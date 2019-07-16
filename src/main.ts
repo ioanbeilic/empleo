@@ -8,6 +8,15 @@ async function bootstrap() {
 
   setup(app);
 
+  const options = new DocumentBuilder()
+    .setTitle('')
+    .setDescription('')
+    .setVersion('1.0')
+    .addTag('cv')
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('openapi/ui', app, document);
+
   await app.listen(3000);
 }
 
