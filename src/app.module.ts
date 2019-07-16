@@ -23,7 +23,7 @@ import { EducationsService } from './modules/services/educations/educations.serv
       useFactory(postgresUri: string) {
         return {
           url: postgresUri,
-          name: '',
+          name: 'educations',
           type: 'postgres',
           entities: [Education],
           synchronize: true

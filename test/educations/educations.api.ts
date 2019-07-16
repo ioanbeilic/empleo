@@ -10,7 +10,7 @@ export class EducationsApi extends Api<Education, EducationCreate> {
   constructor({ app, token }: { app: NestApplication; token?: string }) {
     super({
       server: app.getHttpServer(),
-      endpoint: '/',
+      endpoint: '/educations',
       token
     });
   }
