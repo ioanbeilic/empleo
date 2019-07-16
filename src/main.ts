@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { setup } from 'empleo-nestjs-common';
 import { AppModule } from './app.module';
-import { OpenApi } from './open-api';
+import { OpenApi } from './openapi';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
