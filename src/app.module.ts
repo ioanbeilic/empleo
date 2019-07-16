@@ -2,14 +2,15 @@ import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthenticationModule } from 'empleo-nestjs-authentication';
 import { PaginationModule } from 'empleo-nestjs-common';
-import { AppConfigurationModule } from './modules/configuration/cv.configuration.module';
-
 import { POSTGRES_URI } from './cv.keys';
 import { CvOpenApi } from './cv.openapi';
-import { EducationsModule } from './modules/educations.module';
+import { AppConfigurationModule } from './modules/configuration/cv.configuration.module';
+import { EducationsController } from './modules/controllers/educations/educations.controller';
 import { Education } from './modules/entities/education.entity';
+import { EducationsService } from './modules/services/educations/educations.service';
 
 @Module({
+  controllers: [EducationsController],
   imports: [
     HttpModule,
     AuthenticationModule,
@@ -29,9 +30,8 @@ import { Education } from './modules/entities/education.entity';
         };
       },
       inject: [POSTGRES_URI]
-    }),
-    EducationsModule
+    })
   ],
-  providers: [CvOpenApi]
+  providers: [CvOpenApi, EducationsService]
 })
 export class AppModule {}

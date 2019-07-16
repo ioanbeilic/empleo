@@ -3,7 +3,6 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { setup } from 'empleo-nestjs-common';
 import { AppModule } from './app.module';
 import { CvOpenApi } from './cv.openapi';
-import { EducationsModule } from './modules/educations.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,7 +11,7 @@ async function bootstrap() {
 
   const openApi = app.get(CvOpenApi).getDocument();
   const document = SwaggerModule.createDocument(app, openApi, {
-    include: [EducationsModule] // include modules
+    include: [AppModule] // include modules
   });
   SwaggerModule.setup('openapi/ui', app, document);
 
