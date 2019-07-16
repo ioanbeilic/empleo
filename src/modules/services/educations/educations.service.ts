@@ -8,7 +8,7 @@ import { Education } from '../../entities/education.entity';
 
 @Injectable()
 export class EducationsService {
-  constructor(@InjectRepository(Education, 'educations') private readonly educationRepository: Repository<Education>) {}
+  constructor(@InjectRepository(Education) private readonly educationRepository: Repository<Education>) {}
 
   async createEducation({ user, education: educationCreate }: CreateEducationOptions): Promise<Education> {
     const education = await this.educationRepository.create({

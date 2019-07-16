@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DocumentBuilder, SwaggerBaseConfig } from '@nestjs/swagger';
-import { AppConfigurationService } from './configuration/app.configuration.service';
+import { AppConfigurationService } from './modules/configuration/cv.configuration.service';
 
 @Injectable()
 export class OpenApi {

@@ -2,9 +2,9 @@ import { NestApplication } from '@nestjs/core';
 import Bluebird from 'bluebird';
 import { Token } from 'empleo-nestjs-authentication';
 import { getRepository } from 'typeorm';
-import { EducationCreate } from '../../src/dto/education-create.dto';
-import { Api } from '../../src/empleo-testing';
-import { Education } from '../../src/entities/education.entity';
+import { EducationCreate } from '../../src/modules/dto/education-create.dto';
+import { Api } from '../../src/modules/empleo-testing';
+import { Education } from '../../src/modules/entities/education.entity';
 
 export class EducationsApi extends Api<Education, EducationCreate> {
   constructor({ app, token }: { app: NestApplication; token?: string }) {

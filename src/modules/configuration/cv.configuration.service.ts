@@ -1,6 +1,6 @@
 import { ConfigurationService } from 'empleo-nestjs-configuration';
-import { AppConfiguration } from './app.configuration';
-import schema from './app.configuration.schema.json';
+import { AppConfiguration } from './cv.configuration';
+import schema from './cv.configuration.schema.json';
 
 export class AppConfigurationService extends ConfigurationService<AppConfiguration> {
   constructor() {
