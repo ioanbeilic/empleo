@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { setup } from 'empleo-nestjs-common';
 import { AppModule } from './app.module';
+import { EducationsModule } from './modules/educations.module';
 import { OpenApi } from './openapi';
 
 async function bootstrap() {
@@ -11,7 +12,7 @@ async function bootstrap() {
 
   const openApi = app.get(OpenApi).getDocument();
   const document = SwaggerModule.createDocument(app, openApi, {
-    include: [] // include modules
+    include: [EducationsModule] // include modules
   });
   SwaggerModule.setup('openapi/ui', app, document);
 

@@ -5,6 +5,7 @@ import { PaginationModule } from 'empleo-nestjs-common';
 import { AppConfigurationModule } from './configuration/app.configuration.module';
 
 import { POSTGRES_URI } from './app.keys';
+import { EducationsModule } from './modules/educations.module';
 import { OpenApi } from './openapi';
 
 @Module({
@@ -27,7 +28,8 @@ import { OpenApi } from './openapi';
         };
       },
       inject: [POSTGRES_URI]
-    })
+    }),
+    EducationsModule
   ],
   providers: [OpenApi]
 })
