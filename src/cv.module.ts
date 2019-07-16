@@ -2,25 +2,22 @@ import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthenticationModule } from 'empleo-nestjs-authentication';
 import { PaginationModule } from 'empleo-nestjs-common';
-import { AppConfigurationModule } from './configuration/app.configuration.module';
-
-import { POSTGRES_URI } from './app.keys';
-import { OpenApi } from './openapi';
+import { CvConfigurationModule } from './configuration/cv-configuration.module';
+import { POSTGRES_URI } from './cv.keys';
+import { CvOpenapi } from './cv.openapi';
 
 @Module({
   imports: [
     HttpModule,
     AuthenticationModule,
-    AppConfigurationModule,
+    CvConfigurationModule,
     PaginationModule,
-    TypeOrmModule.forFeature([], 'cv_microservice'),
+    TypeOrmModule.forFeature([]),
     TypeOrmModule.forRootAsync({
-      name: 'cv_microservice',
-      imports: [AppConfigurationModule],
+      imports: [CvConfigurationModule],
       useFactory(postgresUri: string) {
         return {
           url: postgresUri,
-          name: 'cv_microservice',
           type: 'postgres',
           entities: [],
           synchronize: true
@@ -29,6 +26,6 @@ import { OpenApi } from './openapi';
       inject: [POSTGRES_URI]
     })
   ],
-  providers: [OpenApi]
+  providers: [CvOpenapi]
 })
-export class AppModule {}
+export class CvModule {}
