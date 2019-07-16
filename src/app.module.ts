@@ -5,6 +5,7 @@ import { PaginationModule } from 'empleo-nestjs-common';
 import { AppConfigurationModule } from './configuration/app.configuration.module';
 
 import { POSTGRES_URI } from './app.keys';
+import { OpenApi } from './openapi';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { POSTGRES_URI } from './app.keys';
       },
       inject: [POSTGRES_URI]
     })
-  ]
+  ],
+  providers: [OpenApi]
 })
 export class AppModule {}
