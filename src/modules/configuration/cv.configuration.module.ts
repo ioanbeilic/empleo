@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { POSTGRES_URI } from '../../app.keys';
+import { POSTGRES_URI } from '../../cv.keys';
 import { AppConfigurationService } from './cv.configuration.service';
 
 const providers = [

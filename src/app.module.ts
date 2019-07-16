@@ -4,10 +4,10 @@ import { AuthenticationModule } from 'empleo-nestjs-authentication';
 import { PaginationModule } from 'empleo-nestjs-common';
 import { AppConfigurationModule } from './modules/configuration/cv.configuration.module';
 
-import { POSTGRES_URI } from './app.keys';
+import { POSTGRES_URI } from './cv.keys';
+import { CvOpenApi } from './cv.openapi';
 import { EducationsModule } from './modules/educations.module';
 import { Education } from './modules/entities/education.entity';
-import { OpenApi } from './openapi';
 
 @Module({
   imports: [
@@ -32,6 +32,6 @@ import { OpenApi } from './openapi';
     }),
     EducationsModule
   ],
-  providers: [OpenApi]
+  providers: [CvOpenApi]
 })
 export class AppModule {}

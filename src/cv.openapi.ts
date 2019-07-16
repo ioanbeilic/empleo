@@ -3,7 +3,7 @@ import { DocumentBuilder, SwaggerBaseConfig } from '@nestjs/swagger';
 import { AppConfigurationService } from './modules/configuration/cv.configuration.service';
 
 @Injectable()
-export class OpenApi {
+export class CvOpenApi {
   constructor(private readonly configurationService: AppConfigurationService) {}
 
   getDocument(): SwaggerBaseConfig {

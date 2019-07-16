@@ -1,6 +1,6 @@
 import { plainToClass } from 'class-transformer';
+import { Builder } from '../../../empleo-testing';
 import { Documentation } from '../../domain/documentation';
-import { Builder } from '../../empleo-testing';
 
 export class DocumentationBuilder extends Builder<Documentation> {
   withName(name = this.faker.lorem.sentence()): this {

@@ -1,7 +1,7 @@
 import { plainToClass } from 'class-transformer';
+import { Builder } from '../../../empleo-testing';
 import { Documentation } from '../../domain/documentation';
 import { EducationCreate } from '../../dto/education-create.dto';
-import { Builder } from '../../empleo-testing';
 import { Education } from '../../entities/education.entity';
 import { documentationBuilder } from './documentation.builder';
 

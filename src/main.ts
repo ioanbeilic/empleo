@@ -2,15 +2,15 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { setup } from 'empleo-nestjs-common';
 import { AppModule } from './app.module';
+import { CvOpenApi } from './cv.openapi';
 import { EducationsModule } from './modules/educations.module';
-import { OpenApi } from './openapi';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   setup(app);
 
-  const openApi = app.get(OpenApi).getDocument();
+  const openApi = app.get(CvOpenApi).getDocument();
   const document = SwaggerModule.createDocument(app, openApi, {
     include: [EducationsModule] // include modules
   });
