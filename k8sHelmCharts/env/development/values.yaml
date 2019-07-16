@@ -1,0 +1,29 @@
+## DEFAULTS VALUES FOR SVC
+service:
+  type: ClusterIP
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: 10.0.0.0/16
+
+node:
+  env: development
+
+postgres:
+  host: rds-empleo-postgresql.cp0cciacgzf6.eu-west-1.rds.amazonaws.com
+  port: 5432
+  database: empleodb
+  username: empleo_app
+  password: wf+Y7D
+
+redis:
+# These two should come from the [redis global config map](https://gitlab.univ.corp/coreplatform/coreplatform-globalk8s-charts/blob/develop/k8sHelmCharts/env/development/values.yaml)
+#  host: localhost
+#  port: 6379
+  database: 0
+  keyPrefix: KEYCLOAK_TOKEN_BLACKLIST_
+
+keycloak:
+  issuer: https://sso.dev.universia.net/auth/realms/Empleo
+  realm: Empleo
+
+apiManager:
+  uri: https://api-manager.dev.universia.net

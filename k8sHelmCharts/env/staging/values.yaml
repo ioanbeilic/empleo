@@ -1,0 +1,4 @@
+## DEFAULTS VALUES FOR SVC
+service:
+  type: LoadBalancer
+  annotations: {}

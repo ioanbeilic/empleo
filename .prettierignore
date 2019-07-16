@@ -1,0 +1,7 @@
+/app
+/dist
+/k8sHelmCharts
+/node_modules
+/package.json
+/package-lock.json
+/tsconfig.json
