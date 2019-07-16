@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { DocumentBuilder, SwaggerBaseConfig } from '@nestjs/swagger';
-import { AppConfigurationService } from './configuration/app.configuration.service';
+import { CvConfigurationService } from './configuration/cv-configuration.service';
 
 @Injectable()
-export class OpenApi {
-  constructor(private readonly configurationService: AppConfigurationService) {}
+export class CvOpenapi {
+  constructor(private readonly configurationService: CvConfigurationService) {}
 
   getDocument(): SwaggerBaseConfig {
     // This "really clever" patch is needed in order to make the api explorer usable when the app is deployed through api manager
     const isProduction = this.configurationService.isProduction;
-    const basePath = isProduction ? '/empleo/cv/' : '/cv/';
+    const basePath = isProduction ? '/empleo/cv/' : '/';
     const schemes: Array<'http' | 'https'> = isProduction ? ['https', 'http'] : ['http', 'https'];
 
     return new DocumentBuilder()

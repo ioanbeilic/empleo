@@ -47,7 +47,7 @@ spec:
             - configMapRef:
                 name: redis-config
             - configMapRef:
-                name: empleo-profile-config
+                name: empleo-cv-config
 
           resources:
 {{ toYaml .Values.resources | indent 12 }}

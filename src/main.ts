@@ -1,19 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { setup } from 'empleo-nestjs-common';
-import { AppModule } from './app.module';
-import { OpenApi } from './openapi';
+import { CvModule } from './cv.module';
+import { CvOpenapi } from './cv.openapi';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(CvModule);
 
   setup(app);
 
-  const openApi = app.get(OpenApi).getDocument();
-  const document = SwaggerModule.createDocument(app, openApi, {
-    include: [] // include modules
-  });
-  SwaggerModule.setup('openapi/ui', app, document);
+  const cvOpenApi = app.get(CvOpenapi).getDocument();
+  const cvDocument = SwaggerModule.createDocument(app, cvOpenApi);
+
+  SwaggerModule.setup('openapi/ui', app, cvDocument);
 
   await app.listen(3000);
 }
