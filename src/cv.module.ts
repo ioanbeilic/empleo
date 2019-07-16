@@ -1,4 +1,4 @@
-import { HttpModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthenticationModule } from 'empleo-nestjs-authentication';
 import { PaginationModule } from 'empleo-nestjs-common';
@@ -8,7 +8,6 @@ import { CvOpenapi } from './cv.openapi';
 
 @Module({
   imports: [
-    HttpModule,
     AuthenticationModule,
     CvConfigurationModule,
     PaginationModule,
