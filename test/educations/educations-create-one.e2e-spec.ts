@@ -1,7 +1,10 @@
 import { HttpStatus } from '@nestjs/common';
 import { NestApplication } from '@nestjs/core';
 import { AppModule } from '../../src/app.module';
-import { getAdminToken, getCandidateToken } from '../../src/empleo-testing';
+import { documentationBuilder } from '../../src/builders/educations/documentation.builder';
+import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
+import { educationBuilder } from '../../src/builders/educations/education.builder';
+import { getAdminToken, getCandidateToken, startApp } from '../../src/empleo-testing';
 import { api, removeEducationByToken } from './educations.api';
 
 describe('EducationController (POST) (e2e)', () => {
