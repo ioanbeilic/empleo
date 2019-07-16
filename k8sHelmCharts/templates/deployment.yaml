@@ -1,0 +1,57 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name | trunc 63 }}
+  labels:
+    app: {{ .Chart.Name | trunc 63 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name | trunc 63 }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name | trunc 63 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name | trunc 63 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: DAAS_SCHEMA_NAMESPACE
+              value: empleo
+          ports:
+          {{- range $key, $value := .Values.container.ports }}
+            - name: {{ $key }}
+{{ toYaml $value | indent 14 }}
+{{- end }}
+          envFrom:
+            - configMapRef:
+                name: kafka-config
+            - configMapRef:
+                name: keycloak-config
+            - configMapRef:
+                name: mongodb-config
+            - configMapRef:
+                name: mqtt-config
+            - configMapRef:
+                name: ingesta-module-config
+            - configMapRef:
+                name: daas-schema-config
+            - configMapRef:
+                name: nodejs-config
+            - configMapRef:
+                name: redis-config
+            - configMapRef:
+                name: empleo-profile-config
+
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          livenessProbe:
+{{ toYaml .Values.livenessProbe | indent 12 }}
+          readinessProbe:
+{{ toYaml .Values.readinessProbe | indent 12 }}
