@@ -2,10 +2,10 @@ import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthenticationModule } from 'empleo-nestjs-authentication';
 import { PaginationModule } from 'empleo-nestjs-common';
-import { AppConfigurationModule } from './configuration/app.configuration.module';
+import { AppConfigurationModule } from './modules/configuration/cv.configuration.module';
 
-import { POSTGRES_URI } from './app.keys';
-import { OpenApi } from './openapi';
+import { POSTGRES_URI } from './cv.keys';
+import { OpenApi } from './cv.openapi';
 
 @Module({
   imports: [
