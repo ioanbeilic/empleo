@@ -7,6 +7,7 @@ import { POSTGRES_URI } from './cv.keys';
 import { CvOpenapi } from './cv.openapi';
 import { EducationsController } from './modules/controllers/educations/educations.controller';
 import { Education } from './modules/entities/education.entity';
+import { CheckUserService } from './modules/services/common/check-user.service';
 import { EducationsService } from './modules/services/educations/educations.service';
 
 @Module({
@@ -29,6 +30,6 @@ import { EducationsService } from './modules/services/educations/educations.serv
       inject: [POSTGRES_URI]
     })
   ],
-  providers: [CvOpenapi, EducationsService]
+  providers: [CvOpenapi, EducationsService, CheckUserService]
 })
 export class CvModule {}
