@@ -1,6 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { NestApplication } from '@nestjs/core';
-import { AppModule } from '../../src/app.module';
+
+import { CvModule } from '../../src/cv.module';
 import { getAdminToken, getCandidateToken, startApp } from '../../src/empleo-testing';
 import { documentationBuilder } from '../../src/modules/builders/educations/documentation.builder';
 import { educationCreateBuilder } from '../../src/modules/builders/educations/education-create.builder';
@@ -13,7 +14,7 @@ describe('EducationController (POST) (e2e)', () => {
   let adminToken: string;
 
   before(async () => {
-    app = await startApp(AppModule);
+    app = await startApp(CvModule);
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
     await removeEducationByToken(adminToken, candidateToken);
   });

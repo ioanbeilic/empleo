@@ -4,9 +4,14 @@ import { EducationNotFoundException } from '../../errors/education-not-found.exc
 
 @Injectable()
 export class CheckUserService {
-  checkParam(user: User, param: string) {
+  checkParam({ user, param }: CheckUserOptions) {
     if (user.id !== param) {
       throw new EducationNotFoundException();
     }
   }
+}
+
+export interface CheckUserOptions {
+  user: User;
+  param: string;
 }

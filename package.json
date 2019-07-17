@@ -36,7 +36,9 @@
     "rxjs": "^6.5.2",
     "swagger-ui-express": "^4.0.7",
     "tsconfig-paths": "^3.8.0",
-    "typeorm": "^0.2.18"
+    "typeorm": "^0.2.18",
+    "chai": "^4.2.0",
+    "ts-mockito": "^2.3.1"
   },
   "devDependencies": {
     "@nestjs/testing": "^6.5.2",
