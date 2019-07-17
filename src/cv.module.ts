@@ -5,6 +5,9 @@ import { PaginationModule } from 'empleo-nestjs-common';
 import { CvConfigurationModule } from './configuration/cv-configuration.module';
 import { POSTGRES_URI } from './cv.keys';
 import { CvOpenapi } from './cv.openapi';
+import { EducationsController } from './modules/controllers/educations/educations.controller';
+import { Education } from './modules/entities/education.entity';
+import { EducationsService } from './modules/services/educations/educations.service';
 
 @Module({
   controllers: [EducationsController],
@@ -12,7 +15,7 @@ import { CvOpenapi } from './cv.openapi';
     AuthenticationModule,
     CvConfigurationModule,
     PaginationModule,
-    TypeOrmModule.forFeature([]),
+    TypeOrmModule.forFeature([Education]),
     TypeOrmModule.forRootAsync({
       imports: [CvConfigurationModule],
       useFactory(postgresUri: string) {
@@ -26,6 +29,6 @@ import { CvOpenapi } from './cv.openapi';
       inject: [POSTGRES_URI]
     })
   ],
-  providers: [CvOpenapi]
+  providers: [CvOpenapi, EducationsService]
 })
 export class CvModule {}
