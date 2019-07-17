@@ -36,9 +36,7 @@
     "rxjs": "^6.5.2",
     "swagger-ui-express": "^4.0.7",
     "tsconfig-paths": "^3.8.0",
-    "typeorm": "^0.2.18",
-    "chai": "^4.2.0",
-    "ts-mockito": "^2.3.1"
+    "typeorm": "^0.2.18"
   },
   "devDependencies": {
     "@nestjs/testing": "^6.5.2",
@@ -58,9 +56,9 @@
     "prettier": "^1.18.2",
     "rimraf": "^2.6.3",
     "supertest": "^4.0.2",
-    "ts-mockito": "^2.3.1",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "ts-mockito": "^2.3.1"
   }
 }
