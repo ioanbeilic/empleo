@@ -1,8 +1,8 @@
-# empleo-profile-svc
+# empleo-cv-svc
 
-[![Quality Gate](https://sonar.univ.corp/api/badges/gate?key=empleo-profile-svc)](https://sonar.univ.corp/dashboard/index/empleo-profile-svc) [![Quality Gate](https://sonar.univ.corp/api/badges/measure?key=empleo-profile-svc&metric=coverage)](https://sonar.univ.corp/dashboard/index/empleo-profile-svc) [![Quality Gate](https://sonar.univ.corp/api/badges/measure?key=empleo-profile-svc&metric=bugs)](https://sonar.univ.corp/dashboard/index/empleo-profile-svc) [![Quality Gate](https://sonar.univ.corp/api/badges/measure?key=empleo-profile-svc&metric=vulnerabilities)](https://sonar.univ.corp/dashboard/index/empleo-profile-svc) [![Quality Gate](https://sonar.univ.corp/api/badges/measure?key=empleo-profile-svc&metric=code_smells)](https://sonar.univ.corp/dashboard/index/empleo-profile-svc)
+[![Quality Gate](https://sonar.univ.corp/api/badges/gate?key=empleo-cv-svc)](https://sonar.univ.corp/dashboard/index/empleo-cv-svc) [![Quality Gate](https://sonar.univ.corp/api/badges/measure?key=empleo-profile-svc&metric=coverage)](https://sonar.univ.corp/dashboard/index/empleo-profile-svc) [![Quality Gate](https://sonar.univ.corp/api/badges/measure?key=empleo-profile-svc&metric=bugs)](https://sonar.univ.corp/dashboard/index/empleo-profile-svc) [![Quality Gate](https://sonar.univ.corp/api/badges/measure?key=empleo-profile-svc&metric=vulnerabilities)](https://sonar.univ.corp/dashboard/index/empleo-profile-svc) [![Quality Gate](https://sonar.univ.corp/api/badges/measure?key=empleo-profile-svc&metric=code_smells)](https://sonar.univ.corp/dashboard/index/empleo-profile-svc)
 
-# @empleo/profiles-svc
+# empleo-cv-svc
 
 ## Description
 

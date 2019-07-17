@@ -13,7 +13,7 @@ ARG app_service_port=3000
 LABEL maintainer="empleo Team" \
       org.label-schema.vcs-ref=$VCS_REF \
       org.label-schema.build-date=$BUILD_DATE \
-      org.label-schema.vcs-url="https://gitlab.univ.corp/empleo/empleo-profile-svc" \
+      org.label-schema.vcs-url="https://gitlab.univ.corp/empleo/empleo-cv-svc" \
       org.label-schema.docker.dockerfile="/Dockerfile"
 
 

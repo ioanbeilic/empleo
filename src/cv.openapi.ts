@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { DocumentBuilder, SwaggerBaseConfig } from '@nestjs/swagger';
-import { AppConfigurationService } from './modules/configuration/cv.configuration.service';
+import { CvConfigurationService } from './configuration/cv-configuration.service';
 
 @Injectable()
-export class CvOpenApi {
-  constructor(private readonly configurationService: AppConfigurationService) {}
+export class CvOpenapi {
+  constructor(private readonly configurationService: CvConfigurationService) {}
 
   getDocument(): SwaggerBaseConfig {
     // This "really clever" patch is needed in order to make the api explorer usable when the app is deployed through api manager
