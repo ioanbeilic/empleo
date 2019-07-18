@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
 import faker from 'faker';
-import { anyOfClass, anything, deepEqual, instance, mock, objectContaining, verify, when } from 'ts-mockito';
+import { anyOfClass, anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { educationCreateBuilder } from '../../builders/educations/education-create.builder';
 import { educationBuilder } from '../../builders/educations/education.builder';
 import { EducationNotFoundException } from '../../errors/education-not-found.exception';
@@ -11,7 +11,7 @@ import { EducationsController } from './educations.controller';
 
 describe('EducationsController', () => {
   let mockedEducationsService: EducationsService;
-  let mockedCheckUserService: PermissionsService;
+  let mockedPermissionsService: PermissionsService;
   let educationsController: EducationsController;
 
   const user = userBuilder()
@@ -39,13 +39,13 @@ describe('EducationsController', () => {
 
   beforeEach(() => {
     mockedEducationsService = mock(EducationsService);
-    mockedCheckUserService = mock(PermissionsService);
-    educationsController = new EducationsController(instance(mockedEducationsService), instance(mockedCheckUserService));
+    mockedPermissionsService = mock(PermissionsService);
+    educationsController = new EducationsController(instance(mockedEducationsService), instance(mockedPermissionsService));
   });
 
   describe('#createEducation()', () => {
     it('should create a education', async () => {
-      when(mockedCheckUserService.isOwnerOrNotFound(anything(), anything())).thenReturn(true);
+      when(mockedPermissionsService.isOwnerOrNotFound(anything(), anything())).thenReturn(true);
       when(mockedEducationsService.createEducation(anything())).thenResolve(createdEducation);
 
       const keycloakId = user.id;
@@ -53,7 +53,7 @@ describe('EducationsController', () => {
 
       expect(result).to.be.equal(createdEducation);
       verify(
-        mockedCheckUserService.isOwnerOrNotFound(
+        mockedPermissionsService.isOwnerOrNotFound(
           deepEqual({
             user,
             resource: { keycloakId }
@@ -65,7 +65,7 @@ describe('EducationsController', () => {
     });
 
     it('should throw a not found error when the user is not admin and not the owner of the resource', async () => {
-      when(mockedCheckUserService.isOwnerOrNotFound(anything(), anything())).thenThrow(new EducationNotFoundException());
+      when(mockedPermissionsService.isOwnerOrNotFound(anything(), anything())).thenThrow(new EducationNotFoundException());
       when(mockedEducationsService.createEducation(anything())).thenResolve(createdEducation);
 
       const keycloakId = faker.random.uuid();
@@ -75,7 +75,7 @@ describe('EducationsController', () => {
       );
 
       verify(
-        mockedCheckUserService.isOwnerOrNotFound(
+        mockedPermissionsService.isOwnerOrNotFound(
           deepEqual({
             user,
             resource: { keycloakId }
@@ -91,34 +91,63 @@ describe('EducationsController', () => {
     it('should update a education when it exists and belong to the user', async () => {
       const educationId = createdEducation.educationId;
 
+      when(mockedPermissionsService.isOwnerOrNotFound(anything())).thenReturn(true);
       when(mockedEducationsService.updateOne(anything())).thenResolve();
       when(mockedEducationsService.findUserEducationById(anything())).thenResolve(createdEducation);
 
-      const responseEducation = await educationsController.updateEducation(user, educationUpdate, { keycloakId: user.id }, { educationId });
+      const responseEducation = await educationsController.updateEducation(user, educationUpdate, {
+        educationId,
+        keycloakId: user.id
+      });
 
-      verify(mockedEducationsService.findUserEducationById(objectContaining({ educationId, user }))).calledBefore(
+      expect(responseEducation).to.be.undefined;
+      verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId: user.id } }))).once();
+      verify(mockedEducationsService.findUserEducationById(deepEqual({ educationId, user }))).calledBefore(
         mockedEducationsService.updateOne(
-          objectContaining({
+          deepEqual({
             education: createdEducation,
             update: educationUpdate
           })
         )
       );
-      expect(responseEducation).to.be.undefined;
     });
 
     it('should throw an education not found exception when the education does not exist', async () => {
       const educationId = createdEducation.educationId;
+      const keycloakId = user.id;
 
+      when(mockedPermissionsService.isOwnerOrNotFound(anything())).thenReturn(true);
       when(mockedEducationsService.updateOne(anything())).thenResolve();
-
       when(mockedEducationsService.findUserEducationById(anything())).thenReject(new EducationNotFoundException());
 
       await expect(
-        educationsController.updateEducation(user, educationUpdate, { keycloakId: user.id }, { educationId })
+        educationsController.updateEducation(user, educationUpdate, {
+          educationId,
+          keycloakId
+        })
       ).to.eventually.be.rejectedWith(EducationNotFoundException);
 
-      verify(mockedEducationsService.findUserEducationById(objectContaining({ educationId, user }))).once();
+      verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId } }))).once();
+      verify(mockedEducationsService.findUserEducationById(deepEqual({ educationId, user }))).once();
+      verify(mockedEducationsService.updateOne(anything())).never();
+    });
+
+    it('should throw an education not found error when trying to access an cv from another user', async () => {
+      const educationId = createdEducation.educationId;
+      const keycloakId = user.id;
+
+      when(mockedPermissionsService.isOwnerOrNotFound(anything())).thenThrow(new EducationNotFoundException());
+      when(mockedEducationsService.updateOne(anything())).thenResolve();
+      when(mockedEducationsService.findUserEducationById(anything())).thenResolve(createdEducation);
+
+      await expect(
+        educationsController.updateEducation(user, educationUpdate, {
+          educationId,
+          keycloakId
+        })
+      ).to.eventually.be.rejectedWith(EducationNotFoundException);
+      verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId } }))).once();
+      verify(mockedEducationsService.findUserEducationById(deepEqual({ educationId, user }))).never();
       verify(mockedEducationsService.updateOne(anything())).never();
     });
   });

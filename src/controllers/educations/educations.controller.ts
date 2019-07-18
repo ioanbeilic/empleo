@@ -55,8 +55,10 @@ export class EducationsController {
   async updateEducation(
     @AuthenticatedUser() user: User,
     @Body() update: EducationCreate,
-    @Param() { educationId }: FindOneParamsEducation
+    @Param() { educationId, keycloakId }: FindOneParamsEducation
   ): Promise<void> {
+    this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } });
+
     const education = await this.educationsService.findUserEducationById({ educationId, user });
 
     await this.educationsService.updateOne({ education, update });
