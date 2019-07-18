@@ -1,23 +1,28 @@
 import { HttpStatus } from '@nestjs/common';
 import { NestApplication } from '@nestjs/core';
+import { Token } from 'empleo-nestjs-authentication';
 import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
 import { documentationBuilder } from '../../src/builders/educations/documentation.builder';
 import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { educationBuilder } from '../../src/builders/educations/education.builder';
 import { CvModule } from '../../src/cv.module';
-import { api, getUserByToken, removeEducationByToken } from './educations.api';
+import { api, removeEducationByToken } from './educations.api';
 
 describe('EducationController (POST) (e2e)', () => {
   let app: NestApplication;
   let candidateToken: string;
   let adminToken: string;
-  let path: string;
+  let adminKeycloakId: string;
+  let candidateKeycloakId: string;
 
   before(async () => {
     app = await startTestApp(CvModule);
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
+
+    adminKeycloakId = Token.fromEncoded(adminToken).keycloakId;
+    candidateKeycloakId = Token.fromEncoded(candidateToken).keycloakId;
+
     await removeEducationByToken(adminToken, candidateToken);
-    path = `/${await getUserByToken(candidateToken)}/educations`;
   });
 
   afterEach(async () => {
@@ -35,8 +40,8 @@ describe('EducationController (POST) (e2e)', () => {
         .withValidData()
         .build();
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .create({ payload: education })
         .expectJson(HttpStatus.CREATED);
     });
@@ -47,33 +52,10 @@ describe('EducationController (POST) (e2e)', () => {
         .withValidData()
         .build();
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .create({ payload: educationWithoutDocumentation })
         .expectJson(HttpStatus.CREATED);
-    });
-
-    it('should return 403 - Forbidden  when user is not candidate', async () => {
-      const education = educationCreateBuilder()
-        .withoutDocumentation()
-        .withValidData()
-        .build();
-
-      await api(app, path, { token: adminToken })
-        .educations()
-        .create({ payload: education })
-        .expectJson(HttpStatus.FORBIDDEN);
-    });
-
-    it('should return 401 - Unauthorized when user is not logged in', async () => {
-      const education = educationBuilder()
-        .withValidData()
-        .build();
-
-      await api(app, path)
-        .educations()
-        .create({ payload: education })
-        .expectJson(HttpStatus.UNAUTHORIZED);
     });
 
     it('should return 400 - Bad Request when the "centerType" is invalid', async () => {
@@ -83,8 +65,8 @@ describe('EducationController (POST) (e2e)', () => {
 
       education.centerType = '';
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .create({ payload: education })
         .expectJson(HttpStatus.BAD_REQUEST);
     });
@@ -96,8 +78,8 @@ describe('EducationController (POST) (e2e)', () => {
 
       education.country = '';
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .create({ payload: education })
         .expectJson(HttpStatus.BAD_REQUEST);
     });
@@ -109,8 +91,8 @@ describe('EducationController (POST) (e2e)', () => {
 
       education.country = '';
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .create({ payload: education })
         .expectJson(HttpStatus.BAD_REQUEST);
     });
@@ -122,8 +104,8 @@ describe('EducationController (POST) (e2e)', () => {
 
       education.title = '';
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .create({ payload: education })
         .expectJson(HttpStatus.BAD_REQUEST);
     });
@@ -135,8 +117,8 @@ describe('EducationController (POST) (e2e)', () => {
 
       education.category = '';
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .create({ payload: education })
         .expectJson(HttpStatus.BAD_REQUEST);
     });
@@ -153,10 +135,21 @@ describe('EducationController (POST) (e2e)', () => {
 
       education.documentation = [documentation];
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .create({ payload: education })
         .expectJson(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 401 - Unauthorized when user is not logged in', async () => {
+      const education = educationBuilder()
+        .withValidData()
+        .build();
+
+      await api(app)
+        .educations({ keycloakId: candidateKeycloakId })
+        .create({ payload: education })
+        .expectJson(HttpStatus.UNAUTHORIZED);
     });
 
     it('should return 403 - Forbidden when the user is not a candidate', async () => {
@@ -164,8 +157,8 @@ describe('EducationController (POST) (e2e)', () => {
         .withValidData()
         .build();
 
-      await api(app, path, { token: adminToken })
-        .educations()
+      await api(app, { token: adminToken })
+        .educations({ keycloakId: adminKeycloakId })
         .create({ payload: education })
         .expectJson(HttpStatus.FORBIDDEN);
     });
