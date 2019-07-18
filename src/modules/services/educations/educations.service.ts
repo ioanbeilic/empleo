@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'empleo-nestjs-authentication';
 import { Repository } from 'typeorm';
-import uuid from 'uuid/v1';
+import uuid from 'uuid/v4';
 import { EducationCreate } from '../../dto/education-create.dto';
 import { Education } from '../../entities/education.entity';
 
