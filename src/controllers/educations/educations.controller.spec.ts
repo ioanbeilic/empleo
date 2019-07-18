@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
 import faker from 'faker';
-import { anyOfClass, anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
+import { anyOfClass, anything, deepEqual, instance, mock, objectContaining, verify, when } from 'ts-mockito';
 import { educationCreateBuilder } from '../../builders/educations/education-create.builder';
 import { educationBuilder } from '../../builders/educations/education.builder';
 import { EducationNotFoundException } from '../../errors/education-not-found.exception';
@@ -94,7 +94,7 @@ describe('EducationsController', () => {
       when(mockedEducationsService.updateOne(anything())).thenResolve();
       when(mockedEducationsService.findUserEducationById(anything())).thenResolve(createdEducation);
 
-      const responseEducation = await educationsController.updateEducation(user, educationUpdate, { educationId });
+      const responseEducation = await educationsController.updateEducation(user, educationUpdate, { keycloakId: user.id }, { educationId });
 
       verify(mockedEducationsService.findUserEducationById(objectContaining({ educationId, user }))).calledBefore(
         mockedEducationsService.updateOne(
@@ -114,9 +114,9 @@ describe('EducationsController', () => {
 
       when(mockedEducationsService.findUserEducationById(anything())).thenReject(new EducationNotFoundException());
 
-      await expect(educationsController.updateEducation(user, educationUpdate, { educationId })).to.eventually.be.rejectedWith(
-        EducationNotFoundException
-      );
+      await expect(
+        educationsController.updateEducation(user, educationUpdate, { keycloakId: user.id }, { educationId })
+      ).to.eventually.be.rejectedWith(EducationNotFoundException);
 
       verify(mockedEducationsService.findUserEducationById(objectContaining({ educationId, user }))).once();
       verify(mockedEducationsService.updateOne(anything())).never();

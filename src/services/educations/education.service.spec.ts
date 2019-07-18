@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
-import { anyString, anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
+import { anyString, anything, deepEqual, instance, mock, objectContaining, verify, when } from 'ts-mockito';
 import { Repository } from 'typeorm';
 import { educationCreateBuilder } from '../../builders/educations/education-create.builder';
 import { educationBuilder } from '../../builders/educations/education.builder';
@@ -91,13 +91,13 @@ describe('EducationService', () => {
 
   describe('#updateOne()', () => {
     it('should update the education when it exists and belong to the user', async () => {
-      const educationId = createdEducation.educationId;
-
       when(mockedEducationRepository.update(anything(), anything() as Partial<Education>)).thenResolve();
 
       await educationService.updateOne({ education, update: educationUpdate });
 
-      verify(mockedEducationRepository.update(objectContaining({ educationId }), objectContaining(educationUpdate))).once();
+      verify(
+        mockedEducationRepository.update(objectContaining({ educationId: education.educationId }), objectContaining(educationUpdate))
+      ).once();
     });
 
     it('should throw an education not found exception when the education does not exists', async () => {
