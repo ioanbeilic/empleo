@@ -45,7 +45,7 @@ export async function removeEducationById(educationId: string) {
 }
 
 export async function createToDb() {
-  const repository = getRepository(Education, 'educations');
+  const repository = getRepository(Education);
 
   const user = userBuilder()
     .withValidData()

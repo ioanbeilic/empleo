@@ -210,7 +210,7 @@ describe('EducationController (PUT) (e2e)', () => {
         .overrideOne({ identifier: education.educationId, payload: educationUpdate })
         .expectJson(HttpStatus.FORBIDDEN);
     });
-    /*
+
     it('should return 404 - Not Found when the education does not belong to the user', async () => {
       // create a education with another user
       const education = await createToDb();
@@ -229,7 +229,7 @@ describe('EducationController (PUT) (e2e)', () => {
       // remove education created with createToDb() function
       removeEducationById(education.educationId);
     });
-*/
+
     it('should return 404 - Not Found when the education does not exist', async () => {
       const educationUpdate = educationCreateBuilder()
         .withoutDocumentation()
