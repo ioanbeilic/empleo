@@ -11,7 +11,6 @@
     "max-line-length": [true, 140],
     "member-access": [true, "no-public"],
     "no-duplicate-variable": true,
-    "no-implicit-dependencies": true,
     "no-unused-expression": false,
     "object-literal-key-quotes": [true, "as-needed"],
     "object-literal-sort-keys": [false],
