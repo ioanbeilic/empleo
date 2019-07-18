@@ -1,4 +1,15 @@
-import { Body, ClassSerializerInterceptor, Controller, HttpCode, HttpStatus, Param, Post, Put, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  UseInterceptors
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -56,5 +67,17 @@ export class EducationsController {
     const education = await this.educationsService.findUserEducationById({ educationId, user });
 
     await this.educationsService.updateOne({ education, update });
+  }
+
+  @Delete(':keycloakId/educations/:educationId')
+  @Authorize.Candidates()
+  @ApiOperation({ title: 'Remove a education by profile id and education id' })
+  @ApiKeycloakIdParam()
+  @ApiEducationIdParam()
+  @ApiNoContentResponse({ description: 'The education has been successfully deleted' })
+  @ApiBadRequestResponse({ description: 'The education id is not an UUID' })
+  @ApiNotFoundResponse({ description: 'The education does not exist' })
+  async deleteOne(@AuthenticatedUser() user: User, @Param() { educationId }: FindOneParamsEducation): Promise<void> {
+    await this.educationsService.deleteOne({ user, educationId });
   }
 }

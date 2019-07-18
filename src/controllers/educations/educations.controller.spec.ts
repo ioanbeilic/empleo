@@ -106,4 +106,36 @@ describe('EducationsController', () => {
       verify(mockedEducationsService.updateOne(anything())).never();
     });
   });
+
+  describe('#deleteOne()', () => {
+    it('should correctly delete a education', async () => {
+      const educationId = createdEducation.educationId;
+
+      when(mockedEducationsService.deleteOne(anything())).thenResolve();
+
+      const response = await educationsController.deleteOne(user, { educationId });
+
+      verify(mockedEducationsService.deleteOne(objectContaining({ user, educationId }))).once();
+      expect(response).to.be.undefined;
+    });
+
+    it('should throw an education not found exception when the education does not exist', async () => {
+      when(mockedEducationsService.deleteOne(anything())).thenReject(new EducationNotFoundException());
+
+      await expect(educationsController.deleteOne(user, { educationId: 'inexistent_id' })).to.eventually.be.rejectedWith(
+        EducationNotFoundException
+      );
+
+      verify(mockedEducationsService.deleteOne({ user, educationId: createdEducation.educationId })).never();
+    });
+
+    it("should throw a education not found exception if user don't have permission and is not admin", async () => {
+      when(mockedEducationsService.deleteOne(anything())).thenReject(new EducationNotFoundException());
+
+      await expect(educationsController.deleteOne(user, { educationId: createdEducation.educationId })).to.be.rejectedWith(
+        EducationNotFoundException
+      );
+      verify(mockedEducationsService.deleteOne({ user, educationId: createdEducation.educationId })).never();
+    });
+  });
 });
