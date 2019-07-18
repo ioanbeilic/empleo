@@ -31,6 +31,10 @@ describe('EducationsController', () => {
     .withValidData()
     .build();
 
+  const educationUpdate = educationCreateBuilder()
+    .withValidData()
+    .build();
+
   const createdEducation = educationBuilder()
     .hydrate(education)
     .withKeycloakId(user.id)
@@ -64,6 +68,42 @@ describe('EducationsController', () => {
       verify(mockedCheckUserService.checkParam(objectContaining({ user, param: user2.id }))).once();
 
       verify(mockedEducationsService.createEducation({ user, education: educationCreate })).never();
+    });
+  });
+
+  describe('#updateOne()', () => {
+    it('should update a education when it exists and belong to the user', async () => {
+      const educationId = createdEducation.educationId;
+
+      when(mockedEducationsService.updateOne(anything())).thenResolve();
+      when(mockedEducationsService.findUserEducationById(anything())).thenResolve(createdEducation);
+
+      const responseEducation = await educationsController.updateEducation(user, educationUpdate, { educationId });
+
+      verify(mockedEducationsService.findUserEducationById(objectContaining({ educationId, user }))).calledBefore(
+        mockedEducationsService.updateOne(
+          objectContaining({
+            education: createdEducation,
+            update: educationUpdate
+          })
+        )
+      );
+      expect(responseEducation).to.be.undefined;
+    });
+
+    it('should throw an education not found exception when the education does not exist', async () => {
+      const educationId = createdEducation.educationId;
+
+      when(mockedEducationsService.updateOne(anything())).thenResolve();
+
+      when(mockedEducationsService.findUserEducationById(anything())).thenReject(new EducationNotFoundException());
+
+      await expect(educationsController.updateEducation(user, educationUpdate, { educationId })).to.eventually.be.rejectedWith(
+        EducationNotFoundException
+      );
+
+      verify(mockedEducationsService.findUserEducationById(objectContaining({ educationId, user }))).once();
+      verify(mockedEducationsService.updateOne(anything())).never();
     });
   });
 });

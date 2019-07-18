@@ -1,9 +1,11 @@
+import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
 import { anything, instance, mock, objectContaining, verify, when } from 'ts-mockito';
 import { Repository } from 'typeorm';
 import { educationCreateBuilder } from '../../builders/educations/education-create.builder';
 import { educationBuilder } from '../../builders/educations/education.builder';
 import { Education } from '../../entities/education.entity';
+import { EducationNotFoundException } from '../../errors/education-not-found.exception';
 import { EducationsService } from './educations.service';
 
 describe('EducationService', () => {
@@ -30,6 +32,10 @@ describe('EducationService', () => {
     .withKeycloakId(user.id)
     .build();
 
+  const educationUpdate = educationCreateBuilder()
+    .withValidData()
+    .build();
+
   beforeEach(() => {
     mockedEducationRepository = (mock(Repository) as unknown) as Repository<Education>;
     educationRepository = instance(mockedEducationRepository);
@@ -46,6 +52,61 @@ describe('EducationService', () => {
 
       verify(mockedEducationRepository.create(objectContaining({ ...educationCreate, keycloakId: user.id }))).once();
       verify(mockedEducationRepository.save(education)).once();
+    });
+  });
+
+  describe('#findUserEducationById()', () => {
+    it('should return the education when it exists and belong to the user', async () => {
+      when(mockedEducationRepository.findOne(anything())).thenResolve(createdEducation);
+
+      const educationId = createdEducation.educationId;
+      const foundEducation = await educationService.findUserEducationById({ educationId, user });
+
+      verify(mockedEducationRepository.findOne(objectContaining({ educationId }))).once();
+      expect(foundEducation).to.be.equal(createdEducation);
+    });
+
+    it('should throw an education not found exception when the education does not exists', async () => {
+      const educationId = createdEducation.educationId;
+
+      when(mockedEducationRepository.findOne(anything())).thenResolve(undefined);
+
+      await expect(educationService.findUserEducationById({ educationId, user })).to.eventually.be.rejectedWith(EducationNotFoundException);
+
+      verify(mockedEducationRepository.findOne(objectContaining({ educationId }))).once();
+    });
+  });
+
+  describe('#updateOne()', () => {
+    it('should update the education when it exists and belong to the user', async () => {
+      const educationId = createdEducation.educationId;
+
+      when(mockedEducationRepository.update(anything(), anything() as Partial<Education>)).thenResolve();
+
+      await educationService.updateOne({ education, update: educationUpdate });
+
+      verify(mockedEducationRepository.update(objectContaining({ educationId }), objectContaining(educationUpdate))).once();
+    });
+
+    it('should throw an education not found exception when the education does not exists', async () => {
+      const educationId = 'inexistent id';
+
+      when(mockedEducationRepository.findOne(anything())).thenResolve(undefined);
+
+      await expect(educationService.findUserEducationById({ educationId, user })).to.eventually.be.rejectedWith(EducationNotFoundException);
+
+      verify(mockedEducationRepository.findOne(objectContaining({ educationId }))).once();
+    });
+
+    it('should throw an education not found exception when the education exists but it does not belong to the user', async () => {
+      const educationId = createdEducation.educationId;
+      user.id = 'fake id';
+
+      when(mockedEducationRepository.findOne(anything())).thenResolve(undefined);
+
+      await expect(educationService.findUserEducationById({ educationId, user })).to.eventually.be.rejectedWith(EducationNotFoundException);
+
+      verify(mockedEducationRepository.findOne(objectContaining({ educationId }))).once();
     });
   });
 });
