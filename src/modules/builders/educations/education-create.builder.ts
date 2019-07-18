@@ -1,5 +1,5 @@
 import { plainToClass } from 'class-transformer';
-import { Builder } from '../../../empleo-testing';
+import { Builder } from 'empleo-nestjs-testing';
 import { Documentation } from '../../domain/documentation';
 import { EducationCreate } from '../../dto/education-create.dto';
 import { Education } from '../../entities/education.entity';

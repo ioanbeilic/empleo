@@ -1,5 +1,5 @@
 import { plainToClass } from 'class-transformer';
-import { Builder } from '../../../empleo-testing';
+import { Builder } from 'empleo-nestjs-testing';
 import { Documentation } from '../../domain/documentation';
 
 export class DocumentationBuilder extends Builder<Documentation> {

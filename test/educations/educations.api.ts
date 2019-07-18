@@ -1,8 +1,8 @@
 import { NestApplication } from '@nestjs/core';
 import Bluebird from 'bluebird';
 import { Token } from 'empleo-nestjs-authentication';
+import { Api } from 'empleo-nestjs-testing';
 import { getRepository } from 'typeorm';
-import { Api } from '../../src/empleo-testing';
 import { EducationCreate } from '../../src/modules/dto/education-create.dto';
 import { Education } from '../../src/modules/entities/education.entity';
 
