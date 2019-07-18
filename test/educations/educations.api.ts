@@ -1,8 +1,10 @@
 import { NestApplication } from '@nestjs/core';
 import Bluebird from 'bluebird';
-import { Token } from 'empleo-nestjs-authentication';
+import { Token, userBuilder } from 'empleo-nestjs-authentication';
 import { Api } from 'empleo-nestjs-testing';
 import { getRepository } from 'typeorm';
+import uuid from 'uuid/v4';
+import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { EducationCreate } from '../../src/dto/education-create.dto';
 import { Education } from '../../src/entities/education.entity';
 
@@ -40,4 +42,26 @@ export async function removeEducationByToken(...tokens: string[]) {
 export async function removeEducationById(educationId: string) {
   const educationRepository = getRepository(Education);
   return educationRepository.delete(educationId);
+}
+
+export async function createToDb() {
+  const repository = getRepository(Education, 'educations');
+
+  const user = userBuilder()
+    .withValidData()
+    .asAdmin()
+    .build();
+
+  const newEducation = educationCreateBuilder()
+    .withoutDocumentation()
+    .withValidData()
+    .build();
+
+  const education = repository.create({
+    ...newEducation,
+    educationId: uuid(),
+    keycloakId: user.id
+  });
+
+  return await repository.save(education);
 }
