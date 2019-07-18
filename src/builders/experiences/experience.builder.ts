@@ -5,7 +5,7 @@ import { Experience } from '../../entities/experience.entity';
 import { documentationBuilder } from '../common/documentation.builder';
 
 export class ExperienceBuilder extends Builder<Experience> {
-  withEducationId(experienceId = this.faker.random.uuid()): this {
+  withExperienceId(experienceId = this.faker.random.uuid()): this {
     return this.with('experienceId', experienceId);
   }
 
@@ -41,12 +41,16 @@ export class ExperienceBuilder extends Builder<Experience> {
     return this.with('documentation', documentation);
   }
 
+  withoutExperienceId() {
+    return this.without('experienceId');
+  }
+
   withValidData(): this {
     const documentation = documentationBuilder()
       .withValidData()
       .build();
 
-    return this.withEducationId()
+    return this.withExperienceId()
       .withKeycloakId()
       .withDateStart()
       .withDateEnd()
