@@ -7,25 +7,29 @@ import { EducationCreate } from '../../src/modules/dto/education-create.dto';
 import { Education } from '../../src/modules/entities/education.entity';
 
 export class EducationsApi extends Api<Education, EducationCreate> {
-  constructor({ app, token }: { app: NestApplication; token?: string }) {
+  constructor({ app, token, path }: { app: NestApplication; path: string; token?: string }) {
     super({
       server: app.getHttpServer(),
-      endpoint: '/educations',
+      endpoint: path,
       token
     });
   }
 }
 
-export function api(app: NestApplication, { token }: { token?: string } = {}) {
+export function api(app: NestApplication, path: string, { token }: { token?: string } = {}) {
   return {
     educations() {
-      return new EducationsApi({ app, token });
+      return new EducationsApi({ app, token, path });
     }
   };
 }
 
+export async function getUserByToken(token: string) {
+  return Token.fromEncoded(token).keycloakId;
+}
+
 export async function removeEducationByToken(...tokens: string[]) {
-  const educationRepository = getRepository(Education, 'educations');
+  const educationRepository = getRepository(Education);
 
   await Bluebird.resolve(tokens)
     .map(token => Token.fromEncoded(token))
@@ -34,6 +38,6 @@ export async function removeEducationByToken(...tokens: string[]) {
 }
 
 export async function removeEducationById(educationId: string) {
-  const educationRepository = getRepository(Education, 'educations');
+  const educationRepository = getRepository(Education);
   return educationRepository.delete(educationId);
 }

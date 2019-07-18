@@ -28,9 +28,8 @@
     "@types/node": "^10.14.12",
     "class-validator": "^0.9.1",
     "empleo-nestjs-authentication": "0.0.0-rc.20190714-1721",
-    "empleo-nestjs-common": "0.0.0-rc.20190714-1513",
+    "empleo-nestjs-common": "0.0.0-rc.20190717-1059",
     "empleo-nestjs-configuration": "0.0.0-rc.20190714-1512",
-    "empleo-nestjs-testing": "0.0.0-rc.20190716-1518",
     "pg": "^7.11.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.2",
@@ -40,13 +39,16 @@
   },
   "devDependencies": {
     "@nestjs/testing": "^6.5.2",
+    "@types/bluebird": "^3.5.27",
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
     "@types/faker": "^4.1.5",
     "@types/mocha": "^5.2.7",
     "@types/supertest": "^2.0.8",
+    "bluebird": "^3.5.5",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "empleo-nestjs-testing": "0.0.0-rc.20190717-0947",
     "faker": "^4.1.0",
     "husky": "^3.0.0",
     "lint-staged": "^9.2.0",
@@ -56,9 +58,9 @@
     "prettier": "^1.18.2",
     "rimraf": "^2.6.3",
     "supertest": "^4.0.2",
+    "ts-mockito": "^2.3.1",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
-    "typescript": "^3.5.3",
-    "ts-mockito": "^2.3.1"
+    "typescript": "^3.5.3"
   }
 }

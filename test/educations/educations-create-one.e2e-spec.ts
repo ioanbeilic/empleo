@@ -1,22 +1,23 @@
 import { HttpStatus } from '@nestjs/common';
 import { NestApplication } from '@nestjs/core';
-
 import { CvModule } from '../../src/cv.module';
 import { getAdminToken, getCandidateToken, startApp } from '../../src/empleo-testing';
 import { documentationBuilder } from '../../src/modules/builders/educations/documentation.builder';
 import { educationCreateBuilder } from '../../src/modules/builders/educations/education-create.builder';
 import { educationBuilder } from '../../src/modules/builders/educations/education.builder';
-import { api, removeEducationByToken } from './educations.api';
+import { api, getUserByToken, removeEducationByToken } from './educations.api';
 
 describe('EducationController (POST) (e2e)', () => {
   let app: NestApplication;
   let candidateToken: string;
   let adminToken: string;
+  let path: string;
 
   before(async () => {
     app = await startApp(CvModule);
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
     await removeEducationByToken(adminToken, candidateToken);
+    path = `/${await getUserByToken(candidateToken)}/educations`;
   });
 
   afterEach(async () => {
@@ -28,13 +29,13 @@ describe('EducationController (POST) (e2e)', () => {
     await app.close();
   });
 
-  describe('/educations', () => {
+  describe(':keycloakId/educations', () => {
     it('should return 201 - Created', async () => {
       const education = educationBuilder()
         .withValidData()
         .build();
 
-      await api(app, { token: candidateToken })
+      await api(app, path, { token: candidateToken })
         .educations()
         .create({ payload: education })
         .expectJson(HttpStatus.CREATED);
@@ -46,7 +47,7 @@ describe('EducationController (POST) (e2e)', () => {
         .withValidData()
         .build();
 
-      await api(app, { token: candidateToken })
+      await api(app, path, { token: candidateToken })
         .educations()
         .create({ payload: educationWithoutDocumentation })
         .expectJson(HttpStatus.CREATED);
@@ -58,7 +59,7 @@ describe('EducationController (POST) (e2e)', () => {
         .withValidData()
         .build();
 
-      await api(app, { token: adminToken })
+      await api(app, path, { token: adminToken })
         .educations()
         .create({ payload: education })
         .expectJson(HttpStatus.FORBIDDEN);
@@ -69,7 +70,7 @@ describe('EducationController (POST) (e2e)', () => {
         .withValidData()
         .build();
 
-      await api(app)
+      await api(app, path)
         .educations()
         .create({ payload: education })
         .expectJson(HttpStatus.UNAUTHORIZED);
@@ -82,7 +83,7 @@ describe('EducationController (POST) (e2e)', () => {
 
       education.centerType = '';
 
-      await api(app, { token: candidateToken })
+      await api(app, path, { token: candidateToken })
         .educations()
         .create({ payload: education })
         .expectJson(HttpStatus.BAD_REQUEST);
@@ -95,7 +96,7 @@ describe('EducationController (POST) (e2e)', () => {
 
       education.country = '';
 
-      await api(app, { token: candidateToken })
+      await api(app, path, { token: candidateToken })
         .educations()
         .create({ payload: education })
         .expectJson(HttpStatus.BAD_REQUEST);
@@ -108,7 +109,7 @@ describe('EducationController (POST) (e2e)', () => {
 
       education.country = '';
 
-      await api(app, { token: candidateToken })
+      await api(app, path, { token: candidateToken })
         .educations()
         .create({ payload: education })
         .expectJson(HttpStatus.BAD_REQUEST);
@@ -121,7 +122,7 @@ describe('EducationController (POST) (e2e)', () => {
 
       education.title = '';
 
-      await api(app, { token: candidateToken })
+      await api(app, path, { token: candidateToken })
         .educations()
         .create({ payload: education })
         .expectJson(HttpStatus.BAD_REQUEST);
@@ -134,7 +135,7 @@ describe('EducationController (POST) (e2e)', () => {
 
       education.category = '';
 
-      await api(app, { token: candidateToken })
+      await api(app, path, { token: candidateToken })
         .educations()
         .create({ payload: education })
         .expectJson(HttpStatus.BAD_REQUEST);
@@ -152,7 +153,7 @@ describe('EducationController (POST) (e2e)', () => {
 
       education.documentation = [documentation];
 
-      await api(app, { token: candidateToken })
+      await api(app, path, { token: candidateToken })
         .educations()
         .create({ payload: education })
         .expectJson(HttpStatus.BAD_REQUEST);
@@ -163,7 +164,7 @@ describe('EducationController (POST) (e2e)', () => {
         .withValidData()
         .build();
 
-      await api(app, { token: adminToken })
+      await api(app, path, { token: adminToken })
         .educations()
         .create({ payload: education })
         .expectJson(HttpStatus.FORBIDDEN);
