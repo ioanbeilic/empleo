@@ -138,7 +138,7 @@ describe('EducationsController', () => {
     it('should throw an education not found exception when the education does not exist', async () => {
       when(mockedEducationsService.deleteOne(anything())).thenReject(new EducationNotFoundException());
 
-      await expect(educationsController.deleteOne(user, { educationId: 'inexistent_id' })).to.eventually.be.rejectedWith(
+      await expect(educationsController.deleteOne(user, { educationId: faker.random.uuid() })).to.eventually.be.rejectedWith(
         EducationNotFoundException
       );
 

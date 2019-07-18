@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
+import faker from 'faker';
 import { anyString, anything, deepEqual, instance, mock, objectContaining, verify, when } from 'ts-mockito';
 import { DeleteResult, Repository } from 'typeorm';
 import { educationCreateBuilder } from '../../builders/educations/education-create.builder';
@@ -160,7 +161,7 @@ describe('EducationService', () => {
         affected: 0,
         raw: []
       };
-      user.id = 'fake_id';
+      user.id = faker.random.uuid();
 
       when(mockedEducationRepository.delete(anything())).thenReturn(Promise.resolve(deleteResult));
 
