@@ -23,9 +23,12 @@ import { Authenticate, AuthenticatedUser, Authorize, User } from 'empleo-nestjs-
 import { ApiKeycloakIdParam, KeycloakIdParams } from 'empleo-nestjs-common';
 import { EducationCreate } from '../../dto/education-create.dto';
 import { Education } from '../../entities/education.entity';
-import { CheckUserService } from '../../services/common/check-user.service';
+import { EducationNotFoundException } from '../../errors/education-not-found.exception';
+import { PermissionsService } from '../../services/common/permissions.service';
 import { EducationsService } from '../../services/educations/educations.service';
 import { ApiEducationIdParam, FindOneParamsEducation } from './find-one-education.params';
+
+const educationNotFoundException = new EducationNotFoundException();
 
 @Controller()
 @ApiUseTags('educations')
@@ -33,7 +36,7 @@ import { ApiEducationIdParam, FindOneParamsEducation } from './find-one-educatio
 @ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor)
 export class EducationsController {
-  constructor(private readonly educationsService: EducationsService, private readonly checkUserService: CheckUserService) {}
+  constructor(private readonly educationsService: EducationsService, private readonly permissionsService: PermissionsService) {}
 
   @Post(':keycloakId/educations')
   @Authorize.Candidates()
@@ -46,8 +49,9 @@ export class EducationsController {
     @Param() { keycloakId }: KeycloakIdParams,
     @Body() education: EducationCreate
   ): Promise<Education> {
-    this.checkUserService.checkParam({ user, param: keycloakId });
-    return await this.educationsService.createEducation({ user, education });
+    this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } }, educationNotFoundException);
+
+    return this.educationsService.createEducation({ user, education });
   }
 
   @Put(':keycloakId/educations/:educationId')
