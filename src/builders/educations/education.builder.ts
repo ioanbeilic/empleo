@@ -5,7 +5,7 @@ import { Education } from '../../entities/education.entity';
 import { documentationBuilder } from './documentation.builder';
 
 export class EducationBuilder extends Builder<Education> {
-  withProfileId(educationId = this.faker.random.uuid()): this {
+  withEducationId(educationId = this.faker.random.uuid()): this {
     return this.with('educationId', educationId);
   }
 
@@ -37,12 +37,16 @@ export class EducationBuilder extends Builder<Education> {
     return this.with('documentation', documentation);
   }
 
+  withoutEducationId() {
+    return this.without('educationId');
+  }
+
   withValidData(): this {
     const documentation = documentationBuilder()
       .withValidData()
       .build();
 
-    return this.withProfileId()
+    return this.withEducationId()
       .withKeycloakId()
       .withCenterType()
       .withCountry()
