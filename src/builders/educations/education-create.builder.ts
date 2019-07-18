@@ -1,18 +1,11 @@
 import { plainToClass } from 'class-transformer';
-import { Builder } from '../../../empleo-testing';
+import { Builder } from 'empleo-nestjs-testing';
 import { Documentation } from '../../domain/documentation';
+import { EducationCreate } from '../../dto/education-create.dto';
 import { Education } from '../../entities/education.entity';
 import { documentationBuilder } from './documentation.builder';
 
-export class EducationBuilder extends Builder<Education> {
-  withProfileId(educationId = this.faker.random.uuid()): this {
-    return this.with('educationId', educationId);
-  }
-
-  withKeycloakId(keycloakId = this.faker.random.uuid()): this {
-    return this.with('keycloakId', keycloakId);
-  }
-
+export class EducationCreateBuilder extends Builder<EducationCreate> {
   withCenterType(centerType = this.faker.random.word()): this {
     return this.with('centerType', centerType);
   }
@@ -37,14 +30,16 @@ export class EducationBuilder extends Builder<Education> {
     return this.with('documentation', documentation);
   }
 
+  withoutDocumentation(): this {
+    return this.without('documentation');
+  }
+
   withValidData(): this {
     const documentation = documentationBuilder()
       .withValidData()
       .build();
 
-    return this.withProfileId()
-      .withKeycloakId()
-      .withCenterType()
+    return this.withCenterType()
       .withCountry()
       .withCenterName()
       .withTitle()
@@ -57,6 +52,6 @@ export class EducationBuilder extends Builder<Education> {
   }
 }
 
-export function educationBuilder() {
-  return new EducationBuilder();
+export function educationCreateBuilder() {
+  return new EducationCreateBuilder();
 }
