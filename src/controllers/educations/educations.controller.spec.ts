@@ -64,7 +64,7 @@ describe('EducationsController', () => {
       verify(mockedEducationsService.createEducation(deepEqual({ user, education: educationCreate }))).once();
     });
 
-    it('should throw a not found error when the user is not admin and not the owner of the resource', async () => {
+    it('should throw a not found error when the user is not the owner of the resource', async () => {
       when(mockedPermissionsService.isOwnerOrNotFound(anything(), anything())).thenThrow(new EducationNotFoundException());
       when(mockedEducationsService.createEducation(anything())).thenResolve(createdEducation);
 
