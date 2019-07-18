@@ -2,7 +2,7 @@ import { plainToClass } from 'class-transformer';
 import { Builder } from 'empleo-nestjs-testing';
 import { Documentation } from '../../domain/documentation';
 import { Education } from '../../entities/education.entity';
-import { documentationBuilder } from './documentation.builder';
+import { documentationBuilder } from '../common/documentation.builder';
 
 export class EducationBuilder extends Builder<Education> {
   withEducationId(educationId = this.faker.random.uuid()): this {
