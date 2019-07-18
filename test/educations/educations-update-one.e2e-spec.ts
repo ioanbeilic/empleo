@@ -1,26 +1,33 @@
 import { HttpStatus } from '@nestjs/common';
 import { NestApplication } from '@nestjs/core';
 import { plainToClass } from 'class-transformer';
+import { Token } from 'empleo-nestjs-authentication';
 import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
+import faker from 'faker';
+import { getRepository } from 'typeorm';
 import uuid from 'uuid/v4';
 import { documentationBuilder } from '../../src/builders/educations/documentation.builder';
 import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { educationBuilder } from '../../src/builders/educations/education.builder';
 import { CvModule } from '../../src/cv.module';
 import { Education } from '../../src/entities/education.entity';
-import { api, createToDb, getUserByToken, removeEducationById, removeEducationByToken } from './educations.api';
+import { api, removeEducationByToken } from './educations.api';
 
 describe('EducationController (PUT) (e2e)', () => {
   let app: NestApplication;
   let candidateToken: string;
   let adminToken: string;
-  let path: string;
+  let adminKeycloakId: string;
+  let candidateKeycloakId: string;
 
   before(async () => {
     app = await startTestApp(CvModule);
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
+
+    adminKeycloakId = Token.fromEncoded(adminToken).keycloakId;
+    candidateKeycloakId = Token.fromEncoded(candidateToken).keycloakId;
+
     await removeEducationByToken(adminToken, candidateToken);
-    path = `/${await getUserByToken(candidateToken)}/educations`;
   });
 
   afterEach(async () => {
@@ -40,8 +47,8 @@ describe('EducationController (PUT) (e2e)', () => {
         .withValidData()
         .build();
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .overrideOne({ identifier: education.educationId, payload: educationUpdate })
         .expect(HttpStatus.NO_CONTENT);
     });
@@ -54,8 +61,8 @@ describe('EducationController (PUT) (e2e)', () => {
         .withValidData()
         .build();
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .overrideOne({ identifier: education.educationId, payload: educationWithoutDocumentation })
         .expect(HttpStatus.NO_CONTENT);
     });
@@ -68,8 +75,8 @@ describe('EducationController (PUT) (e2e)', () => {
         .withValidData()
         .build();
 
-      await api(app, path)
-        .educations()
+      await api(app)
+        .educations({ keycloakId: candidateKeycloakId })
         .overrideOne({ identifier: education.educationId, payload: educationUpdate })
         .expectJson(HttpStatus.UNAUTHORIZED);
     });
@@ -84,8 +91,8 @@ describe('EducationController (PUT) (e2e)', () => {
 
       educationUpdate.centerType = '';
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .overrideOne({ identifier: education.educationId, payload: educationUpdate })
         .expectJson(HttpStatus.BAD_REQUEST);
     });
@@ -102,8 +109,8 @@ describe('EducationController (PUT) (e2e)', () => {
 
       educationUpdate.country = '';
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .overrideOne({ identifier: education.educationId, payload: educationUpdate })
         .expectJson(HttpStatus.BAD_REQUEST);
     });
@@ -120,8 +127,8 @@ describe('EducationController (PUT) (e2e)', () => {
 
       educationUpdate.country = '';
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .overrideOne({ identifier: education.educationId, payload: educationUpdate })
         .expectJson(HttpStatus.BAD_REQUEST);
     });
@@ -138,8 +145,8 @@ describe('EducationController (PUT) (e2e)', () => {
 
       educationUpdate.title = '';
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .overrideOne({ identifier: education.educationId, payload: educationUpdate })
         .expectJson(HttpStatus.BAD_REQUEST);
     });
@@ -156,8 +163,8 @@ describe('EducationController (PUT) (e2e)', () => {
 
       educationUpdate.category = '';
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .overrideOne({ identifier: education.educationId, payload: educationUpdate })
         .expectJson(HttpStatus.BAD_REQUEST);
     });
@@ -177,8 +184,8 @@ describe('EducationController (PUT) (e2e)', () => {
 
       educationUpdate.documentation = [documentation];
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .overrideOne({ identifier: education.educationId, payload: educationUpdate })
         .expectJson(HttpStatus.BAD_REQUEST);
     });
@@ -191,8 +198,8 @@ describe('EducationController (PUT) (e2e)', () => {
         .withValidData()
         .build();
 
-      await api(app, path)
-        .educations()
+      await api(app)
+        .educations({ keycloakId: candidateKeycloakId })
         .overrideOne({ identifier: education.educationId, payload: educationUpdate })
         .expectJson(HttpStatus.UNAUTHORIZED);
     });
@@ -205,29 +212,10 @@ describe('EducationController (PUT) (e2e)', () => {
         .withValidData()
         .build();
 
-      await api(app, path, { token: adminToken })
-        .educations()
+      await api(app, { token: adminToken })
+        .educations({ keycloakId: adminKeycloakId })
         .overrideOne({ identifier: education.educationId, payload: educationUpdate })
         .expectJson(HttpStatus.FORBIDDEN);
-    });
-
-    it('should return 404 - Not Found when the education does not belong to the user', async () => {
-      // create a education with another user
-      const education = await createToDb();
-
-      const educationUpdate = educationCreateBuilder()
-        .withoutDocumentation()
-        .withValidData()
-        .build();
-
-      // intent to update a valid education from another user
-      await api(app, path, { token: candidateToken })
-        .educations()
-        .overrideOne({ identifier: education.educationId, payload: educationUpdate })
-        .expectJson(HttpStatus.NOT_FOUND);
-
-      // remove education created with createToDb() function
-      removeEducationById(education.educationId);
     });
 
     it('should return 404 - Not Found when the education does not exist', async () => {
@@ -236,10 +224,35 @@ describe('EducationController (PUT) (e2e)', () => {
         .withValidData()
         .build();
 
-      await api(app, path, { token: candidateToken })
-        .educations()
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
         .overrideOne({ identifier: uuid(), payload: educationUpdate })
         .expectJson(HttpStatus.NOT_FOUND);
+    });
+
+    describe('when the education does not belong to the user', () => {
+      let education: Education;
+
+      beforeEach(async () => {
+        education = await createEducation();
+        await getRepository(Education).update({ educationId: education.educationId }, { keycloakId: faker.random.uuid() });
+      });
+
+      afterEach(async () => {
+        await getRepository(Education).remove(education);
+      });
+
+      it('should return 404 - Not Found when the education does not belong to the user', async () => {
+        const educationUpdate = educationCreateBuilder()
+          .withoutDocumentation()
+          .withValidData()
+          .build();
+
+        await api(app, { token: candidateToken })
+          .educations({ keycloakId: candidateKeycloakId })
+          .overrideOne({ identifier: education.educationId, payload: educationUpdate })
+          .expectJson(HttpStatus.NOT_FOUND);
+      });
     });
   });
 
@@ -248,8 +261,8 @@ describe('EducationController (PUT) (e2e)', () => {
       .withValidData()
       .build();
 
-    const createdEducation = await api(app, path, { token: candidateToken })
-      .educations()
+    const createdEducation = await api(app, { token: candidateToken })
+      .educations({ keycloakId: candidateKeycloakId })
       .create({ payload: education })
       .expectJson(HttpStatus.CREATED)
       .body();
