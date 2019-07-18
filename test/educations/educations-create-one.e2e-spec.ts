@@ -1,10 +1,10 @@
 import { HttpStatus } from '@nestjs/common';
 import { NestApplication } from '@nestjs/core';
 import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
+import { documentationBuilder } from '../../src/builders/educations/documentation.builder';
+import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
+import { educationBuilder } from '../../src/builders/educations/education.builder';
 import { CvModule } from '../../src/cv.module';
-import { documentationBuilder } from '../../src/modules/builders/educations/documentation.builder';
-import { educationCreateBuilder } from '../../src/modules/builders/educations/education-create.builder';
-import { educationBuilder } from '../../src/modules/builders/educations/education.builder';
 import { api, getUserByToken, removeEducationByToken } from './educations.api';
 
 describe('EducationController (POST) (e2e)', () => {
