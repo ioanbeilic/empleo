@@ -1,5 +1,13 @@
-import { Body, ClassSerializerInterceptor, Controller, Param, Post, UseInterceptors } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
+import { Body, ClassSerializerInterceptor, Controller, HttpCode, HttpStatus, Param, Post, Put, UseInterceptors } from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUseTags
+} from '@nestjs/swagger';
 import { Authenticate, AuthenticatedUser, Authorize, User } from 'empleo-nestjs-authentication';
 import { ApiKeycloakIdParam, KeycloakIdParams } from 'empleo-nestjs-common';
 import { ExperienceCreate } from '../../dto/experience-create.dto';
@@ -7,6 +15,7 @@ import { Experience } from '../../entities/experience.entity';
 import { ExperienceNotFoundException } from '../../errors/experience-not-found.exception';
 import { PermissionsService } from '../../services/common/permissions.service';
 import { ExperiencesService } from '../../services/experiences/experiences.service';
+import { ApiExperienceIdParam, FindOneParamsExperience } from './find-one-experience.params';
 
 const experienceNotFoundException = new ExperienceNotFoundException();
 
@@ -32,5 +41,26 @@ export class ExperiencesController {
     this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } }, experienceNotFoundException);
 
     return this.experiencesService.createExperience({ user, experience });
+  }
+
+  @Put(':keycloakId/experiences/:experienceId')
+  @Authorize.Candidates()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ title: 'Edit a experience stage by experience id' })
+  @ApiKeycloakIdParam()
+  @ApiExperienceIdParam()
+  @ApiNoContentResponse({ type: Experience, description: 'Education stage successfully updated' })
+  @ApiBadRequestResponse({ description: 'The body did not pass the validation' })
+  @ApiNotFoundResponse({ description: 'The experience does not exist or it does not belong to the user' })
+  async updateEducation(
+    @AuthenticatedUser() user: User,
+    @Body() update: ExperienceCreate,
+    @Param() { experienceId, keycloakId }: FindOneParamsExperience
+  ): Promise<void> {
+    this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } });
+
+    const experience = await this.experiencesService.findUserExperienceById({ experienceId, user });
+
+    await this.experiencesService.updateOne({ experience, update });
   }
 }

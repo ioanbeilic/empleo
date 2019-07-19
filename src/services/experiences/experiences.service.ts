@@ -4,7 +4,8 @@ import { User } from 'empleo-nestjs-authentication';
 import { Repository } from 'typeorm';
 import uuid from 'uuid/v1';
 import { ExperienceCreate } from '../../dto/experience-create.dto';
-import { Experience } from '../../entities/experience.entity';
+import { Experience, ExperienceId } from '../../entities/experience.entity';
+import { ExperienceNotFoundException } from '../../errors/experience-not-found.exception';
 
 @Injectable()
 export class ExperiencesService {
@@ -20,11 +21,31 @@ export class ExperiencesService {
     return await this.saveExperience(newExperience);
   }
 
+  async findUserExperienceById({ experienceId, user }: { experienceId: ExperienceId; user: User }): Promise<Experience> {
+    const experience = await this.experienceRepository.findOne({ experienceId, keycloakId: user.id });
+
+    if (!experience) {
+      throw new ExperienceNotFoundException();
+    }
+
+    return experience;
+  }
+
+  async updateOne({ experience, update }: UpdateExperienceOptions): Promise<void> {
+    await this.experienceRepository.update({ experienceId: experience.experienceId }, update);
+  }
+
   private async saveExperience(experience: Experience): Promise<Experience> {
     return await this.experienceRepository.save(experience);
   }
 }
+
 export interface CreateExperienceOptions {
   user: User;
   experience: ExperienceCreate;
+}
+
+export interface UpdateExperienceOptions {
+  experience: Experience;
+  update: ExperienceCreate;
 }

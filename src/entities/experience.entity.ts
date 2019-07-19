@@ -53,3 +53,5 @@ export class Experience extends ExperienceCreate {
   @Exclude()
   updatedAt!: Date;
 }
+
+export type ExperienceId = typeof Experience.prototype.experienceId;
