@@ -1,8 +1,9 @@
 import { ApiImplicitParam } from '@nestjs/swagger';
 import { IsUUID } from 'class-validator';
+import { KeycloakIdParams } from 'empleo-nestjs-common';
 import { EducationId } from '../../entities/education.entity';
 
-export class FindOneParamsEducation {
+export class FindOneParamsEducation extends KeycloakIdParams {
   @IsUUID()
   educationId!: EducationId;
 }

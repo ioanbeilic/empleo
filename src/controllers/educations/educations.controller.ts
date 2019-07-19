@@ -66,8 +66,10 @@ export class EducationsController {
   async updateEducation(
     @AuthenticatedUser() user: User,
     @Body() update: EducationCreate,
-    @Param() { educationId }: FindOneParamsEducation
+    @Param() { educationId, keycloakId }: FindOneParamsEducation
   ): Promise<void> {
+    this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } });
+
     const education = await this.educationsService.findUserEducationById({ educationId, user });
 
     await this.educationsService.updateOne({ education, update });
@@ -81,7 +83,8 @@ export class EducationsController {
   @ApiNoContentResponse({ description: 'The education has been successfully deleted' })
   @ApiBadRequestResponse({ description: 'The education id is not an UUID' })
   @ApiNotFoundResponse({ description: 'The education does not exist' })
-  async deleteOne(@AuthenticatedUser() user: User, @Param() { educationId }: FindOneParamsEducation): Promise<void> {
+  async deleteOneEducation(@AuthenticatedUser() user: User, @Param() { educationId, keycloakId }: FindOneParamsEducation): Promise<void> {
+    this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } });
     await this.educationsService.deleteOne({ user, educationId });
   }
 }

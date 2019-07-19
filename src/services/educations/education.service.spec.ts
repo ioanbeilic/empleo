@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
 import faker from 'faker';
-import { anyString, anything, deepEqual, instance, mock, objectContaining, verify, when } from 'ts-mockito';
+import { anyString, anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { DeleteResult, Repository } from 'typeorm';
 import { educationCreateBuilder } from '../../builders/educations/education-create.builder';
 import { educationBuilder } from '../../builders/educations/education.builder';
@@ -75,7 +75,7 @@ describe('EducationService', () => {
       const educationId = createdEducation.educationId;
       const foundEducation = await educationService.findUserEducationById({ educationId, user });
 
-      verify(mockedEducationRepository.findOne(objectContaining({ educationId }))).once();
+      verify(mockedEducationRepository.findOne(deepEqual({ educationId, keycloakId: user.id }))).once();
       expect(foundEducation).to.be.equal(createdEducation);
     });
 
@@ -84,9 +84,14 @@ describe('EducationService', () => {
 
       when(mockedEducationRepository.findOne(anything())).thenResolve(undefined);
 
-      await expect(educationService.findUserEducationById({ educationId, user })).to.eventually.be.rejectedWith(EducationNotFoundException);
+      await expect(
+        educationService.findUserEducationById({
+          educationId,
+          user
+        })
+      ).to.eventually.be.rejectedWith(EducationNotFoundException);
 
-      verify(mockedEducationRepository.findOne(objectContaining({ educationId }))).once();
+      verify(mockedEducationRepository.findOne(deepEqual({ educationId, keycloakId: user.id }))).once();
     });
   });
 
@@ -96,30 +101,40 @@ describe('EducationService', () => {
 
       await educationService.updateOne({ education, update: educationUpdate });
 
-      verify(
-        mockedEducationRepository.update(objectContaining({ educationId: education.educationId }), objectContaining(educationUpdate))
-      ).once();
+      verify(mockedEducationRepository.update(deepEqual({ educationId: education.educationId }), deepEqual(educationUpdate))).once();
     });
 
     it('should throw an education not found exception when the education does not exists', async () => {
-      const educationId = 'inexistent id';
+      const educationId = faker.random.uuid();
 
       when(mockedEducationRepository.findOne(anything())).thenResolve(undefined);
 
-      await expect(educationService.findUserEducationById({ educationId, user })).to.eventually.be.rejectedWith(EducationNotFoundException);
+      await expect(
+        educationService.findUserEducationById({
+          educationId,
+          user
+        })
+      ).to.eventually.be.rejectedWith(EducationNotFoundException);
 
-      verify(mockedEducationRepository.findOne(objectContaining({ educationId }))).once();
+      verify(mockedEducationRepository.findOne(deepEqual({ educationId, keycloakId: user.id }))).once();
     });
 
     it('should throw an education not found exception when the education exists but it does not belong to the user', async () => {
       const educationId = createdEducation.educationId;
-      user.id = 'fake id';
+      const anotherUser = userBuilder()
+        .withValidData()
+        .build();
 
       when(mockedEducationRepository.findOne(anything())).thenResolve(undefined);
 
-      await expect(educationService.findUserEducationById({ educationId, user })).to.eventually.be.rejectedWith(EducationNotFoundException);
+      await expect(
+        educationService.findUserEducationById({
+          educationId,
+          user: anotherUser
+        })
+      ).to.eventually.be.rejectedWith(EducationNotFoundException);
 
-      verify(mockedEducationRepository.findOne(objectContaining({ educationId }))).once();
+      verify(mockedEducationRepository.findOne(deepEqual({ educationId, keycloakId: anotherUser.id }))).once();
     });
   });
 
@@ -136,7 +151,7 @@ describe('EducationService', () => {
 
       const result = await educationService.deleteOne({ user, educationId });
 
-      verify(mockedEducationRepository.delete(objectContaining({ educationId, keycloakId: user.id }))).once();
+      verify(mockedEducationRepository.delete(deepEqual({ educationId, keycloakId: user.id }))).once();
 
       expect(result).to.be.undefined;
     });
@@ -152,7 +167,7 @@ describe('EducationService', () => {
 
       await expect(educationService.deleteOne({ educationId, user })).eventually.be.rejectedWith(EducationNotFoundException);
 
-      verify(mockedEducationRepository.delete(objectContaining({ educationId, keycloakId: user.id }))).once();
+      verify(mockedEducationRepository.delete(deepEqual({ educationId, keycloakId: user.id }))).once();
     });
 
     it('should throw an education not found exception when the education exists but it does not belong to the user', async () => {
@@ -167,7 +182,7 @@ describe('EducationService', () => {
 
       await expect(educationService.deleteOne({ educationId, user })).to.eventually.be.rejectedWith(EducationNotFoundException);
 
-      verify(mockedEducationRepository.delete(objectContaining({ educationId }))).once();
+      verify(mockedEducationRepository.delete(deepEqual({ educationId, keycloakId: user.id }))).once();
     });
   });
 });
