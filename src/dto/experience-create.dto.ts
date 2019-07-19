@@ -22,6 +22,7 @@ export class ExperienceCreate {
   position!: string;
 
   @IsString()
+  @Length(20)
   @ApiModelProperty({ type: 'text', example: 'D3.js implementation on Google Adword' })
   description!: string;
 
