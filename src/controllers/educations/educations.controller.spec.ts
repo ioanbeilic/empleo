@@ -151,4 +151,44 @@ describe('EducationsController', () => {
       verify(mockedEducationsService.updateOne(anything())).never();
     });
   });
+
+  describe('#deleteOne()', () => {
+    const educationId = createdEducation.educationId;
+    const keycloakId = user.id;
+
+    it('should correctly delete a education', async () => {
+      when(mockedEducationsService.deleteOne(anything())).thenResolve();
+
+      const response = await educationsController.deleteOneEducation(user, { educationId, keycloakId });
+
+      verify(mockedEducationsService.deleteOne(deepEqual({ user, educationId }))).once();
+      expect(response).to.be.undefined;
+    });
+
+    it('should throw an education not found exception when the education does not exist', async () => {
+      when(mockedPermissionsService.isOwnerOrNotFound(anything())).thenThrow(new EducationNotFoundException());
+      when(mockedEducationsService.deleteOne(anything())).thenReject();
+
+      await expect(
+        educationsController.deleteOneEducation(user, { educationId: faker.random.uuid(), keycloakId: user.id })
+      ).to.eventually.be.rejectedWith(EducationNotFoundException);
+
+      verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId } }))).once();
+      verify(mockedEducationsService.deleteOne(anything())).never();
+    });
+
+    it("should throw a education not found exception if user don't have permission and is not admin", async () => {
+      when(mockedPermissionsService.isOwnerOrNotFound(anything())).thenThrow(new EducationNotFoundException());
+      when(mockedEducationsService.deleteOne(anything())).thenReject();
+
+      const anotherKeycloakId = faker.random.uuid();
+
+      await expect(
+        educationsController.deleteOneEducation(user, { educationId: createdEducation.educationId, keycloakId: anotherKeycloakId })
+      ).to.be.rejectedWith(EducationNotFoundException);
+
+      verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId: anotherKeycloakId } }))).once();
+      verify(mockedEducationsService.deleteOne({ user, educationId: createdEducation.educationId })).never();
+    });
+  });
 });

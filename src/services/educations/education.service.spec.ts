@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
 import faker from 'faker';
 import { anyString, anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { educationCreateBuilder } from '../../builders/educations/education-create.builder';
 import { educationBuilder } from '../../builders/educations/education.builder';
 import { Education } from '../../entities/education.entity';
@@ -135,6 +135,54 @@ describe('EducationService', () => {
       ).to.eventually.be.rejectedWith(EducationNotFoundException);
 
       verify(mockedEducationRepository.findOne(deepEqual({ educationId, keycloakId: anotherUser.id }))).once();
+    });
+  });
+
+  describe('#deleteOne()', () => {
+    it('should correctly delete a education stage', async () => {
+      const deleteResult: DeleteResult = {
+        affected: 1,
+        raw: []
+      };
+
+      when(mockedEducationRepository.delete(anything())).thenReturn(Promise.resolve(deleteResult));
+
+      const educationId = createdEducation.educationId;
+
+      const result = await educationService.deleteOne({ user, educationId });
+
+      verify(mockedEducationRepository.delete(deepEqual({ educationId, keycloakId: user.id }))).once();
+
+      expect(result).to.be.undefined;
+    });
+
+    it('should throw an education not found exception when the education does not exists', async () => {
+      const educationId = createdEducation.educationId;
+      const deleteResult: DeleteResult = {
+        affected: 0,
+        raw: []
+      };
+
+      when(mockedEducationRepository.delete(anything())).thenReturn(Promise.resolve(deleteResult));
+
+      await expect(educationService.deleteOne({ educationId, user })).eventually.be.rejectedWith(EducationNotFoundException);
+
+      verify(mockedEducationRepository.delete(deepEqual({ educationId, keycloakId: user.id }))).once();
+    });
+
+    it('should throw an education not found exception when the education exists but it does not belong to the user', async () => {
+      const educationId = createdEducation.educationId;
+      const deleteResult: DeleteResult = {
+        affected: 0,
+        raw: []
+      };
+      user.id = faker.random.uuid();
+
+      when(mockedEducationRepository.delete(anything())).thenReturn(Promise.resolve(deleteResult));
+
+      await expect(educationService.deleteOne({ educationId, user })).to.eventually.be.rejectedWith(EducationNotFoundException);
+
+      verify(mockedEducationRepository.delete(deepEqual({ educationId, keycloakId: user.id }))).once();
     });
   });
 });
