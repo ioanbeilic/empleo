@@ -6,7 +6,7 @@ import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-te
 import faker from 'faker';
 import { getRepository } from 'typeorm';
 import uuid from 'uuid/v4';
-import { documentationBuilder } from '../../src/builders/educations/documentation.builder';
+import { documentationBuilder } from '../../src/builders/common/documentation.builder';
 import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { educationBuilder } from '../../src/builders/educations/education.builder';
 import { CvModule } from '../../src/cv.module';
