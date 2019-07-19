@@ -16,16 +16,12 @@ export class EducationsApi extends Api<Education, EducationCreate> {
   }
 }
 
-export function api(app: NestApplication, path: string, { token }: { token?: string } = {}) {
+export function api(app: NestApplication, { token }: { token?: string } = {}) {
   return {
-    educations() {
-      return new EducationsApi({ app, token, path });
+    educations({ keycloakId }: { keycloakId: string }) {
+      return new EducationsApi({ app, token, path: `/${keycloakId}/educations` });
     }
   };
-}
-
-export async function getUserByToken(token: string) {
-  return Token.fromEncoded(token).keycloakId;
 }
 
 export async function removeEducationByToken(...tokens: string[]) {
