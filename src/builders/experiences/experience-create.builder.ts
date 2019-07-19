@@ -5,12 +5,12 @@ import { ExperienceCreate } from '../../dto/experience-create.dto';
 import { documentationBuilder } from '../common/documentation.builder';
 
 export class ExperienceCreateBuilder extends Builder<ExperienceCreate> {
-  withDateStart(dateStart = this.faker.date.future()): this {
-    return this.with('dateStart', dateStart);
+  withStartDate(startDate = this.faker.date.future()): this {
+    return this.with('startDate', startDate);
   }
 
-  withDateEnd(dateEnd = this.faker.date.future()): this {
-    return this.with('dateEnd', dateEnd);
+  withEndDate(endDate = this.faker.date.future()): this {
+    return this.with('endDate', endDate);
   }
 
   withCompanyName(companyName = this.faker.company.companyName()): this {
@@ -42,8 +42,8 @@ export class ExperienceCreateBuilder extends Builder<ExperienceCreate> {
       .withValidData()
       .build();
 
-    return this.withDateStart()
-      .withDateEnd()
+    return this.withStartDate()
+      .withEndDate()
       .withCompanyName()
       .withTitle()
       .withPosition()

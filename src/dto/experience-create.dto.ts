@@ -5,11 +5,11 @@ import { Default } from 'empleo-nestjs-common';
 import { Documentation } from '../domain/documentation';
 
 export class ExperienceCreate {
-  @ApiModelProperty({ type: 'date', format: 'YYYY-MM-DD', example: '2019-07-10T12:40:18.858Z' })
-  dateStart!: Date;
+  @ApiModelProperty({ type: 'string', format: 'YYYY-MM-DD', example: '2019-07-10T00:00:00.000Z' })
+  startDate!: Date;
 
-  @ApiModelProperty({ type: 'date', format: 'YYYY-MM-DD ', example: '2019-07-10T12:40:18.858Z' })
-  dateEnd!: Date;
+  @ApiModelPropertyOptional({ type: 'string', format: 'YYYY-MM-DD ', example: '2019-07-10T00:00:08.000Z' })
+  endDate?: Date;
 
   @IsString()
   @Length(1, 50)
