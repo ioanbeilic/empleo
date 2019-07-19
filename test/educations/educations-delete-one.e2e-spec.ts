@@ -28,7 +28,7 @@ describe('EducationController (DELETE) (e2e)', () => {
   });
 
   afterEach(async () => {
-    await removeEducationByToken(candidateToken, adminToken);
+    await removeEducationByToken(adminToken, candidateToken);
   });
 
   after(async () => {
@@ -37,22 +37,20 @@ describe('EducationController (DELETE) (e2e)', () => {
   });
 
   describe(':keycloakId/educations/:educationsId', () => {
-    it('should return 200 - OK', async () => {
+    it('should return 204 - No Content', async () => {
       const education = await createEducation();
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
         .removeOne({ identifier: education.educationId })
-        .expect(HttpStatus.OK);
+        .expect(HttpStatus.NO_CONTENT);
     });
 
-    it('should return 403 - Forbidden  when user is not candidate', async () => {
-      const education = await createEducation();
-
-      await api(app, { token: adminToken })
+    it('should return 400 - Bad Request when the "educationId" is invalid', async () => {
+      await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
-        .removeOne({ identifier: education.educationId })
-        .expect(HttpStatus.FORBIDDEN);
+        .removeOne({ identifier: '123455' })
+        .expect(HttpStatus.BAD_REQUEST);
     });
 
     it('should return 401 - Unauthorized when user is not logged in', async () => {
@@ -64,14 +62,16 @@ describe('EducationController (DELETE) (e2e)', () => {
         .expect(HttpStatus.UNAUTHORIZED);
     });
 
-    it('should return 400 - Bad Request when the "educationId" is invalid', async () => {
-      await api(app, { token: candidateToken })
+    it('should return 403 - Forbidden  when user is not candidate', async () => {
+      const education = await createEducation();
+
+      await api(app, { token: adminToken })
         .educations({ keycloakId: candidateKeycloakId })
-        .removeOne({ identifier: '123455' })
-        .expect(HttpStatus.BAD_REQUEST);
+        .removeOne({ identifier: education.educationId })
+        .expect(HttpStatus.FORBIDDEN);
     });
 
-    it('should return 404 - Not Found when the "educationId" is null', async () => {
+    it('should return 404 - Not Found when the "educationId" is not a valid uuid', async () => {
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
         .removeOne({ identifier: '' })

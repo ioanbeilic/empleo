@@ -154,7 +154,8 @@ describe('EducationsController', () => {
 
   describe('#deleteOne()', () => {
     const educationId = createdEducation.educationId;
-    let keycloakId = user.id;
+    const keycloakId = user.id;
+
     it('should correctly delete a education', async () => {
       when(mockedEducationsService.deleteOne(anything())).thenResolve();
 
@@ -180,13 +181,13 @@ describe('EducationsController', () => {
       when(mockedPermissionsService.isOwnerOrNotFound(anything())).thenThrow(new EducationNotFoundException());
       when(mockedEducationsService.deleteOne(anything())).thenReject();
 
-      keycloakId = faker.random.uuid();
+      const anotherKeycloakId = faker.random.uuid();
 
       await expect(
-        educationsController.deleteOneEducation(user, { educationId: createdEducation.educationId, keycloakId })
+        educationsController.deleteOneEducation(user, { educationId: createdEducation.educationId, keycloakId: anotherKeycloakId })
       ).to.be.rejectedWith(EducationNotFoundException);
 
-      verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId } }))).once();
+      verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId: anotherKeycloakId } }))).once();
       verify(mockedEducationsService.deleteOne({ user, educationId: createdEducation.educationId })).never();
     });
   });

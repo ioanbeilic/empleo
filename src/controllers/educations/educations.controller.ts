@@ -77,12 +77,13 @@ export class EducationsController {
 
   @Delete(':keycloakId/educations/:educationId')
   @Authorize.Candidates()
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ title: 'Remove a education by profile id and education id' })
   @ApiKeycloakIdParam()
   @ApiEducationIdParam()
   @ApiNoContentResponse({ description: 'The education has been successfully deleted' })
   @ApiBadRequestResponse({ description: 'The education id is not an UUID' })
-  @ApiNotFoundResponse({ description: 'The education does not exist' })
+  @ApiNotFoundResponse({ description: 'The education does not exist or does not belong to the user' })
   async deleteOneEducation(@AuthenticatedUser() user: User, @Param() { educationId, keycloakId }: FindOneParamsEducation): Promise<void> {
     this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } });
     await this.educationsService.deleteOne({ user, educationId });
