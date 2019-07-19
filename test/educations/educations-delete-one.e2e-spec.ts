@@ -3,9 +3,8 @@ import { NestApplication } from '@nestjs/core';
 import { plainToClass } from 'class-transformer';
 import { Token } from 'empleo-nestjs-authentication';
 import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
-import faker = require('faker');
+import faker from 'faker';
 import { getRepository } from 'typeorm';
-import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { educationBuilder } from '../../src/builders/educations/education.builder';
 import { CvModule } from '../../src/cv.module';
 import { Education } from '../../src/entities/education.entity';
@@ -39,67 +38,30 @@ describe('EducationController (DELETE) (e2e)', () => {
 
   describe(':keycloakId/educations/:educationsId', () => {
     it('should return 200 - OK', async () => {
-      const education = educationCreateBuilder()
-        .withValidData()
-        .build();
-
-      const newEducation = await api(app, { token: candidateToken })
-        .educations({ keycloakId: candidateKeycloakId })
-        .create({ payload: education })
-        .expect(HttpStatus.CREATED)
-        .body();
+      const education = await createEducation();
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
-        .removeOne({ identifier: newEducation.educationId })
-        .expect(HttpStatus.OK);
-    });
-
-    it('should return 200 - OK', async () => {
-      const educationWithoutDocumentation = educationCreateBuilder()
-        .withoutDocumentation()
-        .withValidData()
-        .build();
-
-      const newEducation = await api(app, { token: candidateToken })
-        .educations({ keycloakId: candidateKeycloakId })
-        .create({ payload: educationWithoutDocumentation })
-        .expect(HttpStatus.CREATED)
-        .body();
-
-      await api(app, { token: candidateToken })
-        .educations({ keycloakId: candidateKeycloakId })
-        .removeOne({ identifier: newEducation.educationId })
+        .removeOne({ identifier: education.educationId })
         .expect(HttpStatus.OK);
     });
 
     it('should return 403 - Forbidden  when user is not candidate', async () => {
-      const education = educationCreateBuilder()
-        .withValidData()
-        .build();
-
-      const newEducation = await api(app, { token: candidateToken })
-        .educations({ keycloakId: adminKeycloakId })
-        .create({ payload: education })
-        .expect(HttpStatus.CREATED)
-        .body();
+      const education = await createEducation();
 
       await api(app, { token: adminToken })
         .educations({ keycloakId: candidateKeycloakId })
-        .removeOne({ identifier: newEducation.educationId })
+        .removeOne({ identifier: education.educationId })
         .expect(HttpStatus.FORBIDDEN);
     });
 
-    it('should return 404 - Not Found when user is not logged in', async () => {
-      const education = educationCreateBuilder()
-        .withoutDocumentation()
-        .withValidData()
-        .build();
+    it('should return 401 - Unauthorized when user is not logged in', async () => {
+      const education = await createEducation();
 
       await api(app)
         .educations({ keycloakId: candidateKeycloakId })
         .removeOne({ identifier: education.educationId })
-        .expect(HttpStatus.NOT_FOUND);
+        .expect(HttpStatus.UNAUTHORIZED);
     });
 
     it('should return 400 - Bad Request when the "educationId" is invalid', async () => {
@@ -113,6 +75,15 @@ describe('EducationController (DELETE) (e2e)', () => {
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
         .removeOne({ identifier: '' })
+        .expect(HttpStatus.NOT_FOUND);
+    });
+
+    it('should return 404 - Not Found when the url keycloakId not belong to logged user', async () => {
+      const education = await createEducation();
+
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: adminKeycloakId })
+        .removeOne({ identifier: education.educationId })
         .expect(HttpStatus.NOT_FOUND);
     });
 
