@@ -5,8 +5,7 @@ import { Token } from 'empleo-nestjs-authentication';
 import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
 import faker from 'faker';
 import { getRepository } from 'typeorm';
-import uuid from 'uuid/v4';
-import { documentationBuilder } from '../../src/builders/common/documentation.builder';
+import { documentationBuilder } from '../../src/builders/educations/documentation.builder';
 import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { educationBuilder } from '../../src/builders/educations/education.builder';
 import { CvModule } from '../../src/cv.module';
@@ -226,7 +225,7 @@ describe('EducationController (PUT) (e2e)', () => {
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
-        .overrideOne({ identifier: uuid(), payload: educationUpdate })
+        .overrideOne({ identifier: faker.random.uuid(), payload: educationUpdate })
         .expectJson(HttpStatus.NOT_FOUND);
     });
 

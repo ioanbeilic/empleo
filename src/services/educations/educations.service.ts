@@ -34,6 +34,14 @@ export class EducationsService {
   async updateOne({ education, update }: UpdateEducationOptions): Promise<void> {
     await this.educationRepository.update({ educationId: education.educationId }, update);
   }
+
+  async deleteOne({ user, educationId }: DeleteEducationOptions) {
+    const { affected } = await this.educationRepository.delete({ educationId, keycloakId: user.id });
+
+    if (!affected) {
+      throw new EducationNotFoundException();
+    }
+  }
 }
 
 export interface CreateEducationOptions {
@@ -44,4 +52,9 @@ export interface CreateEducationOptions {
 export interface UpdateEducationOptions {
   education: Education;
   update: EducationCreate;
+}
+
+export interface DeleteEducationOptions {
+  user: User;
+  educationId: string;
 }
