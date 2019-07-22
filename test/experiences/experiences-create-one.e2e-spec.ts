@@ -60,6 +60,17 @@ describe('ExperiencesController (POST) (e2e)', () => {
         .expectJson(HttpStatus.CREATED);
     });
 
+    it('should return 201 - Created without  "endDate"', async () => {
+      const experience = await createExperience();
+
+      delete experience.endDate;
+
+      await api(app, { token: candidateToken })
+        .experiences({ keycloakId: candidateKeycloakId })
+        .create({ payload: experience })
+        .expectJson(HttpStatus.CREATED);
+    });
+
     it('should return 400 - Bad Request when the "companyName" is invalid', async () => {
       const experience = await createExperience();
       experience.companyName = '';

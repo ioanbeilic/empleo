@@ -14,11 +14,11 @@ export class ExperienceBuilder extends Builder<Experience> {
   }
 
   withDateStart(dateStart = this.faker.date.future()): this {
-    return this.with('dateStart', dateStart);
+    return this.with('startDate', dateStart);
   }
 
   withDateEnd(dateEnd = this.faker.date.future()): this {
-    return this.with('dateEnd', dateEnd);
+    return this.with('endDate', dateEnd);
   }
 
   withCompanyName(companyName = this.faker.company.companyName()): this {

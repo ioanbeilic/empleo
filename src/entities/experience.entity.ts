@@ -21,11 +21,11 @@ export class Experience extends ExperienceCreate {
 
   @IsDate()
   @Column({ type: 'date', name: 'date_start' })
-  dateStart!: Date;
+  startDate!: Date;
 
   @IsDate()
-  @Column({ type: 'date', name: 'date_end' })
-  dateEnd!: Date;
+  @Column({ type: 'date', nullable: true, default: null, name: 'date_end' })
+  endDate?: Date;
 
   @Column({ type: 'varchar', name: 'company_name', length: 50 })
   companyName!: string;
