@@ -26,12 +26,24 @@ export class EducationCreateBuilder extends Builder<EducationCreate> {
     return this.with('category', category);
   }
 
+  withStartDate(startDate = this.faker.date.past()): this {
+    return this.with('startDate', startDate);
+  }
+
+  withEndDate(endDate = this.faker.date.future()): this {
+    return this.with('endDate', endDate);
+  }
+
   withDocumentation(...documentation: Documentation[]): this {
     return this.with('documentation', documentation);
   }
 
   withoutDocumentation(): this {
     return this.without('documentation');
+  }
+
+  withoutEndDate() {
+    return this.without('endDate');
   }
 
   withValidData(): this {
@@ -44,7 +56,9 @@ export class EducationCreateBuilder extends Builder<EducationCreate> {
       .withCenterName()
       .withTitle()
       .withCategory()
-      .withDocumentation(documentation);
+      .withDocumentation(documentation)
+      .withStartDate()
+      .withEndDate();
   }
 
   build(): Education {

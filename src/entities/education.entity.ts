@@ -43,6 +43,14 @@ export class Education extends EducationCreate {
   documentation?: Documentation[];
 
   @IsDate()
+  @Column({ type: 'date', name: 'date_start' })
+  startDate!: Date;
+
+  @IsDate()
+  @Column({ type: 'date', name: 'date_end', nullable: true })
+  endDate?: Date;
+
+  @IsDate()
   @CreatedAtColumn()
   @Exclude()
   createdAt!: Date;
