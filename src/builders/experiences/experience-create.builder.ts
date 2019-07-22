@@ -5,7 +5,7 @@ import { ExperienceCreate } from '../../dto/experience-create.dto';
 import { documentationBuilder } from '../common/documentation.builder';
 
 export class ExperienceCreateBuilder extends Builder<ExperienceCreate> {
-  withStartDate(startDate = this.faker.date.future()): this {
+  withStartDate(startDate = this.faker.date.past()): this {
     return this.with('startDate', startDate);
   }
 

@@ -10,20 +10,17 @@ import { Experience } from '../../entities/experience.entity';
 export class ExperiencesService {
   constructor(@InjectRepository(Experience) private readonly experienceRepository: Repository<Experience>) {}
 
-  async createExperience({ user, experience }: CreateExperienceOptions): Promise<Experience> {
-    const newExperience = this.experienceRepository.create({
-      ...experience,
+  async createExperience({ user, experience: experienceCreate }: CreateExperienceOptions): Promise<Experience> {
+    const experience = this.experienceRepository.create({
+      ...experienceCreate,
       experienceId: uuid(),
       keycloakId: user.id
     });
 
-    return await this.saveExperience(newExperience);
-  }
-
-  private async saveExperience(experience: Experience): Promise<Experience> {
-    return await this.experienceRepository.save(experience);
+    return this.experienceRepository.save(experience);
   }
 }
+
 export interface CreateExperienceOptions {
   user: User;
   experience: ExperienceCreate;

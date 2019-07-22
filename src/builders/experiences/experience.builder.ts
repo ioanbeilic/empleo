@@ -1,6 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { Builder } from 'empleo-nestjs-testing';
-import { Documentation } from '../..//domain/documentation';
+import { Documentation } from '../../domain/documentation';
 import { Experience } from '../../entities/experience.entity';
 import { documentationBuilder } from '../common/documentation.builder';
 
@@ -13,7 +13,7 @@ export class ExperienceBuilder extends Builder<Experience> {
     return this.with('keycloakId', keycloakId);
   }
 
-  withDateStart(dateStart = this.faker.date.future()): this {
+  withDateStart(dateStart = this.faker.date.past()): this {
     return this.with('startDate', dateStart);
   }
 

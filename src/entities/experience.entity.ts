@@ -19,11 +19,9 @@ export class Experience extends ExperienceCreate {
   @ApiModelProperty({ type: 'string', format: 'uuid', example: uuid() })
   keycloakId!: string;
 
-  @IsDate()
   @Column({ type: 'date', name: 'date_start' })
   startDate!: Date;
 
-  @IsDate()
   @Column({ type: 'date', nullable: true, default: null, name: 'date_end' })
   endDate?: Date;
 
