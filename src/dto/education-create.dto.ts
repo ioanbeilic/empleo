@@ -35,6 +35,12 @@ export class EducationCreate {
   @ApiModelProperty({ type: 'string', minLength: 1, maxLength: 255, example: 'Technology and Information' })
   category!: string;
 
+  @ApiModelProperty({ type: 'string', format: 'YYYY-MM-DD', example: '2019-07-10T00:00:00.000Z' })
+  startDate!: Date;
+
+  @ApiModelPropertyOptional({ type: 'string', format: 'YYYY-MM-DD ', example: '2019-07-10T00:00:00.000Z' })
+  endDate?: Date;
+
   @IsOptional()
   @ValidateNested({ each: true })
   @Default(() => [])

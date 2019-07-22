@@ -1,11 +1,13 @@
 import { HttpStatus } from '@nestjs/common';
 import { NestApplication } from '@nestjs/core';
+import { plainToClass } from 'class-transformer';
 import { Token } from 'empleo-nestjs-authentication';
 import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
 import { documentationBuilder } from '../../src/builders/educations/documentation.builder';
 import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { educationBuilder } from '../../src/builders/educations/education.builder';
 import { CvModule } from '../../src/cv.module';
+import { Education } from '../../src/entities/education.entity';
 import { api, removeEducationByToken } from './educations.api';
 
 describe('EducationController (POST) (e2e)', () => {
@@ -21,7 +23,6 @@ describe('EducationController (POST) (e2e)', () => {
 
     adminKeycloakId = Token.fromEncoded(adminToken).keycloakId;
     candidateKeycloakId = Token.fromEncoded(candidateToken).keycloakId;
-
     await removeEducationByToken(adminToken, candidateToken);
   });
 
@@ -36,9 +37,7 @@ describe('EducationController (POST) (e2e)', () => {
 
   describe(':keycloakId/educations', () => {
     it('should return 201 - Created', async () => {
-      const education = educationBuilder()
-        .withValidData()
-        .build();
+      const education = await createEducation();
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
@@ -59,9 +58,7 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "centerType" is invalid', async () => {
-      const education = educationBuilder()
-        .withValidData()
-        .build();
+      const education = await createEducation();
 
       education.centerType = '';
 
@@ -72,9 +69,7 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "country" is invalid', async () => {
-      const education = educationBuilder()
-        .withValidData()
-        .build();
+      const education = await createEducation();
 
       education.country = '';
 
@@ -85,9 +80,7 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "centerName" is invalid', async () => {
-      const education = educationBuilder()
-        .withValidData()
-        .build();
+      const education = await createEducation();
 
       education.country = '';
 
@@ -98,9 +91,7 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "title" is invalid', async () => {
-      const education = educationBuilder()
-        .withValidData()
-        .build();
+      const education = await createEducation();
 
       education.title = '';
 
@@ -111,9 +102,7 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "category" is invalid', async () => {
-      const education = educationBuilder()
-        .withValidData()
-        .build();
+      const education = await createEducation();
 
       education.category = '';
 
@@ -123,10 +112,20 @@ describe('EducationController (POST) (e2e)', () => {
         .expectJson(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return 400 - Bad Request when the "documentation.name" is empty', async () => {
-      const education = educationBuilder()
+    it('should return 201 - CREATED when the "endDate" is null', async () => {
+      const educationWithoutEndDate = educationCreateBuilder()
+        .withoutEndDate()
         .withValidData()
         .build();
+
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
+        .create({ payload: educationWithoutEndDate })
+        .expectJson(HttpStatus.CREATED);
+    });
+
+    it('should return 400 - Bad Reques expcreateEducation;t when the "documentation.name" is empty', async () => {
+      const education = await createEducation();
 
       const documentation = documentationBuilder()
         .withValidData()
@@ -142,9 +141,7 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 401 - Unauthorized when user is not logged in', async () => {
-      const education = educationBuilder()
-        .withValidData()
-        .build();
+      const education = await createEducation();
 
       await api(app)
         .educations({ keycloakId: candidateKeycloakId })
@@ -153,9 +150,7 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 403 - Forbidden when the user is not a candidate', async () => {
-      const education = educationBuilder()
-        .withValidData()
-        .build();
+      const education = await createEducation();
 
       await api(app, { token: adminToken })
         .educations({ keycloakId: adminKeycloakId })
@@ -163,4 +158,18 @@ describe('EducationController (POST) (e2e)', () => {
         .expectJson(HttpStatus.FORBIDDEN);
     });
   });
+
+  async function createEducation() {
+    const experience = educationBuilder()
+      .withValidData()
+      .build();
+
+    const createdEducation = await api(app, { token: candidateToken })
+      .educations({ keycloakId: candidateKeycloakId })
+      .create({ payload: experience })
+      .expectJson(HttpStatus.CREATED)
+      .body();
+
+    return plainToClass(Education, createdEducation);
+  }
 });
