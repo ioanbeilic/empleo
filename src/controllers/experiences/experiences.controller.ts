@@ -49,10 +49,10 @@ export class ExperiencesController {
   @ApiOperation({ title: 'Edit a experience stage by experience id' })
   @ApiKeycloakIdParam()
   @ApiExperienceIdParam()
-  @ApiNoContentResponse({ type: Experience, description: 'Education stage successfully updated' })
+  @ApiNoContentResponse({ type: Experience, description: 'Experience stage successfully updated' })
   @ApiBadRequestResponse({ description: 'The body did not pass the validation' })
   @ApiNotFoundResponse({ description: 'The experience does not exist or it does not belong to the user' })
-  async updateEducation(
+  async updateExperience(
     @AuthenticatedUser() user: User,
     @Body() update: ExperienceCreate,
     @Param() { experienceId, keycloakId }: FindOneParamsExperience
