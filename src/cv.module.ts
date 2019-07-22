@@ -6,8 +6,10 @@ import { CvConfigurationModule } from './configuration/cv-configuration.module';
 import { EducationsController } from './controllers/educations/educations.controller';
 import { POSTGRES_URI } from './cv.keys';
 import { CvOpenapi } from './cv.openapi';
+import { Cv } from './entities/cv.entity';
 import { Education } from './entities/education.entity';
 import { PermissionsService } from './services/common/permissions.service';
+import { CvService } from './services/cv/cv.service';
 import { EducationsService } from './services/educations/educations.service';
 
 @Module({
@@ -16,20 +18,20 @@ import { EducationsService } from './services/educations/educations.service';
     AuthenticationModule,
     CvConfigurationModule,
     PaginationModule,
-    TypeOrmModule.forFeature([Education]),
+    TypeOrmModule.forFeature([Education, Cv]),
     TypeOrmModule.forRootAsync({
       imports: [CvConfigurationModule],
       useFactory(postgresUri: string) {
         return {
           url: postgresUri,
           type: 'postgres',
-          entities: [Education],
+          entities: [Education, Cv],
           synchronize: true
         };
       },
       inject: [POSTGRES_URI]
     })
   ],
-  providers: [CvOpenapi, EducationsService, PermissionsService]
+  providers: [CvOpenapi, EducationsService, PermissionsService, CvService]
 })
 export class CvModule {}
