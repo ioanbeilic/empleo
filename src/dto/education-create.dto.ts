@@ -1,6 +1,6 @@
 import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsOptional, IsString, Length, ValidateNested } from 'class-validator';
+import { IsDate, IsOptional, IsString, Length, ValidateNested } from 'class-validator';
 import { Default } from 'empleo-nestjs-common';
 import { Documentation } from '../domain/documentation';
 
@@ -34,6 +34,15 @@ export class EducationCreate {
   @Length(1, 255)
   @ApiModelProperty({ type: 'string', minLength: 1, maxLength: 255, example: 'Technology and Information' })
   category!: string;
+
+  @IsDate()
+  @ApiModelProperty({ type: 'string', format: 'date', example: '2017-09-01' })
+  startDate!: Date;
+
+  @IsOptional()
+  @IsDate()
+  @ApiModelPropertyOptional({ type: 'string', format: 'date ', example: '2019-06-20' })
+  endDate?: Date;
 
   @IsOptional()
   @ValidateNested({ each: true })
