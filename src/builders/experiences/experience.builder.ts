@@ -13,12 +13,12 @@ export class ExperienceBuilder extends Builder<Experience> {
     return this.with('keycloakId', keycloakId);
   }
 
-  withDateStart(dateStart = this.faker.date.future()): this {
-    return this.with('startDate', dateStart);
+  withStartDate(startDate = this.faker.date.future()): this {
+    return this.with('startDate', startDate);
   }
 
-  withDateEnd(dateEnd = this.faker.date.future()): this {
-    return this.with('endDate', dateEnd);
+  withEndDate(endDate = this.faker.date.future()): this {
+    return this.with('endDate', endDate);
   }
 
   withCompanyName(companyName = this.faker.company.companyName()): this {
@@ -45,6 +45,10 @@ export class ExperienceBuilder extends Builder<Experience> {
     return this.without('experienceId');
   }
 
+  withoutEndDate() {
+    return this.without('endDate');
+  }
+
   withValidData(): this {
     const documentation = documentationBuilder()
       .withValidData()
@@ -52,8 +56,8 @@ export class ExperienceBuilder extends Builder<Experience> {
 
     return this.withExperienceId()
       .withKeycloakId()
-      .withDateStart()
-      .withDateEnd()
+      .withStartDate()
+      .withEndDate()
       .withCompanyName()
       .withTitle()
       .withPosition()

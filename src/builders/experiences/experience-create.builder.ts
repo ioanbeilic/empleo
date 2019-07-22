@@ -37,6 +37,10 @@ export class ExperienceCreateBuilder extends Builder<ExperienceCreate> {
     return this.without('documentation');
   }
 
+  withoutEndDate() {
+    return this.without('endDate');
+  }
+
   withValidData(): this {
     const documentation = documentationBuilder()
       .withValidData()
