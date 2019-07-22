@@ -3,7 +3,7 @@ import { Builder } from 'empleo-nestjs-testing';
 import { Documentation } from '../../domain/documentation';
 import { EducationCreate } from '../../dto/education-create.dto';
 import { Education } from '../../entities/education.entity';
-import { documentationBuilder } from './documentation.builder';
+import { documentationBuilder } from '../common/documentation.builder';
 
 export class EducationCreateBuilder extends Builder<EducationCreate> {
   withCenterType(centerType = this.faker.random.word()): this {
