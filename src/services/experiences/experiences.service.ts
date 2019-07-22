@@ -35,6 +35,14 @@ export class ExperiencesService {
     await this.experienceRepository.update({ experienceId: experience.experienceId }, update);
   }
 
+  async deleteOne({ user, experienceId }: DeleteExperienceOptions) {
+    const { affected } = await this.experienceRepository.delete({ experienceId, keycloakId: user.id });
+
+    if (!affected) {
+      throw new ExperienceNotFoundException();
+    }
+  }
+
   private async saveExperience(experience: Experience): Promise<Experience> {
     return await this.experienceRepository.save(experience);
   }
@@ -48,4 +56,9 @@ export interface CreateExperienceOptions {
 export interface UpdateExperienceOptions {
   experience: Experience;
   update: ExperienceCreate;
+}
+
+export interface DeleteExperienceOptions {
+  user: User;
+  experienceId: string;
 }

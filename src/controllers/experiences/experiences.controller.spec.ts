@@ -151,4 +151,44 @@ describe('ExperiencesController', () => {
       verify(mockedExperiencesService.updateOne(anything())).never();
     });
   });
+
+  describe('#deleteOne()', () => {
+    const experienceId = createdExperience.experienceId;
+    const keycloakId = user.id;
+
+    it('should correctly delete a experience', async () => {
+      when(mockedExperiencesService.deleteOne(anything())).thenResolve();
+
+      const response = await experiencesController.deleteOneExperience(user, { experienceId, keycloakId });
+
+      verify(mockedExperiencesService.deleteOne(deepEqual({ user, experienceId }))).once();
+      expect(response).to.be.undefined;
+    });
+
+    it('should throw an experience not found exception when the experience does not exist', async () => {
+      when(mockedCheckUserService.isOwnerOrNotFound(anything())).thenThrow(new ExperienceNotFoundException());
+      when(mockedExperiencesService.deleteOne(anything())).thenReject();
+
+      await expect(
+        experiencesController.deleteOneExperience(user, { experienceId: faker.random.uuid(), keycloakId: user.id })
+      ).to.eventually.be.rejectedWith(ExperienceNotFoundException);
+
+      verify(mockedCheckUserService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId } }))).once();
+      verify(mockedExperiencesService.deleteOne(anything())).never();
+    });
+
+    it("should throw a experience not found exception if user don't have permission and is not admin", async () => {
+      when(mockedCheckUserService.isOwnerOrNotFound(anything())).thenThrow(new ExperienceNotFoundException());
+      when(mockedExperiencesService.deleteOne(anything())).thenReject();
+
+      const anotherKeycloakId = faker.random.uuid();
+
+      await expect(
+        experiencesController.deleteOneExperience(user, { experienceId: createdExperience.experienceId, keycloakId: anotherKeycloakId })
+      ).to.be.rejectedWith(ExperienceNotFoundException);
+
+      verify(mockedCheckUserService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId: anotherKeycloakId } }))).once();
+      verify(mockedExperiencesService.deleteOne({ user, experienceId: createdExperience.experienceId })).never();
+    });
+  });
 });
