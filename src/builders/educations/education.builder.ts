@@ -41,7 +41,7 @@ export class EducationBuilder extends Builder<Education> {
     return this.with('startDate', startDate);
   }
 
-  withEndDate(endDate = this.faker.date.past()): this {
+  withEndDate(endDate = this.faker.date.future()): this {
     return this.with('endDate', endDate);
   }
 
