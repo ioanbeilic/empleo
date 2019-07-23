@@ -171,8 +171,13 @@ describe('ExperiencesController (POST) (e2e)', () => {
     let experience: Experience;
 
     beforeEach(async () => {
-      experience = await createExperience();
-      await getRepository(Experience).update({ experienceId: experience.experienceId }, { keycloakId: faker.random.uuid() });
+      experience = experienceBuilder()
+        .withValidData()
+        .build();
+
+      experience.keycloakId = faker.random.uuid();
+
+      await getRepository(Experience).create(experience);
     });
 
     afterEach(async () => {

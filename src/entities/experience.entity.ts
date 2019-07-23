@@ -2,10 +2,11 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { IsDate, IsUUID } from 'class-validator';
 import { CreatedAtColumn, UpdatedAtColumn } from 'empleo-nestjs-common';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
 import { Documentation } from '../domain/documentation';
 import { ExperienceCreate } from '../dto/experience-create.dto';
+import { Cv } from './cv.entity';
 
 @Entity()
 export class Experience extends ExperienceCreate {
@@ -17,6 +18,8 @@ export class Experience extends ExperienceCreate {
   @IsUUID()
   @Column({ type: 'uuid', name: 'keycloak_id' })
   @ApiModelProperty({ type: 'string', format: 'uuid', example: uuid() })
+  @ManyToOne(type => Cv, cv => cv, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
   keycloakId!: string;
 
   @Column({ type: 'date', name: 'date_start' })
