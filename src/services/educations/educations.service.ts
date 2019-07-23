@@ -22,8 +22,7 @@ export class EducationsService {
       keycloakId: user.id
     });
 
-    this.cvService.findOrCreateCv(user.id);
-
+    this.cvService.createCv(user.id);
     return this.educationRepository.save(education);
   }
 

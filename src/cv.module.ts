@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthenticationModule } from 'empleo-nestjs-authentication';
 import { PaginationModule } from 'empleo-nestjs-common';
 import { CvConfigurationModule } from './configuration/cv-configuration.module';
+import { CvController } from './controllers/cv/cv.controller';
 import { EducationsController } from './controllers/educations/educations.controller';
 import { POSTGRES_URI } from './cv.keys';
 import { CvOpenapi } from './cv.openapi';
@@ -13,7 +14,7 @@ import { CvService } from './services/cv/cv.service';
 import { EducationsService } from './services/educations/educations.service';
 
 @Module({
-  controllers: [EducationsController],
+  controllers: [EducationsController, CvController],
   imports: [
     AuthenticationModule,
     CvConfigurationModule,
