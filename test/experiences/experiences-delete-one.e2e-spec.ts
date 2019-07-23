@@ -15,13 +15,11 @@ describe('ExperienceController (DELETE) (e2e)', () => {
   let candidateToken: string;
   let adminToken: string;
   let candidateKeycloakId: string;
-  let adminKeycloakId: string;
 
   before(async () => {
     app = await startTestApp(CvModule);
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
 
-    adminKeycloakId = Token.fromEncoded(adminToken).keycloakId;
     candidateKeycloakId = Token.fromEncoded(candidateToken).keycloakId;
 
     await removeExperienceByToken(adminToken, candidateToken);
@@ -46,7 +44,7 @@ describe('ExperienceController (DELETE) (e2e)', () => {
         .expect(HttpStatus.NO_CONTENT);
     });
 
-    it('should return 400 - Bad Request when the "experienceId" is invalid', async () => {
+    it('should return 400 - Bad Request when the "experienceId" is not an uuid', async () => {
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })
         .removeOne({ identifier: '123455' })
@@ -71,20 +69,11 @@ describe('ExperienceController (DELETE) (e2e)', () => {
         .expect(HttpStatus.FORBIDDEN);
     });
 
-    it('should return 404 - Not Found when the "experienceId" is not a valid uuid', async () => {
+    it('should return 404 - Not Found when the experience does not exist', async () => {
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })
-        .removeOne({ identifier: '' })
-        .expect(HttpStatus.NOT_FOUND);
-    });
-
-    it('should return 404 - Not Found when the url keycloakId not belong to logged user', async () => {
-      const experience = await createExperience();
-
-      await api(app, { token: candidateToken })
-        .experiences({ keycloakId: adminKeycloakId })
-        .removeOne({ identifier: experience.experienceId })
-        .expect(HttpStatus.NOT_FOUND);
+        .removeOne({ identifier: faker.random.uuid() })
+        .expectJson(HttpStatus.NOT_FOUND);
     });
 
     describe('when the experience does not belong to the user', () => {
@@ -99,7 +88,7 @@ describe('ExperienceController (DELETE) (e2e)', () => {
         await getRepository(Experience).remove(experience);
       });
 
-      it('should return 404 - Not Found when the experience does not belong to the user', async () => {
+      it('should return 404 - Not Found', async () => {
         await api(app, { token: candidateToken })
           .experiences({ keycloakId: candidateKeycloakId })
           .removeOne({ identifier: experience.experienceId })

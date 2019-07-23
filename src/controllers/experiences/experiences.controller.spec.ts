@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
-import faker = require('faker');
+import faker from 'faker';
 import { anyOfClass, anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
-import { ExperiencesService } from '../..//services/experiences/experiences.service';
 import { experienceCreateBuilder } from '../../builders/experiences/experience-create.builder';
 import { experienceBuilder } from '../../builders/experiences/experience.builder';
 import { ExperienceNotFoundException } from '../../errors/experience-not-found.exception';
 import { PermissionsService } from '../../services/common/permissions.service';
+import { ExperiencesService } from '../../services/experiences/experiences.service';
 import { ExperiencesController } from './experiences.controller';
 
 describe('ExperiencesController', () => {
