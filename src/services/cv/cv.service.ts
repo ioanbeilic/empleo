@@ -13,7 +13,7 @@ function isUniqueKeyViolationError(err: Error & { code?: string }) {
 export class CvService {
   constructor(@InjectRepository(Cv) private readonly cvRepository: Repository<Cv>) {}
 
-  async createCv(keycloakId: string): Promise<void | never> {
+  async createCv({ keycloakId }: CreateCvOptions): Promise<void | never> {
     const cv = await this.cvRepository.create({ cvId: uuid(), keycloakId });
 
     try {
@@ -25,11 +25,19 @@ export class CvService {
     }
   }
 
-  async deleteOne(keycloakId: string) {
+  async deleteOne({ keycloakId }: DeleteCvOptions) {
     const { affected } = await this.cvRepository.delete({ keycloakId });
 
     if (!affected) {
       throw new CvNotFoundException();
     }
   }
+}
+
+export interface CreateCvOptions {
+  keycloakId: string;
+}
+
+export interface DeleteCvOptions {
+  keycloakId: string;
 }

@@ -23,6 +23,6 @@ export class CvController {
   @ApiNotFoundResponse({ description: 'The cv does not exist or does not belong to the user' })
   async deleteOneCv(@AuthenticatedUser() user: User, @Param() { keycloakId }: KeycloakIdParams): Promise<void> {
     this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } });
-    await this.cvService.deleteOne(user.id);
+    await this.cvService.deleteOne({ keycloakId: user.id });
   }
 }
