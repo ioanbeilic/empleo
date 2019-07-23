@@ -11,14 +11,14 @@ import { ExperienceNotFoundException } from '../../errors/experience-not-found.e
 export class ExperiencesService {
   constructor(@InjectRepository(Experience) private readonly experienceRepository: Repository<Experience>) {}
 
-  async createExperience({ user, experience }: CreateExperienceOptions): Promise<Experience> {
-    const newExperience = this.experienceRepository.create({
-      ...experience,
+  async createExperience({ user, experience: experienceCreate }: CreateExperienceOptions): Promise<Experience> {
+    const experience = this.experienceRepository.create({
+      ...experienceCreate,
       experienceId: uuid(),
       keycloakId: user.id
     });
 
-    return await this.saveExperience(newExperience);
+    return this.experienceRepository.save(experience);
   }
 
   async findUserExperienceById({ experienceId, user }: { experienceId: ExperienceId; user: User }): Promise<Experience> {
@@ -33,10 +33,6 @@ export class ExperiencesService {
 
   async updateOne({ experience, update }: UpdateExperienceOptions): Promise<void> {
     await this.experienceRepository.update({ experienceId: experience.experienceId }, update);
-  }
-
-  private async saveExperience(experience: Experience): Promise<Experience> {
-    return await this.experienceRepository.save(experience);
   }
 }
 
