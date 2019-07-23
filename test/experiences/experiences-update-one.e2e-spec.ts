@@ -66,18 +66,18 @@ describe('ExperienceController (PUT) (e2e)', () => {
         .expect(HttpStatus.NO_CONTENT);
     });
 
-    it('should return 401 - Unauthorized when user is not logged in', async () => {
+    it('should return 204 - No Content when the "endDate" is null', async () => {
       const experience = await createExperience();
 
       const experienceUpdate = experienceCreateBuilder()
-        .withoutDocumentation()
+        .withoutEndDate()
         .withValidData()
         .build();
 
-      await api(app)
+      await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })
         .overrideOne({ identifier: experience.experienceId, payload: experienceUpdate })
-        .expectJson(HttpStatus.UNAUTHORIZED);
+        .expect(HttpStatus.NO_CONTENT);
     });
 
     it('should return 400 - Bad Request when the "companyName" is invalid', async () => {
@@ -142,20 +142,6 @@ describe('ExperienceController (PUT) (e2e)', () => {
         .experiences({ keycloakId: candidateKeycloakId })
         .overrideOne({ identifier: experience.experienceId, payload: experienceUpdate })
         .expectJson(HttpStatus.BAD_REQUEST);
-    });
-
-    it('should return 204 - No Content when the "startDate" is null', async () => {
-      const experience = await createExperience();
-
-      const experienceUpdate = experienceCreateBuilder()
-        .withoutEndDate()
-        .withValidData()
-        .build();
-
-      await api(app, { token: candidateToken })
-        .experiences({ keycloakId: candidateKeycloakId })
-        .overrideOne({ identifier: experience.experienceId, payload: experienceUpdate })
-        .expect(HttpStatus.NO_CONTENT);
     });
 
     it('should return 400 - Bad Request when the "documentation.name" is empty', async () => {
