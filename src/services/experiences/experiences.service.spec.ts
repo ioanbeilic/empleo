@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
-import faker from 'faker';
 import { anything, deepEqual, instance, mock, objectContaining, verify, when } from 'ts-mockito';
 import { DeleteResult, Repository } from 'typeorm';
 import { experienceCreateBuilder } from '../../builders/experiences/experience-create.builder';
@@ -67,15 +66,11 @@ describe('ExperiencesService', () => {
 
   describe('#deleteOne()', () => {
     it('should correctly delete a experience stage', async () => {
-      const deleteResult: DeleteResult = {
-        affected: 1,
-        raw: []
-      };
+      const deleteResult: DeleteResult = { affected: 1, raw: [] };
 
-      when(mockedExperienceRepository.delete(anything())).thenReturn(Promise.resolve(deleteResult));
+      when(mockedExperienceRepository.delete(anything())).thenResolve(deleteResult);
 
       const experienceId = createdExperience.experienceId;
-
       const result = await experiencesService.deleteOne({ user, experienceId });
 
       verify(mockedExperienceRepository.delete(deepEqual({ experienceId, keycloakId: user.id }))).once();
@@ -85,41 +80,29 @@ describe('ExperiencesService', () => {
 
     it('should throw an experience not found exception when the experience does not exists', async () => {
       const experienceId = createdExperience.experienceId;
-      const deleteResult: DeleteResult = {
-        affected: 0,
-        raw: []
-      };
+      const deleteResult: DeleteResult = { affected: 0, raw: [] };
 
-      when(mockedExperienceRepository.delete(anything())).thenReturn(Promise.resolve(deleteResult));
+      when(mockedExperienceRepository.delete(anything())).thenResolve(deleteResult);
 
-      await expect(
-        experiencesService.deleteOne({
-          experienceId,
-          user
-        })
-      ).eventually.be.rejectedWith(ExperienceNotFoundException);
+      await expect(experiencesService.deleteOne({ experienceId, user })).eventually.be.rejectedWith(ExperienceNotFoundException);
 
       verify(mockedExperienceRepository.delete(deepEqual({ experienceId, keycloakId: user.id }))).once();
     });
 
     it('should throw an experience not found exception when the experience exists but it does not belong to the user', async () => {
       const experienceId = createdExperience.experienceId;
-      const deleteResult: DeleteResult = {
-        affected: 0,
-        raw: []
-      };
-      user.id = faker.random.uuid();
+      const deleteResult: DeleteResult = { affected: 0, raw: [] };
+      const anotherUser = userBuilder()
+        .withValidData()
+        .build();
 
-      when(mockedExperienceRepository.delete(anything())).thenReturn(Promise.resolve(deleteResult));
+      when(mockedExperienceRepository.delete(anything())).thenResolve(deleteResult);
 
-      await expect(
-        experiencesService.deleteOne({
-          experienceId,
-          user
-        })
-      ).to.eventually.be.rejectedWith(ExperienceNotFoundException);
+      await expect(experiencesService.deleteOne({ experienceId, user: anotherUser })).to.eventually.be.rejectedWith(
+        ExperienceNotFoundException
+      );
 
-      verify(mockedExperienceRepository.delete(deepEqual({ experienceId, keycloakId: user.id }))).once();
+      verify(mockedExperienceRepository.delete(deepEqual({ experienceId, keycloakId: anotherUser.id }))).once();
     });
   });
 });
