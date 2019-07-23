@@ -1,5 +1,5 @@
 import { userBuilder } from 'empleo-nestjs-authentication';
-import { anything, instance, mock, objectContaining, verify, when } from 'ts-mockito';
+import { anything, deepEqual, instance, mock, objectContaining, verify, when } from 'ts-mockito';
 import { Repository } from 'typeorm';
 import { experienceCreateBuilder } from '../../builders/experiences/experience-create.builder';
 import { experienceBuilder } from '../../builders/experiences/experience.builder';
@@ -29,6 +29,10 @@ describe('ExperiencesService', () => {
     .withKeycloakId(user.id)
     .build();
 
+  const experienceUpdate = experienceCreateBuilder()
+    .withValidData()
+    .build();
+
   beforeEach(() => {
     mockedExperienceRepository = (mock(Repository) as unknown) as Repository<Experience>;
 
@@ -45,6 +49,16 @@ describe('ExperiencesService', () => {
 
       verify(mockedExperienceRepository.create(objectContaining({ ...experienceCreate, keycloakId: user.id }))).once();
       verify(mockedExperienceRepository.save(experience)).once();
+    });
+  });
+
+  describe('#updateOne()', () => {
+    it('should update the experience when it exists and belong to the user', async () => {
+      when(mockedExperienceRepository.update(anything(), anything() as Partial<Experience>)).thenResolve();
+
+      await experiencesService.updateOne({ experience, update: experienceUpdate });
+
+      verify(mockedExperienceRepository.update(deepEqual({ experienceId: experience.experienceId }), deepEqual(experienceUpdate))).once();
     });
   });
 });
