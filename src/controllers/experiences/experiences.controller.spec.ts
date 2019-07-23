@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
-import faker = require('faker');
+import faker from 'faker';
 import { anyOfClass, anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
-import { ExperiencesService } from '../..//services/experiences/experiences.service';
 import { experienceCreateBuilder } from '../../builders/experiences/experience-create.builder';
 import { experienceBuilder } from '../../builders/experiences/experience.builder';
 import { ExperienceNotFoundException } from '../../errors/experience-not-found.exception';
 import { PermissionsService } from '../../services/common/permissions.service';
+import { ExperiencesService } from '../../services/experiences/experiences.service';
 import { ExperiencesController } from './experiences.controller';
 
 describe('ExperiencesController', () => {
@@ -26,6 +26,10 @@ describe('ExperiencesController', () => {
   const experience = experienceBuilder()
     .hydrate(experienceCreate)
     .withoutExperienceId()
+    .build();
+
+  const experienceUpdate = experienceCreateBuilder()
+    .withValidData()
     .build();
 
   const createdExperience = experienceBuilder()
@@ -80,6 +84,71 @@ describe('ExperiencesController', () => {
         )
       ).once();
       verify(mockedExperiencesService.createExperience(anything())).never();
+    });
+  });
+
+  describe('#updateOne()', () => {
+    it('should update a experience when it exists and belong to the user', async () => {
+      const experienceId = createdExperience.experienceId;
+
+      when(mockedCheckUserService.isOwnerOrNotFound(anything())).thenReturn(true);
+      when(mockedExperiencesService.updateOne(anything())).thenResolve();
+      when(mockedExperiencesService.findUserExperienceById(anything())).thenResolve(createdExperience);
+
+      const responseExperience = await experiencesController.updateExperience(user, experienceUpdate, {
+        experienceId,
+        keycloakId: user.id
+      });
+
+      expect(responseExperience).to.be.undefined;
+      verify(mockedCheckUserService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId: user.id } }))).once();
+      verify(mockedExperiencesService.findUserExperienceById(deepEqual({ experienceId, user }))).calledBefore(
+        mockedExperiencesService.updateOne(
+          deepEqual({
+            experience: createdExperience,
+            update: experienceUpdate
+          })
+        )
+      );
+    });
+
+    it('should throw an experience not found exception when the experience does not exist', async () => {
+      const experienceId = createdExperience.experienceId;
+      const keycloakId = user.id;
+
+      when(mockedCheckUserService.isOwnerOrNotFound(anything())).thenReturn(true);
+      when(mockedExperiencesService.updateOne(anything())).thenResolve();
+      when(mockedExperiencesService.findUserExperienceById(anything())).thenReject(new ExperienceNotFoundException());
+
+      await expect(
+        experiencesController.updateExperience(user, experienceUpdate, {
+          experienceId,
+          keycloakId
+        })
+      ).to.eventually.be.rejectedWith(ExperienceNotFoundException);
+
+      verify(mockedCheckUserService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId } }))).once();
+      verify(mockedExperiencesService.findUserExperienceById(deepEqual({ experienceId, user }))).once();
+      verify(mockedExperiencesService.updateOne(anything())).never();
+    });
+
+    it('should throw an experience not found error when trying to access an cv from another user', async () => {
+      const experienceId = createdExperience.experienceId;
+      const keycloakId = user.id;
+
+      when(mockedCheckUserService.isOwnerOrNotFound(anything())).thenThrow(new ExperienceNotFoundException());
+      when(mockedExperiencesService.updateOne(anything())).thenResolve();
+      when(mockedExperiencesService.findUserExperienceById(anything())).thenResolve(createdExperience);
+
+      await expect(
+        experiencesController.updateExperience(user, experienceUpdate, {
+          experienceId,
+          keycloakId
+        })
+      ).to.eventually.be.rejectedWith(ExperienceNotFoundException);
+      verify(mockedCheckUserService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId } }))).once();
+      verify(mockedExperiencesService.findUserExperienceById(deepEqual({ experienceId, user }))).never();
+      verify(mockedExperiencesService.updateOne(anything())).never();
     });
   });
 });
