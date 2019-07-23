@@ -5,7 +5,7 @@ import { Token } from 'empleo-nestjs-authentication';
 import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
 import faker from 'faker';
 import { getRepository } from 'typeorm';
-import { documentationBuilder } from '../../src/builders/educations/documentation.builder';
+import { documentationBuilder } from '../../src/builders/common/documentation.builder';
 import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { educationBuilder } from '../../src/builders/educations/education.builder';
 import { CvModule } from '../../src/cv.module';
@@ -97,9 +97,7 @@ describe('EducationController (PUT) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "country" is invalid', async () => {
-      const education = educationBuilder()
-        .withValidData()
-        .build();
+      const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
         .withoutDocumentation()
@@ -115,9 +113,7 @@ describe('EducationController (PUT) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "centerName" is invalid', async () => {
-      const education: Education = educationBuilder()
-        .withValidData()
-        .build();
+      const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
         .withoutDocumentation()
@@ -133,9 +129,7 @@ describe('EducationController (PUT) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "title" is invalid', async () => {
-      const education = educationBuilder()
-        .withValidData()
-        .build();
+      const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
         .withoutDocumentation()
@@ -151,9 +145,7 @@ describe('EducationController (PUT) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "category" is invalid', async () => {
-      const education: Education = educationBuilder()
-        .withValidData()
-        .build();
+      const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
         .withoutDocumentation()
@@ -166,6 +158,20 @@ describe('EducationController (PUT) (e2e)', () => {
         .educations({ keycloakId: candidateKeycloakId })
         .overrideOne({ identifier: education.educationId, payload: educationUpdate })
         .expectJson(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 204 - No Content when the "endDate" is null', async () => {
+      const education = await createEducation();
+
+      const educationWithoutEndDate = educationCreateBuilder()
+        .withoutEndDate()
+        .withValidData()
+        .build();
+
+      await api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
+        .overrideOne({ identifier: education.educationId, payload: educationWithoutEndDate })
+        .expect(HttpStatus.NO_CONTENT);
     });
 
     it('should return 400 - Bad Request when the "documentation.name" is empty', async () => {

@@ -3,7 +3,7 @@ import { Builder } from 'empleo-nestjs-testing';
 import { Documentation } from '../../domain/documentation';
 import { EducationCreate } from '../../dto/education-create.dto';
 import { Education } from '../../entities/education.entity';
-import { documentationBuilder } from './documentation.builder';
+import { documentationBuilder } from '../common/documentation.builder';
 
 export class EducationCreateBuilder extends Builder<EducationCreate> {
   withCenterType(centerType = this.faker.random.word()): this {
@@ -26,12 +26,24 @@ export class EducationCreateBuilder extends Builder<EducationCreate> {
     return this.with('category', category);
   }
 
+  withStartDate(startDate = this.faker.date.past()): this {
+    return this.with('startDate', startDate);
+  }
+
+  withEndDate(endDate = this.faker.date.future()): this {
+    return this.with('endDate', endDate);
+  }
+
   withDocumentation(...documentation: Documentation[]): this {
     return this.with('documentation', documentation);
   }
 
   withoutDocumentation(): this {
     return this.without('documentation');
+  }
+
+  withoutEndDate() {
+    return this.without('endDate');
   }
 
   withValidData(): this {
@@ -44,7 +56,9 @@ export class EducationCreateBuilder extends Builder<EducationCreate> {
       .withCenterName()
       .withTitle()
       .withCategory()
-      .withDocumentation(documentation);
+      .withDocumentation(documentation)
+      .withStartDate()
+      .withEndDate();
   }
 
   build(): Education {

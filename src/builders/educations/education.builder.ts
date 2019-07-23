@@ -2,7 +2,7 @@ import { plainToClass } from 'class-transformer';
 import { Builder } from 'empleo-nestjs-testing';
 import { Documentation } from '../../domain/documentation';
 import { Education } from '../../entities/education.entity';
-import { documentationBuilder } from './documentation.builder';
+import { documentationBuilder } from '../common/documentation.builder';
 
 export class EducationBuilder extends Builder<Education> {
   withEducationId(educationId = this.faker.random.uuid()): this {
@@ -37,8 +37,20 @@ export class EducationBuilder extends Builder<Education> {
     return this.with('documentation', documentation);
   }
 
+  withStartDate(startDate = this.faker.date.past()): this {
+    return this.with('startDate', startDate);
+  }
+
+  withEndDate(endDate = this.faker.date.future()): this {
+    return this.with('endDate', endDate);
+  }
+
   withoutEducationId() {
     return this.without('educationId');
+  }
+
+  withoutEndDate() {
+    return this.without('endDate');
   }
 
   withValidData(): this {
@@ -53,6 +65,8 @@ export class EducationBuilder extends Builder<Education> {
       .withCenterName()
       .withTitle()
       .withCategory()
+      .withStartDate()
+      .withEndDate()
       .withDocumentation(documentation);
   }
 
