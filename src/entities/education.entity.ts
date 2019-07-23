@@ -35,10 +35,13 @@ export class Education extends EducationCreate {
   @Column({ type: 'varchar', length: 255 })
   category!: string;
 
-  @Column({
-    type: 'jsonb',
-    transformer: new EntityColumnTransformer(Documentation)
-  })
+  @Column({ type: 'date', name: 'date_start' })
+  startDate!: Date;
+
+  @Column({ type: 'date', name: 'date_end', nullable: true })
+  endDate?: Date;
+
+  @Column({ type: 'jsonb', transformer: new EntityColumnTransformer(Documentation) })
   @ApiModelProperty({ type: [Documentation] })
   documentation?: Documentation[];
 
