@@ -1,4 +1,15 @@
-import { Body, ClassSerializerInterceptor, Controller, HttpCode, HttpStatus, Param, Post, Put, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  UseInterceptors
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -62,5 +73,22 @@ export class ExperiencesController {
     const experience = await this.experiencesService.findUserExperienceById({ experienceId, user });
 
     await this.experiencesService.updateOne({ experience, update });
+  }
+
+  @Delete(':keycloakId/experiences/:experienceId')
+  @Authorize.Candidates()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ title: 'Remove a experience by keycloakId and experience id' })
+  @ApiKeycloakIdParam()
+  @ApiExperienceIdParam()
+  @ApiNoContentResponse({ description: 'The experience has been successfully deleted' })
+  @ApiBadRequestResponse({ description: 'The experience id is not an UUID' })
+  @ApiNotFoundResponse({ description: 'The experience does not exist or does not belong to the user' })
+  async deleteOneExperience(
+    @AuthenticatedUser() user: User,
+    @Param() { experienceId, keycloakId }: FindOneParamsExperience
+  ): Promise<void> {
+    this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } });
+    await this.experiencesService.deleteOne({ user, experienceId });
   }
 }
