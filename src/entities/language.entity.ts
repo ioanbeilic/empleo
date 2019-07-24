@@ -39,3 +39,5 @@ export class Language extends LanguageCreate {
   @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
   cv?: Cv;
 }
+
+export type LanguageId = typeof Language.prototype.languageId;

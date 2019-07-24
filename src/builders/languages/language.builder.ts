@@ -3,7 +3,7 @@ import { Builder } from 'empleo-nestjs-testing';
 import { Language } from '../../entities/language.entity';
 
 export class LanguageBuilder extends Builder<Language> {
-  withExperienceId(languageId = this.faker.random.uuid()): this {
+  withLanguageId(languageId = this.faker.random.uuid()): this {
     return this.with('languageId', languageId);
   }
 
@@ -20,7 +20,10 @@ export class LanguageBuilder extends Builder<Language> {
   }
 
   withValidData(): this {
-    return this.withLanguage().withLevel();
+    return this.withLanguageId()
+      .withKeycloakId()
+      .withLanguage()
+      .withLevel();
   }
 
   withoutLanguageId() {

@@ -1,5 +1,13 @@
-import { Body, ClassSerializerInterceptor, Controller, Param, Post, UseInterceptors } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
+import { Body, ClassSerializerInterceptor, Controller, HttpCode, HttpStatus, Param, Post, Put, UseInterceptors } from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUseTags
+} from '@nestjs/swagger';
 import { Authenticate, AuthenticatedUser, Authorize, User } from 'empleo-nestjs-authentication';
 import { ApiKeycloakIdParam, KeycloakIdParams } from 'empleo-nestjs-common';
 import { LanguageCreate } from '../../dto/language-create.dto';
@@ -7,6 +15,7 @@ import { Language } from '../../entities/language.entity';
 import { LanguageNotFoundException } from '../../errors/language-not-found.exception';
 import { PermissionsService } from '../../services/common/permissions.service';
 import { LanguagesService } from '../../services/languages/languages.service';
+import { ApiLanguageIdParam, FindOneParamsLanguage } from './find-one-language.params';
 
 const languageNotFoundException = new LanguageNotFoundException();
 
@@ -32,5 +41,26 @@ export class LanguagesController {
     this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } }, languageNotFoundException);
 
     return this.languagesService.createLanguage({ user, language });
+  }
+
+  @Put(':keycloakId/languages/:languageId')
+  @Authorize.Candidates()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ title: 'Edit a language stage by language id' })
+  @ApiKeycloakIdParam()
+  @ApiLanguageIdParam()
+  @ApiNoContentResponse({ type: Language, description: 'Language stage successfully updated' })
+  @ApiBadRequestResponse({ description: 'The body did not pass the validation' })
+  @ApiNotFoundResponse({ description: 'The language does not exist or it does not belong to the user' })
+  async updateLanguage(
+    @AuthenticatedUser() user: User,
+    @Body() update: LanguageCreate,
+    @Param() { languageId, keycloakId }: FindOneParamsLanguage
+  ): Promise<void> {
+    this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } });
+
+    const language = await this.languagesService.findUserLanguageById({ languageId, user });
+
+    await this.languagesService.updateOne({ language, update });
   }
 }

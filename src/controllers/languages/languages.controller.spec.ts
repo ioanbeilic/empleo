@@ -28,6 +28,10 @@ describe('LanguagesController', () => {
     .withoutLanguageId()
     .build();
 
+  const languageUpdate = languageCreateBuilder()
+    .withValidData()
+    .build();
+
   const createdLanguage = languageBuilder()
     .hydrate(language)
     .withKeycloakId(user.id)
@@ -80,6 +84,71 @@ describe('LanguagesController', () => {
         )
       ).once();
       verify(mockedLanguagesService.createLanguage(anything())).never();
+    });
+  });
+
+  describe('#updateOne()', () => {
+    it('should update a language when it exists and belong to the user', async () => {
+      const languageId = createdLanguage.languageId;
+
+      when(mockedPermissionsService.isOwnerOrNotFound(anything())).thenReturn(true);
+      when(mockedLanguagesService.updateOne(anything())).thenResolve();
+      when(mockedLanguagesService.findUserLanguageById(anything())).thenResolve(createdLanguage);
+
+      const responseLanguage = await languagesController.updateLanguage(user, languageUpdate, {
+        languageId,
+        keycloakId: user.id
+      });
+
+      expect(responseLanguage).to.be.undefined;
+      verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId: user.id } }))).once();
+      verify(mockedLanguagesService.findUserLanguageById(deepEqual({ languageId, user }))).calledBefore(
+        mockedLanguagesService.updateOne(
+          deepEqual({
+            language: createdLanguage,
+            update: languageUpdate
+          })
+        )
+      );
+    });
+
+    it('should throw an language not found exception when the language does not exist', async () => {
+      const languageId = createdLanguage.languageId;
+      const keycloakId = user.id;
+
+      when(mockedPermissionsService.isOwnerOrNotFound(anything())).thenReturn(true);
+      when(mockedLanguagesService.updateOne(anything())).thenResolve();
+      when(mockedLanguagesService.findUserLanguageById(anything())).thenReject(new LanguageNotFoundException());
+
+      await expect(
+        languagesController.updateLanguage(user, languageUpdate, {
+          languageId,
+          keycloakId
+        })
+      ).to.eventually.be.rejectedWith(LanguageNotFoundException);
+
+      verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId } }))).once();
+      verify(mockedLanguagesService.findUserLanguageById(deepEqual({ languageId, user }))).once();
+      verify(mockedLanguagesService.updateOne(anything())).never();
+    });
+
+    it('should throw an language not found error when trying to access an cv from another user', async () => {
+      const languageId = createdLanguage.languageId;
+      const keycloakId = user.id;
+
+      when(mockedPermissionsService.isOwnerOrNotFound(anything())).thenThrow(new LanguageNotFoundException());
+      when(mockedLanguagesService.updateOne(anything())).thenResolve();
+      when(mockedLanguagesService.findUserLanguageById(anything())).thenResolve(createdLanguage);
+
+      await expect(
+        languagesController.updateLanguage(user, languageUpdate, {
+          languageId,
+          keycloakId
+        })
+      ).to.eventually.be.rejectedWith(LanguageNotFoundException);
+      verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId } }))).once();
+      verify(mockedLanguagesService.findUserLanguageById(deepEqual({ languageId, user }))).never();
+      verify(mockedLanguagesService.updateOne(anything())).never();
     });
   });
 });
