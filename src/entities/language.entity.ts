@@ -27,7 +27,7 @@ export class Language extends LanguageCreate {
   @Column({ type: 'varchar', name: 'language', length: 20 })
   language!: string;
 
-  @Column({ type: 'number', name: 'level' })
+  @Column({ type: 'int', name: 'level' })
   level!: number;
 
   @IsDate()

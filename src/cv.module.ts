@@ -9,6 +9,7 @@ import { POSTGRES_URI } from './cv.keys';
 import { CvOpenapi } from './cv.openapi';
 import { Education } from './entities/education.entity';
 import { Experience } from './entities/experience.entity';
+import { Language } from './entities/language.entity';
 import { PermissionsService } from './services/common/permissions.service';
 import { EducationsService } from './services/educations/educations.service';
 import { ExperiencesService } from './services/experiences/experiences.service';
@@ -19,14 +20,14 @@ import { ExperiencesService } from './services/experiences/experiences.service';
     AuthenticationModule,
     CvConfigurationModule,
     PaginationModule,
-    TypeOrmModule.forFeature([Education, Experience]),
+    TypeOrmModule.forFeature([Education, Experience, Language]),
     TypeOrmModule.forRootAsync({
       imports: [CvConfigurationModule],
       useFactory(postgresUri: string) {
         return {
           url: postgresUri,
           type: 'postgres',
-          entities: [Education, Experience],
+          entities: [Education, Experience, Language],
           synchronize: true
         };
       },
