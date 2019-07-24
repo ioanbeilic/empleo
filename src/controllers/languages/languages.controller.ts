@@ -21,10 +21,10 @@ export class LanguagesController {
   @Post(':keycloakId/languages')
   @Authorize.Candidates()
   @ApiKeycloakIdParam()
-  @ApiOperation({ title: 'Create a Language stage, recommended date format: new Date().toIsoString() and return  2019-07-10 ' })
+  @ApiOperation({ title: 'Create a Language stage, level is a number from 1 to 5 ' })
   @ApiOkResponse({ type: Language, description: 'Language stage successfully added' })
   @ApiBadRequestResponse({ description: 'The body did not pass the validation' })
-  async create(
+  async createLanguage(
     @AuthenticatedUser() user: User,
     @Param() { keycloakId }: KeycloakIdParams,
     @Body() language: LanguageCreate
