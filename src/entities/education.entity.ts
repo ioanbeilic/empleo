@@ -2,10 +2,11 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { IsDate, IsUUID } from 'class-validator';
 import { CreatedAtColumn, EntityColumnTransformer, UpdatedAtColumn } from 'empleo-nestjs-common';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
 import { Documentation } from '../domain/documentation';
 import { EducationCreate } from '../dto/education-create.dto';
+import { Cv } from './cv.entity';
 
 @Entity()
 export class Education extends EducationCreate {
@@ -54,6 +55,10 @@ export class Education extends EducationCreate {
   @UpdatedAtColumn()
   @Exclude()
   updatedAt!: Date;
+
+  @ManyToOne(() => Cv, cv => cv.experiences, { cascade: true })
+  @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
+  cv?: Cv;
 }
 
 export type EducationId = typeof Education.prototype.educationId;

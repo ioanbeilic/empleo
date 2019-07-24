@@ -91,8 +91,13 @@ describe('EducationController (DELETE) (e2e)', () => {
       let education: Education;
 
       beforeEach(async () => {
-        education = await createEducation();
-        await getRepository(Education).update({ educationId: education.educationId }, { keycloakId: faker.random.uuid() });
+        education = educationBuilder()
+          .withValidData()
+          .build();
+
+        education.keycloakId = faker.random.uuid();
+
+        await getRepository(Education).create(education);
       });
 
       afterEach(async () => {

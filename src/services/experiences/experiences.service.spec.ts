@@ -7,11 +7,13 @@ import { experienceBuilder } from '../../builders/experiences/experience.builder
 import { ExperienceCreate } from '../../dto/experience-create.dto';
 import { Experience } from '../../entities/experience.entity';
 import { ExperienceNotFoundException } from '../../errors/experience-not-found.exception';
+import { CvService } from '../cv/cv.service';
 import { ExperiencesService } from './experiences.service';
 
 describe('ExperiencesService', () => {
   let mockedExperienceRepository: Repository<Experience>;
   let experiencesService: ExperiencesService;
+  let mockedCvService: CvService;
 
   const user = userBuilder()
     .withValidData()
@@ -37,8 +39,8 @@ describe('ExperiencesService', () => {
 
   beforeEach(() => {
     mockedExperienceRepository = (mock(Repository) as unknown) as Repository<Experience>;
-
-    experiencesService = new ExperiencesService(instance(mockedExperienceRepository));
+    mockedCvService = mock(CvService);
+    experiencesService = new ExperiencesService(instance(mockedExperienceRepository), instance(mockedCvService));
   });
 
   describe('#create()', () => {
