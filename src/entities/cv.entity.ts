@@ -5,6 +5,7 @@ import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
 import { Education } from './education.entity';
 import { Experience } from './experience.entity';
+import { Language } from './language.entity';
 
 @Entity()
 export class Cv {
@@ -24,6 +25,9 @@ export class Cv {
 
   @OneToMany(() => Experience, experience => experience.cv)
   experiences!: Experience[];
+
+  @OneToMany(() => Language, language => language.cv)
+  languages!: Language[];
 }
 
 export type CvId = typeof Cv.prototype.cvId;
