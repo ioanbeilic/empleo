@@ -35,7 +35,7 @@ export class Language extends LanguageCreate {
   @Exclude()
   updatedAt!: Date;
 
-  @ManyToOne(() => Cv, cv => cv.languages, { cascade: true })
+  @ManyToOne(() => Cv, cv => cv.languages, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
   cv?: Cv;
 }

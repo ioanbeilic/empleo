@@ -10,6 +10,6 @@ export class LanguageCreate {
   @IsInt()
   @Min(1)
   @Max(5)
-  @ApiModelProperty({ type: 'number' })
+  @ApiModelProperty({ type: 'number', example: 1 })
   level!: number;
 }

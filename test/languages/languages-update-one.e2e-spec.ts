@@ -141,7 +141,7 @@ describe('LanguageController (PUT) (e2e)', () => {
   });
 
   async function createLanguage() {
-    const language = languageBuilder()
+    const language = languageCreateBuilder()
       .withValidData()
       .build();
 
