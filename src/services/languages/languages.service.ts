@@ -40,6 +40,14 @@ export class LanguagesService {
   async updateOne({ language, update }: UpdateLanguageOptions): Promise<void> {
     await this.languageRepository.update({ languageId: language.languageId }, update);
   }
+
+  async deleteOne({ user, languageId }: DeleteLanguageOptions) {
+    const { affected } = await this.languageRepository.delete({ languageId, keycloakId: user.id });
+
+    if (!affected) {
+      throw new LanguageNotFoundException();
+    }
+  }
 }
 
 export interface CreateLanguageOptions {
@@ -50,4 +58,9 @@ export interface CreateLanguageOptions {
 export interface UpdateLanguageOptions {
   language: Language;
   update: LanguageCreate;
+}
+
+export interface DeleteLanguageOptions {
+  user: User;
+  languageId: string;
 }
