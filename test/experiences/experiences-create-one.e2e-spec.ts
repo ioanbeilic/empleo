@@ -3,8 +3,6 @@ import { NestApplication } from '@nestjs/core';
 import { plainToClass } from 'class-transformer';
 import { Token } from 'empleo-nestjs-authentication';
 import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
-import faker = require('faker');
-import { getRepository } from 'typeorm';
 import { documentationBuilder } from '../../src/builders/common/documentation.builder';
 import { experienceCreateBuilder } from '../../src/builders/experiences/experience-create.builder';
 import { experienceBuilder } from '../../src/builders/experiences/experience.builder';
@@ -152,48 +150,6 @@ describe('ExperiencesController (POST) (e2e)', () => {
         .experiences({ keycloakId: adminKeycloakId })
         .create({ payload: experience })
         .expectJson(HttpStatus.FORBIDDEN);
-    });
-  });
-
-  it('should return 404 - Not Found when the experience does not exist', async () => {
-    const experienceUpdate = experienceCreateBuilder()
-      .withoutDocumentation()
-      .withValidData()
-      .build();
-
-    await api(app, { token: candidateToken })
-      .experiences({ keycloakId: candidateKeycloakId })
-      .overrideOne({ identifier: faker.random.uuid(), payload: experienceUpdate })
-      .expectJson(HttpStatus.NOT_FOUND);
-  });
-
-  describe('when the experience does not belong to the user', () => {
-    let experience: Experience;
-
-    beforeEach(async () => {
-      experience = experienceBuilder()
-        .withValidData()
-        .build();
-
-      experience.keycloakId = faker.random.uuid();
-
-      await getRepository(Experience).create(experience);
-    });
-
-    afterEach(async () => {
-      await getRepository(Experience).remove(experience);
-    });
-
-    it('should return 404 - Not Found when the experience does not belong to the user', async () => {
-      const experienceUpdate = experienceCreateBuilder()
-        .withoutDocumentation()
-        .withValidData()
-        .build();
-
-      await api(app, { token: candidateToken })
-        .experiences({ keycloakId: candidateKeycloakId })
-        .overrideOne({ identifier: experience.experienceId, payload: experienceUpdate })
-        .expectJson(HttpStatus.NOT_FOUND);
     });
   });
 

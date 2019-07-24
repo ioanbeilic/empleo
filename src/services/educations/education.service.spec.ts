@@ -148,7 +148,7 @@ describe('EducationService', () => {
         raw: []
       };
 
-      when(mockedEducationRepository.delete(anything())).thenReturn(Promise.resolve(deleteResult));
+      when(mockedEducationRepository.delete(anything())).thenResolve(deleteResult);
 
       const educationId = createdEducation.educationId;
 
@@ -166,7 +166,7 @@ describe('EducationService', () => {
         raw: []
       };
 
-      when(mockedEducationRepository.delete(anything())).thenReturn(Promise.resolve(deleteResult));
+      when(mockedEducationRepository.delete(anything())).thenResolve(deleteResult);
 
       await expect(educationService.deleteOne({ educationId, user })).eventually.be.rejectedWith(EducationNotFoundException);
 
@@ -181,7 +181,7 @@ describe('EducationService', () => {
       };
       user.id = faker.random.uuid();
 
-      when(mockedEducationRepository.delete(anything())).thenReturn(Promise.resolve(deleteResult));
+      when(mockedEducationRepository.delete(anything())).thenResolve(deleteResult);
 
       await expect(educationService.deleteOne({ educationId, user })).to.eventually.be.rejectedWith(EducationNotFoundException);
 
