@@ -1,23 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
-import uuid from 'uuid/v4';
+import { isUniqueKeyViolationError } from 'empleo-nestjs-common';
+import { Repository } from 'typeorm';
+import uuid from 'uuid/v1';
 import { Cv } from '../../entities/cv.entity';
 import { CvNotFoundException } from '../../errors/cv-not-found.exception';
-
-function isUniqueKeyViolationError(err: Error & { code?: string }) {
-  return err instanceof QueryFailedError && err.code === '23505';
-}
 
 @Injectable()
 export class CvService {
   constructor(@InjectRepository(Cv) private readonly cvRepository: Repository<Cv>) {}
 
-  async createCv({ keycloakId }: CreateCvOptions): Promise<void | never> {
-    const cv = await this.cvRepository.create({ cvId: uuid(), keycloakId });
-
+  async ensureExists({ keycloakId }: CreateCvOptions): Promise<void> {
     try {
-      await this.cvRepository.save(cv);
+      await this.cvRepository.save({ cvId: uuid(), keycloakId });
     } catch (err) {
       if (!isUniqueKeyViolationError(err)) {
         throw err;

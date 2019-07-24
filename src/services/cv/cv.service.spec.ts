@@ -20,11 +20,12 @@ describe('CvService', () => {
     cvService = new CvService(cvRepository);
   });
 
-  describe('#create()', () => {
+  describe('#ensureExists()', () => {
     it('should correctly insert keycloakId to cv', async () => {
       when(mockedCvRepository.create(anything())).thenResolve();
 
-      await cvService.createCv({ keycloakId: user.id });
+      await cvService.ensureExists({ keycloakId: user.id });
+
       verify(mockedCvRepository.save(anything())).once();
     });
   });

@@ -52,7 +52,7 @@ export class Experience extends ExperienceCreate {
   @Exclude()
   updatedAt!: Date;
 
-  @ManyToOne(() => Cv, cv => cv.educations, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Cv, cv => cv.educations, { cascade: true })
   @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
   cv?: Cv;
 }

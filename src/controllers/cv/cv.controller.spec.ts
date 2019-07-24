@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
-import faker = require('faker');
+import faker from 'faker';
 import { anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { CvNotFoundException } from '../../errors/cv-not-found.exception';
 import { PermissionsService } from '../../services/common/permissions.service';
@@ -35,7 +35,7 @@ describe('CvController', () => {
     });
   });
 
-  it("should throw a cv not found exception if user don't have permission and is not admin", async () => {
+  it('should throw a cv not found exception when trying to delete a CV from another user', async () => {
     when(mockedPermissionsService.isOwnerOrNotFound(anything())).thenThrow(new CvNotFoundException());
     when(mockedCvService.deleteOne(anything())).thenReject();
 

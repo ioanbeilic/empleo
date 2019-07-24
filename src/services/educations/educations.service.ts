@@ -22,7 +22,7 @@ export class EducationsService {
       keycloakId: user.id
     });
 
-    await this.cvService.createCv({ keycloakId: user.id });
+    await this.cvService.ensureExists({ keycloakId: user.id });
 
     return this.educationRepository.save(education);
   }

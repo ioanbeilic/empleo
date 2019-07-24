@@ -16,13 +16,14 @@ export class CvController {
   @Delete(':keycloakId/cv')
   @Authorize.Candidates()
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ title: 'Remove a cv by keyclokId and all relational table' })
+  @ApiOperation({ title: 'Completely removes a CV' })
   @ApiKeycloakIdParam()
   @ApiNoContentResponse({ description: 'The cv has been successfully deleted' })
-  @ApiBadRequestResponse({ description: 'The keyclokId is not an UUID' })
-  @ApiNotFoundResponse({ description: 'The cv does not exist or does not belong to the user' })
+  @ApiBadRequestResponse({ description: 'The keycloak id is not an UUID' })
+  @ApiNotFoundResponse({ description: 'The CV does not exist or does not belong to the user' })
   async deleteOneCv(@AuthenticatedUser() user: User, @Param() { keycloakId }: KeycloakIdParams): Promise<void> {
     this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } });
+
     await this.cvService.deleteOne({ keycloakId: user.id });
   }
 }
