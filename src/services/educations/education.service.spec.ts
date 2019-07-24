@@ -7,13 +7,15 @@ import { educationCreateBuilder } from '../../builders/educations/education-crea
 import { educationBuilder } from '../../builders/educations/education.builder';
 import { Education } from '../../entities/education.entity';
 import { EducationNotFoundException } from '../../errors/education-not-found.exception';
+import { CvService } from '../cv/cv.service';
 import { EducationsService } from './educations.service';
 
 describe('EducationService', () => {
   let mockedEducationRepository: Repository<Education>;
   let educationService: EducationsService;
-
+  // let cvService: CvService;
   let educationRepository: Repository<Education>;
+  let mockedCvService: CvService;
 
   const user = userBuilder()
     .withValidData()
@@ -43,7 +45,8 @@ describe('EducationService', () => {
   beforeEach(() => {
     mockedEducationRepository = (mock(Repository) as unknown) as Repository<Education>;
     educationRepository = instance(mockedEducationRepository);
-    educationService = new EducationsService(educationRepository);
+    mockedCvService = mock(CvService);
+    educationService = new EducationsService(educationRepository, instance(mockedCvService));
   });
 
   describe('#create()', () => {
@@ -145,7 +148,7 @@ describe('EducationService', () => {
         raw: []
       };
 
-      when(mockedEducationRepository.delete(anything())).thenReturn(Promise.resolve(deleteResult));
+      when(mockedEducationRepository.delete(anything())).thenResolve(deleteResult);
 
       const educationId = createdEducation.educationId;
 
@@ -163,7 +166,7 @@ describe('EducationService', () => {
         raw: []
       };
 
-      when(mockedEducationRepository.delete(anything())).thenReturn(Promise.resolve(deleteResult));
+      when(mockedEducationRepository.delete(anything())).thenResolve(deleteResult);
 
       await expect(educationService.deleteOne({ educationId, user })).eventually.be.rejectedWith(EducationNotFoundException);
 
@@ -178,7 +181,7 @@ describe('EducationService', () => {
       };
       user.id = faker.random.uuid();
 
-      when(mockedEducationRepository.delete(anything())).thenReturn(Promise.resolve(deleteResult));
+      when(mockedEducationRepository.delete(anything())).thenResolve(deleteResult);
 
       await expect(educationService.deleteOne({ educationId, user })).to.eventually.be.rejectedWith(EducationNotFoundException);
 

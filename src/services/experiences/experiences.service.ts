@@ -6,10 +6,14 @@ import uuid from 'uuid/v1';
 import { ExperienceCreate } from '../../dto/experience-create.dto';
 import { Experience, ExperienceId } from '../../entities/experience.entity';
 import { ExperienceNotFoundException } from '../../errors/experience-not-found.exception';
+import { CvService } from '../cv/cv.service';
 
 @Injectable()
 export class ExperiencesService {
-  constructor(@InjectRepository(Experience) private readonly experienceRepository: Repository<Experience>) {}
+  constructor(
+    @InjectRepository(Experience) private readonly experienceRepository: Repository<Experience>,
+    private readonly cvService: CvService
+  ) {}
 
   async createExperience({ user, experience: experienceCreate }: CreateExperienceOptions): Promise<Experience> {
     const experience = this.experienceRepository.create({
@@ -17,6 +21,8 @@ export class ExperiencesService {
       experienceId: uuid(),
       keycloakId: user.id
     });
+
+    await this.cvService.ensureExists({ keycloakId: user.id });
 
     return this.experienceRepository.save(experience);
   }
@@ -34,6 +40,14 @@ export class ExperiencesService {
   async updateOne({ experience, update }: UpdateExperienceOptions): Promise<void> {
     await this.experienceRepository.update({ experienceId: experience.experienceId }, update);
   }
+
+  async deleteOne({ user, experienceId }: DeleteExperienceOptions) {
+    const { affected } = await this.experienceRepository.delete({ experienceId, keycloakId: user.id });
+
+    if (!affected) {
+      throw new ExperienceNotFoundException();
+    }
+  }
 }
 
 export interface CreateExperienceOptions {
@@ -44,4 +58,9 @@ export interface CreateExperienceOptions {
 export interface UpdateExperienceOptions {
   experience: Experience;
   update: ExperienceCreate;
+}
+
+export interface DeleteExperienceOptions {
+  user: User;
+  experienceId: string;
 }

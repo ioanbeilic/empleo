@@ -6,10 +6,14 @@ import uuid from 'uuid/v4';
 import { EducationCreate } from '../../dto/education-create.dto';
 import { Education, EducationId } from '../../entities/education.entity';
 import { EducationNotFoundException } from '../../errors/education-not-found.exception';
+import { CvService } from '../cv/cv.service';
 
 @Injectable()
 export class EducationsService {
-  constructor(@InjectRepository(Education) private readonly educationRepository: Repository<Education>) {}
+  constructor(
+    @InjectRepository(Education) private readonly educationRepository: Repository<Education>,
+    private readonly cvService: CvService
+  ) {}
 
   async createEducation({ user, education: educationCreate }: CreateEducationOptions): Promise<Education> {
     const education = await this.educationRepository.create({
@@ -17,6 +21,8 @@ export class EducationsService {
       educationId: uuid(),
       keycloakId: user.id
     });
+
+    await this.cvService.ensureExists({ keycloakId: user.id });
 
     return this.educationRepository.save(education);
   }

@@ -5,6 +5,7 @@ import { CreatedAtColumn, UpdatedAtColumn } from 'empleo-nestjs-common';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
 import { LanguageCreate } from '../dto/language-create.dto';
+import { Cv } from './cv.entity';
 
 @Entity()
 export class Language extends LanguageCreate {
