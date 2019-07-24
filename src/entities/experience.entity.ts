@@ -18,8 +18,6 @@ export class Experience extends ExperienceCreate {
   @IsUUID()
   @Column({ type: 'uuid', name: 'keycloak_id' })
   @ApiModelProperty({ type: 'string', format: 'uuid', example: uuid() })
-  @ManyToOne(type => Cv, cv => cv, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
   keycloakId!: string;
 
   @Column({ type: 'date', name: 'date_start' })
@@ -53,6 +51,10 @@ export class Experience extends ExperienceCreate {
   @UpdatedAtColumn()
   @Exclude()
   updatedAt!: Date;
+
+  @ManyToOne(() => Cv, cv => cv.educations, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
+  cv?: Cv;
 }
 
 export type ExperienceId = typeof Experience.prototype.experienceId;

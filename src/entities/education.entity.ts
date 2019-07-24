@@ -18,8 +18,6 @@ export class Education extends EducationCreate {
   @IsUUID()
   @Exclude()
   @ApiModelProperty({ type: 'string', format: 'uuid', example: uuid() })
-  @ManyToOne(type => Cv, cv => cv, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
   @Column({ type: 'uuid', name: 'keycloak_id' })
   keycloakId!: string;
 
@@ -57,6 +55,10 @@ export class Education extends EducationCreate {
   @UpdatedAtColumn()
   @Exclude()
   updatedAt!: Date;
+
+  @ManyToOne(() => Cv, cv => cv.experiences, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
+  cv?: Cv;
 }
 
 export type EducationId = typeof Education.prototype.educationId;
