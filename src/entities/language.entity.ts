@@ -15,13 +15,7 @@ export class Language extends LanguageCreate {
 
   @IsUUID()
   @Column({ type: 'uuid', name: 'keycloak_id' })
-
-  // to implement on update
-  /*
   @ApiModelProperty({ type: 'string', format: 'uuid', example: uuid() })
-  @ManyToOne(type => Cv, cv => cv, { onDelete: 'CASCADE' })
-  */
-  @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
   keycloakId!: string;
 
   @Column({ type: 'varchar', name: 'language', length: 20 })
@@ -39,4 +33,8 @@ export class Language extends LanguageCreate {
   @UpdatedAtColumn()
   @Exclude()
   updatedAt!: Date;
+
+  @ManyToOne(() => Cv, cv => cv.educations, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
+  cv?: Cv;
 }
