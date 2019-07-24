@@ -3,7 +3,7 @@ import { NestApplication } from '@nestjs/core';
 import { plainToClass } from 'class-transformer';
 import { Token } from 'empleo-nestjs-authentication';
 import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
-import { documentationBuilder } from '../../src/builders/common/documentation.builder';
+import { additionalDocumentationBuilder } from '../../src/builders/common/additional-documentation.builder';
 import { experienceCreateBuilder } from '../../src/builders/experiences/experience-create.builder';
 import { experienceBuilder } from '../../src/builders/experiences/experience.builder';
 import { CvModule } from '../../src/cv.module';
@@ -47,14 +47,14 @@ describe('ExperiencesController (POST) (e2e)', () => {
     });
 
     it('should return 201 - Created without documentation', async () => {
-      const experiencesWithoutDocumentation = experienceCreateBuilder()
-        .withoutDocumentation()
+      const experiencesWithoutAdditionalDocumentation = experienceCreateBuilder()
+        .withoutAdditionalDocumentation()
         .withValidData()
         .build();
 
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })
-        .create({ payload: experiencesWithoutDocumentation })
+        .create({ payload: experiencesWithoutAdditionalDocumentation })
         .expectJson(HttpStatus.CREATED);
     });
 
@@ -117,7 +117,7 @@ describe('ExperiencesController (POST) (e2e)', () => {
         .withValidData()
         .build();
 
-      const documentation = documentationBuilder()
+      const documentation = additionalDocumentationBuilder()
         .withValidData()
         .withName('')
         .build();

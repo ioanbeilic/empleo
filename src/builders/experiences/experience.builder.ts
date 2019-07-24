@@ -1,8 +1,8 @@
 import { plainToClass } from 'class-transformer';
 import { Builder } from 'empleo-nestjs-testing';
-import { Documentation } from '../../domain/documentation';
+import { AdditionalDocumentation } from '../../domain/additional-documentation';
 import { Experience } from '../../entities/experience.entity';
-import { documentationBuilder } from '../common/documentation.builder';
+import { additionalDocumentationBuilder } from '../common/additional-documentation.builder';
 
 export class ExperienceBuilder extends Builder<Experience> {
   withExperienceId(experienceId = this.faker.random.uuid()): this {
@@ -37,7 +37,7 @@ export class ExperienceBuilder extends Builder<Experience> {
     return this.with('title', title);
   }
 
-  withDocumentation(...documentation: Documentation[]): this {
+  withAdditionalDocumentation(...documentation: AdditionalDocumentation[]): this {
     return this.with('documentation', documentation);
   }
 
@@ -50,7 +50,7 @@ export class ExperienceBuilder extends Builder<Experience> {
   }
 
   withValidData(): this {
-    const documentation = documentationBuilder()
+    const documentation = additionalDocumentationBuilder()
       .withValidData()
       .build();
 
@@ -63,7 +63,7 @@ export class ExperienceBuilder extends Builder<Experience> {
       .withPosition()
       .withDescription()
       .withTitle()
-      .withDocumentation(documentation);
+      .withAdditionalDocumentation(documentation);
   }
 
   build(): Experience {

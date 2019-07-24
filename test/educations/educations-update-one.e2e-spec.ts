@@ -5,7 +5,7 @@ import { Token } from 'empleo-nestjs-authentication';
 import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
 import faker from 'faker';
 import { getRepository } from 'typeorm';
-import { documentationBuilder } from '../../src/builders/common/documentation.builder';
+import { additionalDocumentationBuilder } from '../../src/builders/common/additional-documentation.builder';
 import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { educationBuilder } from '../../src/builders/educations/education.builder';
 import { CvModule } from '../../src/cv.module';
@@ -55,14 +55,14 @@ describe('EducationController (PUT) (e2e)', () => {
     it('should return 204 - No Content without documentation', async () => {
       const education = await createEducation();
 
-      const educationWithoutDocumentation = educationCreateBuilder()
-        .withoutDocumentation()
+      const educationWithoutAdditionalDocumentation = educationCreateBuilder()
+        .withoutAdditionalDocumentation()
         .withValidData()
         .build();
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
-        .overrideOne({ identifier: education.educationId, payload: educationWithoutDocumentation })
+        .overrideOne({ identifier: education.educationId, payload: educationWithoutAdditionalDocumentation })
         .expect(HttpStatus.NO_CONTENT);
     });
 
@@ -70,7 +70,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutDocumentation()
+        .withoutAdditionalDocumentation()
         .withValidData()
         .build();
 
@@ -84,7 +84,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutDocumentation()
+        .withoutAdditionalDocumentation()
         .withValidData()
         .build();
 
@@ -100,7 +100,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutDocumentation()
+        .withoutAdditionalDocumentation()
         .withValidData()
         .build();
 
@@ -116,7 +116,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutDocumentation()
+        .withoutAdditionalDocumentation()
         .withValidData()
         .build();
 
@@ -132,7 +132,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutDocumentation()
+        .withoutAdditionalDocumentation()
         .withValidData()
         .build();
 
@@ -148,7 +148,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutDocumentation()
+        .withoutAdditionalDocumentation()
         .withValidData()
         .build();
 
@@ -178,11 +178,11 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutDocumentation()
+        .withoutAdditionalDocumentation()
         .withValidData()
         .build();
 
-      const documentation = documentationBuilder()
+      const documentation = additionalDocumentationBuilder()
         .withValidData()
         .withName('')
         .build();
@@ -199,7 +199,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutDocumentation()
+        .withoutAdditionalDocumentation()
         .withValidData()
         .build();
 
@@ -213,7 +213,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutDocumentation()
+        .withoutAdditionalDocumentation()
         .withValidData()
         .build();
 
@@ -225,7 +225,7 @@ describe('EducationController (PUT) (e2e)', () => {
 
     it('should return 404 - Not Found when the education does not exist', async () => {
       const educationUpdate = educationCreateBuilder()
-        .withoutDocumentation()
+        .withoutAdditionalDocumentation()
         .withValidData()
         .build();
 
@@ -254,7 +254,7 @@ describe('EducationController (PUT) (e2e)', () => {
 
       it('should return 404 - Not Found when the education does not belong to the user', async () => {
         const educationUpdate = educationCreateBuilder()
-          .withoutDocumentation()
+          .withoutAdditionalDocumentation()
           .withValidData()
           .build();
 

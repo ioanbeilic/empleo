@@ -1,8 +1,8 @@
 import { plainToClass } from 'class-transformer';
 import { Builder } from 'empleo-nestjs-testing';
-import { Documentation } from '../../domain/documentation';
+import { AdditionalDocumentation } from '../../domain/additional-documentation';
 import { ExperienceCreate } from '../../dto/experience-create.dto';
-import { documentationBuilder } from '../common/documentation.builder';
+import { additionalDocumentationBuilder } from '../common/additional-documentation.builder';
 
 export class ExperienceCreateBuilder extends Builder<ExperienceCreate> {
   withStartDate(startDate = this.faker.date.past()): this {
@@ -29,11 +29,11 @@ export class ExperienceCreateBuilder extends Builder<ExperienceCreate> {
     return this.with('title', title);
   }
 
-  withDocumentation(...documentation: Documentation[]): this {
+  withAdditionalDocumentation(...documentation: AdditionalDocumentation[]): this {
     return this.with('documentation', documentation);
   }
 
-  withoutDocumentation(): this {
+  withoutAdditionalDocumentation(): this {
     return this.without('documentation');
   }
 
@@ -42,7 +42,7 @@ export class ExperienceCreateBuilder extends Builder<ExperienceCreate> {
   }
 
   withValidData(): this {
-    const documentation = documentationBuilder()
+    const documentation = additionalDocumentationBuilder()
       .withValidData()
       .build();
 
@@ -53,7 +53,7 @@ export class ExperienceCreateBuilder extends Builder<ExperienceCreate> {
       .withPosition()
       .withDescription()
       .withTitle()
-      .withDocumentation(documentation);
+      .withAdditionalDocumentation(documentation);
   }
 
   build(): ExperienceCreate {
