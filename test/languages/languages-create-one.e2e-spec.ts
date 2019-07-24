@@ -3,6 +3,7 @@ import { NestApplication } from '@nestjs/core';
 import { plainToClass } from 'class-transformer';
 import { Token } from 'empleo-nestjs-authentication';
 import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
+import { languageCreateBuilder } from '../../src/builders/languages/language-create.builder';
 import { languageBuilder } from '../../src/builders/languages/language.builder';
 import { CvModule } from '../../src/cv.module';
 import { Language } from '../../src/entities/language.entity';
@@ -90,7 +91,7 @@ describe('LanguagesController (POST) (e2e)', () => {
   });
 
   async function createLanguage() {
-    const language = languageBuilder()
+    const language = languageCreateBuilder()
       .withValidData()
       .build();
 

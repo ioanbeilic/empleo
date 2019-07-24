@@ -7,7 +7,7 @@ export class LanguageCreateBuilder extends Builder<LanguageCreate> {
     return this.with('language', language);
   }
 
-  withLevel(level = this.faker.random.number(5)): this {
+  withLevel(level = this.faker.random.number({ min: 1, max: 5 })): this {
     return this.with('level', level);
   }
 
