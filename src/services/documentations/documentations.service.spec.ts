@@ -1,10 +1,12 @@
+import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
-import { anything, instance, mock, objectContaining, verify, when } from 'ts-mockito';
-import { Repository } from 'typeorm';
+import { anything, deepEqual, instance, mock, objectContaining, verify, when } from 'ts-mockito';
+import { DeleteResult, Repository } from 'typeorm';
 import { documentationCreateBuilder } from '../../builders/documentations/documentations-create.builder';
 import { documentationBuilder } from '../../builders/documentations/documentations.builder';
 import { DocumentationCreate } from '../../dto/documentation-create.dto';
 import { Documentation } from '../../entities/documentation.entity';
+import { DocumentationNotFoundException } from '../../errors/documentation-not-found.exception';
 import { CvService } from '../cv/cv.service';
 import { DocumentationsService } from './documentations.service';
 
@@ -47,6 +49,48 @@ describe('DocumentationsService', () => {
 
       verify(mockedDocumentationRepository.create(objectContaining({ ...documentationCreate, keycloakId: user.id }))).once();
       verify(mockedDocumentationRepository.save(documentation)).once();
+    });
+  });
+
+  describe('#deleteOne()', () => {
+    it('should correctly delete a documentation stage', async () => {
+      const deleteResult: DeleteResult = { affected: 1, raw: [] };
+
+      when(mockedDocumentationRepository.delete(anything())).thenResolve(deleteResult);
+
+      const documentationId = createdDocumentation.documentationId;
+      const result = await documentationsService.deleteOne({ user, documentationId });
+
+      verify(mockedDocumentationRepository.delete(deepEqual({ documentationId, keycloakId: user.id }))).once();
+
+      expect(result).to.be.undefined;
+    });
+
+    it('should throw an documentation not found exception when the documentation does not exists', async () => {
+      const documentationId = createdDocumentation.documentationId;
+      const deleteResult: DeleteResult = { affected: 0, raw: [] };
+
+      when(mockedDocumentationRepository.delete(anything())).thenResolve(deleteResult);
+
+      await expect(documentationsService.deleteOne({ documentationId, user })).eventually.be.rejectedWith(DocumentationNotFoundException);
+
+      verify(mockedDocumentationRepository.delete(deepEqual({ documentationId, keycloakId: user.id }))).once();
+    });
+
+    it('should throw an documentation not found exception when the documentation exists but it does not belong to the user', async () => {
+      const documentationId = createdDocumentation.documentationId;
+      const deleteResult: DeleteResult = { affected: 0, raw: [] };
+      const anotherUser = userBuilder()
+        .withValidData()
+        .build();
+
+      when(mockedDocumentationRepository.delete(anything())).thenResolve(deleteResult);
+
+      await expect(documentationsService.deleteOne({ documentationId, user: anotherUser })).to.eventually.be.rejectedWith(
+        DocumentationNotFoundException
+      );
+
+      verify(mockedDocumentationRepository.delete(deepEqual({ documentationId, keycloakId: anotherUser.id }))).once();
     });
   });
 });

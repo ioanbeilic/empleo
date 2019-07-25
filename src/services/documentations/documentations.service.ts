@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import uuid from 'uuid/v1';
 import { DocumentationCreate } from '../../dto/documentation-create.dto';
 import { Documentation } from '../../entities/documentation.entity';
+import { DocumentationNotFoundException } from '../../errors/documentation-not-found.exception';
 import { CvService } from '../cv/cv.service';
 
 @Injectable()
@@ -25,9 +26,22 @@ export class DocumentationsService {
 
     return this.documentationRepository.save(documentation);
   }
+
+  async deleteOne({ user, documentationId }: DeleteDocumentationOptions) {
+    const { affected } = await this.documentationRepository.delete({ documentationId, keycloakId: user.id });
+
+    if (!affected) {
+      throw new DocumentationNotFoundException();
+    }
+  }
 }
 
 export interface CreateDocumentationOptions {
   user: User;
   documentation: DocumentationCreate;
+}
+
+export interface DeleteDocumentationOptions {
+  user: User;
+  documentationId: string;
 }

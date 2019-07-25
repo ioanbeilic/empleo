@@ -11,7 +11,7 @@ import { DocumentationsController } from './documentations.controller';
 
 describe('DocumentationsController', () => {
   let mockedDocumentationsService: DocumentationsService;
-  let mockedCheckUserService: PermissionsService;
+  let mockedPermissionsService: PermissionsService;
   let documentationsController: DocumentationsController;
 
   const user = userBuilder()
@@ -35,13 +35,13 @@ describe('DocumentationsController', () => {
 
   beforeEach(() => {
     mockedDocumentationsService = mock(DocumentationsService);
-    mockedCheckUserService = mock(PermissionsService);
-    documentationsController = new DocumentationsController(instance(mockedDocumentationsService), instance(mockedCheckUserService));
+    mockedPermissionsService = mock(PermissionsService);
+    documentationsController = new DocumentationsController(instance(mockedDocumentationsService), instance(mockedPermissionsService));
   });
 
   describe('#createDocumentation()', () => {
     it('should create a documentation', async () => {
-      when(mockedCheckUserService.isOwnerOrNotFound(anything(), anything())).thenReturn(true);
+      when(mockedPermissionsService.isOwnerOrNotFound(anything(), anything())).thenReturn(true);
       when(mockedDocumentationsService.createDocumentation(anything())).thenResolve(createdDocumentation);
 
       const keycloakId = user.id;
@@ -49,7 +49,7 @@ describe('DocumentationsController', () => {
 
       expect(result).to.be.equal(createdDocumentation);
       verify(
-        mockedCheckUserService.isOwnerOrNotFound(
+        mockedPermissionsService.isOwnerOrNotFound(
           deepEqual({
             user,
             resource: { keycloakId }
@@ -61,7 +61,7 @@ describe('DocumentationsController', () => {
     });
 
     it('should throw a not found error when the user is not the owner of the resource', async () => {
-      when(mockedCheckUserService.isOwnerOrNotFound(anything(), anything())).thenThrow(new DocumentationNotFoundException());
+      when(mockedPermissionsService.isOwnerOrNotFound(anything(), anything())).thenThrow(new DocumentationNotFoundException());
       when(mockedDocumentationsService.createDocumentation(anything())).thenResolve(createdDocumentation);
 
       const keycloakId = faker.random.uuid();
@@ -71,7 +71,7 @@ describe('DocumentationsController', () => {
       );
 
       verify(
-        mockedCheckUserService.isOwnerOrNotFound(
+        mockedPermissionsService.isOwnerOrNotFound(
           deepEqual({
             user,
             resource: { keycloakId }
@@ -80,6 +80,49 @@ describe('DocumentationsController', () => {
         )
       ).once();
       verify(mockedDocumentationsService.createDocumentation(anything())).never();
+    });
+  });
+
+  describe('#deleteOne()', () => {
+    const documentationId = createdDocumentation.documentationId;
+    const keycloakId = user.id;
+
+    it('should correctly delete a documentation', async () => {
+      when(mockedDocumentationsService.deleteOne(anything())).thenResolve();
+
+      const response = await documentationsController.deleteOneDocumentation(user, { documentationId, keycloakId });
+
+      verify(mockedDocumentationsService.deleteOne(deepEqual({ user, documentationId }))).once();
+      expect(response).to.be.undefined;
+    });
+
+    it('should throw an documentation not found exception when the documentation does not exist', async () => {
+      when(mockedPermissionsService.isOwnerOrNotFound(anything())).thenThrow(new DocumentationNotFoundException());
+      when(mockedDocumentationsService.deleteOne(anything())).thenReject();
+
+      await expect(
+        documentationsController.deleteOneDocumentation(user, { documentationId: faker.random.uuid(), keycloakId: user.id })
+      ).to.eventually.be.rejectedWith(DocumentationNotFoundException);
+
+      verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId } }))).once();
+      verify(mockedDocumentationsService.deleteOne(anything())).never();
+    });
+
+    it("should throw a documentation not found exception if user don't have permission", async () => {
+      when(mockedPermissionsService.isOwnerOrNotFound(anything())).thenThrow(new DocumentationNotFoundException());
+      when(mockedDocumentationsService.deleteOne(anything())).thenReject();
+
+      const anotherKeycloakId = faker.random.uuid();
+
+      await expect(
+        documentationsController.deleteOneDocumentation(user, {
+          documentationId: createdDocumentation.documentationId,
+          keycloakId: anotherKeycloakId
+        })
+      ).to.be.rejectedWith(DocumentationNotFoundException);
+
+      verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId: anotherKeycloakId } }))).once();
+      verify(mockedDocumentationsService.deleteOne({ user, documentationId: createdDocumentation.documentationId })).never();
     });
   });
 });
