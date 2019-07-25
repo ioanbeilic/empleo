@@ -52,10 +52,20 @@ describe('DocumentationsController (POST) (e2e)', () => {
         .expectJson(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return 201 - Created when the "url" is null', async () => {
+    it('should return 400 - Bad Request when the "url" is invalid', async () => {
       const documentation = await createDocumentation();
 
       documentation.url = '';
+
+      await api(app, { token: candidateToken })
+        .documentations({ keycloakId: candidateKeycloakId })
+        .create({ payload: documentation })
+        .expectJson(HttpStatus.BAD_REQUEST);
+    });
+    it('should return 201 - Created when the "url" is null', async () => {
+      const documentation = await createDocumentation();
+
+      documentation.url = null;
 
       await api(app, { token: candidateToken })
         .documentations({ keycloakId: candidateKeycloakId })

@@ -17,13 +17,13 @@ export class Documentation extends DocumentationCreate {
   @IsUUID()
   @Exclude()
   @ApiModelProperty({ type: 'string', format: 'uuid', example: uuid() })
-  @Column({ type: 'uuid', name: 'keycloak_id', unique: true })
+  @Column({ type: 'uuid', name: 'keycloak_id' })
   keycloakId!: string;
 
   @Column({ type: 'varchar', length: 255 })
   name!: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   url!: string | null;
 
   @IsDate()
