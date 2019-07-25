@@ -1,6 +1,6 @@
 import { NestApplication } from '@nestjs/core';
 import Bluebird from 'bluebird';
-import { Token } from 'empleo-nestjs-authentication';
+import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { Api } from 'empleo-nestjs-testing';
 import { getRepository } from 'typeorm';
 import { EducationCreate } from '../../src/dto/education-create.dto';
@@ -28,7 +28,7 @@ export async function removeEducationByToken(...tokens: string[]) {
   const educationRepository = getRepository(Education);
 
   await Bluebird.resolve(tokens)
-    .map(token => Token.fromEncoded(token))
+    .map(token => tokenFromEncodedToken(token))
     .map(({ keycloakId }) => keycloakId)
     .map(keycloakId => educationRepository.delete({ keycloakId }));
 }
