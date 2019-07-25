@@ -47,11 +47,11 @@ export class LanguagesController {
   @Put(':keycloakId/languages/:languageId')
   @Authorize.Candidates()
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ title: 'Edit a language stage by language id' })
+  @ApiOperation({ title: 'Edit a CV language' })
   @ApiKeycloakIdParam()
   @ApiLanguageIdParam()
   @ApiNoContentResponse({ type: Language, description: 'Language successfully updated' })
-  @ApiBadRequestResponse({ description: 'The body did not pass the validation or the keycloak id is not an uui' })
+  @ApiBadRequestResponse({ description: 'The body did not pass the validation or the keycloak id is not an uuid' })
   @ApiNotFoundResponse({ description: 'The cv does not belong to the user or the language does not exist' })
   async updateLanguage(
     @AuthenticatedUser() user: User,
