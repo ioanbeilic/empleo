@@ -1,13 +1,14 @@
 import { plainToClass } from 'class-transformer';
 import { Builder } from 'empleo-nestjs-testing';
+import { LanguageLevel } from '../../domain/language-level.enum';
 import { LanguageCreate } from '../../dto/language-create.dto';
 
 export class LanguageCreateBuilder extends Builder<LanguageCreate> {
-  withLanguage(language = this.faker.random.word()): this {
+  withLanguage(language = this.faker.random.locale()): this {
     return this.with('language', language);
   }
 
-  withLevel(level = this.faker.random.number({ min: 1, max: 5 })): this {
+  withLevel(level = LanguageLevel.Intermediate): this {
     return this.with('level', level);
   }
 

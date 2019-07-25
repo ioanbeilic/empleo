@@ -30,9 +30,10 @@ export class LanguagesController {
   @Post(':keycloakId/languages')
   @Authorize.Candidates()
   @ApiKeycloakIdParam()
-  @ApiOperation({ title: 'Create a Language stage, level is a number from 1 to 5 ' })
-  @ApiOkResponse({ type: Language, description: 'Language stage successfully added' })
-  @ApiBadRequestResponse({ description: 'The body did not pass the validation' })
+  @ApiOperation({ title: 'Add a known language to the CV' })
+  @ApiOkResponse({ type: Language, description: 'Language successfully added' })
+  @ApiBadRequestResponse({ description: 'The body did not pass the validation or the keycloak id is not an  uuid' })
+  @ApiNotFoundResponse({ description: 'The cv does not belong to the user' })
   async createLanguage(
     @AuthenticatedUser() user: User,
     @Param() { keycloakId }: KeycloakIdParams,
@@ -49,9 +50,9 @@ export class LanguagesController {
   @ApiOperation({ title: 'Edit a language stage by language id' })
   @ApiKeycloakIdParam()
   @ApiLanguageIdParam()
-  @ApiNoContentResponse({ type: Language, description: 'Language stage successfully updated' })
-  @ApiBadRequestResponse({ description: 'The body did not pass the validation' })
-  @ApiNotFoundResponse({ description: 'The language does not exist or it does not belong to the user' })
+  @ApiNoContentResponse({ type: Language, description: 'Language successfully updated' })
+  @ApiBadRequestResponse({ description: 'The body did not pass the validation or the keycloak id is not an uui' })
+  @ApiNotFoundResponse({ description: 'The cv does not belong to the user or the language does not exist' })
   async updateLanguage(
     @AuthenticatedUser() user: User,
     @Body() update: LanguageCreate,

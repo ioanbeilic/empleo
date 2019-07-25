@@ -1,5 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { Builder } from 'empleo-nestjs-testing';
+import { LanguageLevel } from '../../domain/language-level.enum';
 import { Language } from '../../entities/language.entity';
 
 export class LanguageBuilder extends Builder<Language> {
@@ -11,11 +12,11 @@ export class LanguageBuilder extends Builder<Language> {
     return this.with('keycloakId', keycloakId);
   }
 
-  withLanguage(language = this.faker.random.word()): this {
+  withLanguage(language = this.faker.random.locale()): this {
     return this.with('language', language);
   }
 
-  withLevel(level = this.faker.random.number({ min: 1, max: 5 })): this {
+  withLevel(level = LanguageLevel.Intermediate): this {
     return this.with('level', level);
   }
 
