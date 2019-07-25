@@ -38,6 +38,6 @@ export class ExperienceCreate {
 
   @IsOptional()
   @IsDate()
-  @ApiModelPropertyOptional({ type: 'string', format: 'date ', example: '2019-06-20' })
+  @ApiModelPropertyOptional({ type: 'string', format: 'date', example: '2019-06-20' })
   endDate?: Date;
 }

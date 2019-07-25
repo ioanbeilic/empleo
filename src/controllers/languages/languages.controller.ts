@@ -1,5 +1,5 @@
 import { Body, ClassSerializerInterceptor, Controller, Param, Post, UseInterceptors } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { Authenticate, AuthenticatedUser, Authorize, User } from 'empleo-nestjs-authentication';
 import { ApiKeycloakIdParam, KeycloakIdParams } from 'empleo-nestjs-common';
 import { LanguageCreate } from '../../dto/language-create.dto';
@@ -21,9 +21,10 @@ export class LanguagesController {
   @Post(':keycloakId/languages')
   @Authorize.Candidates()
   @ApiKeycloakIdParam()
-  @ApiOperation({ title: 'Create a Language stage, level is a number from 1 to 5 ' })
-  @ApiOkResponse({ type: Language, description: 'Language stage successfully added' })
-  @ApiBadRequestResponse({ description: 'The body did not pass the validation' })
+  @ApiOperation({ title: 'Add a known language to the CV' })
+  @ApiOkResponse({ type: Language, description: 'Language successfully added' })
+  @ApiBadRequestResponse({ description: 'The body did not pass the validation or the keycloak id is not an  uuid' })
+  @ApiNotFoundResponse({ description: 'The non `admin` user is trying to add a language to a CV from another user' })
   async createLanguage(
     @AuthenticatedUser() user: User,
     @Param() { keycloakId }: KeycloakIdParams,

@@ -3,6 +3,7 @@ import { NestApplication } from '@nestjs/core';
 import { plainToClass } from 'class-transformer';
 import { Token } from 'empleo-nestjs-authentication';
 import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
+import faker from 'faker';
 import { languageCreateBuilder } from '../../src/builders/languages/language-create.builder';
 import { languageBuilder } from '../../src/builders/languages/language.builder';
 import { CvModule } from '../../src/cv.module';
@@ -45,7 +46,7 @@ describe('LanguagesController (POST) (e2e)', () => {
         .expectJson(HttpStatus.CREATED);
     });
 
-    it('should return 400 - Bad Request when the "language" is null', async () => {
+    it('should return 400 - Bad Request when the "language" is not valid', async () => {
       const language = await createLanguage();
 
       language.language = '';
@@ -56,7 +57,7 @@ describe('LanguagesController (POST) (e2e)', () => {
         .expectJson(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return 400 - Bad Request when the "level" is invalid', async () => {
+    it('should return 400 - Bad Request when the "level" is not valid', async () => {
       const language = await createLanguage();
 
       language.level = 6;
@@ -87,6 +88,17 @@ describe('LanguagesController (POST) (e2e)', () => {
         .languages({ keycloakId: adminKeycloakId })
         .create({ payload: language })
         .expectJson(HttpStatus.FORBIDDEN);
+    });
+
+    it('should return 404 - Not Found when a non admin is trying to add a language to a CV from another user', async () => {
+      const language = languageBuilder()
+        .withValidData()
+        .build();
+
+      await api(app, { token: candidateToken })
+        .languages({ keycloakId: faker.random.uuid() })
+        .create({ payload: language })
+        .expectJson(HttpStatus.NOT_FOUND);
     });
   });
 
