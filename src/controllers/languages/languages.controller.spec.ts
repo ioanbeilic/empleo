@@ -151,4 +151,44 @@ describe('LanguagesController', () => {
       verify(mockedLanguagesService.updateOne(anything())).never();
     });
   });
+
+  describe('#deleteOne()', () => {
+    const languageId = createdLanguage.languageId;
+    const keycloakId = user.id;
+
+    it('should correctly delete a language', async () => {
+      when(mockedLanguagesService.deleteOne(anything())).thenResolve();
+
+      const response = await languagesController.deleteOneLanguage(user, { languageId, keycloakId });
+
+      verify(mockedLanguagesService.deleteOne(deepEqual({ user, languageId }))).once();
+      expect(response).to.be.undefined;
+    });
+
+    it('should throw an language not found exception when the language does not exist', async () => {
+      when(mockedPermissionsService.isOwnerOrNotFound(anything())).thenThrow(new LanguageNotFoundException());
+      when(mockedLanguagesService.deleteOne(anything())).thenReject();
+
+      await expect(
+        languagesController.deleteOneLanguage(user, { languageId: faker.random.uuid(), keycloakId: user.id })
+      ).to.eventually.be.rejectedWith(LanguageNotFoundException);
+
+      verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId } }))).once();
+      verify(mockedLanguagesService.deleteOne(anything())).never();
+    });
+
+    it("should throw a language not found exception if user don't have permission", async () => {
+      when(mockedPermissionsService.isOwnerOrNotFound(anything())).thenThrow(new LanguageNotFoundException());
+      when(mockedLanguagesService.deleteOne(anything())).thenReject();
+
+      const anotherKeycloakId = faker.random.uuid();
+
+      await expect(
+        languagesController.deleteOneLanguage(user, { languageId: createdLanguage.languageId, keycloakId: anotherKeycloakId })
+      ).to.be.rejectedWith(LanguageNotFoundException);
+
+      verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId: anotherKeycloakId } }))).once();
+      verify(mockedLanguagesService.deleteOne({ user, languageId: createdLanguage.languageId })).never();
+    });
+  });
 });

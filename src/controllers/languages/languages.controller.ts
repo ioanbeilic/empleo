@@ -1,4 +1,15 @@
-import { Body, ClassSerializerInterceptor, Controller, HttpCode, HttpStatus, Param, Post, Put, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  UseInterceptors
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -63,5 +74,19 @@ export class LanguagesController {
     const language = await this.languagesService.findUserLanguageById({ languageId, user });
 
     await this.languagesService.updateOne({ language, update });
+  }
+
+  @Delete(':keycloakId/languages/:languageId')
+  @Authorize.Candidates()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ title: 'Remove a language by keycloakId and language id' })
+  @ApiKeycloakIdParam()
+  @ApiLanguageIdParam()
+  @ApiNoContentResponse({ description: 'The language has been successfully deleted' })
+  @ApiBadRequestResponse({ description: 'The language id is not an UUID' })
+  @ApiNotFoundResponse({ description: 'The language does not exist or does not belong to the user' })
+  async deleteOneLanguage(@AuthenticatedUser() user: User, @Param() { languageId, keycloakId }: FindOneParamsLanguage): Promise<void> {
+    this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } });
+    await this.languagesService.deleteOne({ user, languageId });
   }
 }
