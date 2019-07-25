@@ -1,5 +1,5 @@
 import { userBuilder } from 'empleo-nestjs-authentication';
-import { anything, instance, mock, objectContaining, verify, when } from 'ts-mockito';
+import { anything, deepEqual, instance, mock, objectContaining, verify, when } from 'ts-mockito';
 import { Repository } from 'typeorm';
 import { languageCreateBuilder } from '../../builders/languages/language-create.builder';
 import { languageBuilder } from '../../builders/languages/language.builder';
@@ -26,6 +26,10 @@ describe('LanguagesService', () => {
     .withValidData()
     .build();
 
+  const languageUpdate = languageCreateBuilder()
+    .withValidData()
+    .build();
+
   const createdLanguage = languageBuilder()
     .hydrate(language)
     .withKeycloakId(user.id)
@@ -47,6 +51,16 @@ describe('LanguagesService', () => {
 
       verify(mockedLanguageRepository.create(objectContaining({ ...languageCreate, keycloakId: user.id }))).once();
       verify(mockedLanguageRepository.save(language)).once();
+    });
+  });
+
+  describe('#updateOne()', () => {
+    it('should update the language when it exists and belong to the user', async () => {
+      when(mockedLanguageRepository.update(anything(), anything() as Partial<Language>)).thenResolve();
+
+      await languagesService.updateOne({ language, update: languageUpdate });
+
+      verify(mockedLanguageRepository.update(deepEqual({ languageId: language.languageId }), deepEqual(languageUpdate))).once();
     });
   });
 });
