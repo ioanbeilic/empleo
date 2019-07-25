@@ -56,7 +56,7 @@ export class Education extends EducationCreate {
   @Exclude()
   updatedAt!: Date;
 
-  @ManyToOne(() => Cv, cv => cv.experiences, { cascade: true })
+  @ManyToOne(() => Cv, cv => cv.experiences, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
   cv?: Cv;
 }

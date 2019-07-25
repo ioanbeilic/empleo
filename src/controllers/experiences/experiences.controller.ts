@@ -41,7 +41,7 @@ export class ExperiencesController {
   @Post(':keycloakId/experiences')
   @Authorize.Candidates()
   @ApiKeycloakIdParam()
-  @ApiOperation({ title: 'Create a Experience stage, recommended date format: new Date().toIsoString() and return  2019-07-10 ' })
+  @ApiOperation({ title: 'Create a Experience stage', description: 'The date format must be `YYYY-MM-DD`' })
   @ApiOkResponse({ type: Experience, description: 'Experience stage successfully added' })
   @ApiBadRequestResponse({ description: 'The body did not pass the validation' })
   async create(
