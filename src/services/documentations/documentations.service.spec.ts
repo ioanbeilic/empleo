@@ -42,12 +42,13 @@ describe('DocumentationsService', () => {
   describe('#create()', () => {
     it('should correctly create a documentation', async () => {
       when(mockedDocumentationRepository.create(anything() as Partial<Documentation>)).thenReturn(documentation);
-
+      when(mockedCvService.ensureExists(anything())).thenResolve();
       when(mockedDocumentationRepository.save(documentation)).thenResolve(createdDocumentation);
 
       await documentationsService.createDocumentation({ user, documentation: documentationCreate });
 
       verify(mockedDocumentationRepository.create(objectContaining({ ...documentationCreate, keycloakId: user.id }))).once();
+      verify(mockedCvService.ensureExists(deepEqual({ keycloakId: user.id })));
       verify(mockedDocumentationRepository.save(documentation)).once();
     });
   });
