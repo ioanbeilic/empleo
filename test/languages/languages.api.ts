@@ -1,6 +1,6 @@
 import { NestApplication } from '@nestjs/core';
 import Bluebird from 'bluebird';
-import { Token } from 'empleo-nestjs-authentication';
+import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { Api } from 'empleo-nestjs-testing';
 import { getRepository } from 'typeorm';
 import { LanguageCreate } from '../../src/dto/language-create.dto';
@@ -28,7 +28,7 @@ export async function removeLanguageByToken(...tokens: string[]) {
   const languageRepository = getRepository(Language);
 
   await Bluebird.resolve(tokens)
-    .map(token => Token.fromEncoded(token))
+    .map(token => tokenFromEncodedToken(token))
     .map(({ keycloakId }) => keycloakId)
     .map(keycloakId => languageRepository.delete({ keycloakId }));
 }
