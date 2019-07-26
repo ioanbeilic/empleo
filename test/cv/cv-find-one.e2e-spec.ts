@@ -1,34 +1,36 @@
 import { HttpStatus } from '@nestjs/common';
-import { NestApplication } from '@nestjs/core';
-import { Token } from 'empleo-nestjs-authentication';
-import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
+import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
+import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
 import { educationBuilder } from '../../src/builders/educations/education.builder';
 import { CvModule } from '../../src/cv.module';
 import { Education } from '../../src/entities/education.entity';
 import { api, apiEducation, removeCvByToken, removeEducationByToken } from './cv.api';
 
 describe('CvController (FIND) (e2e)', () => {
-  let app: NestApplication;
+  const app = new AppWrapper(CvModule);
+
   let candidateToken: string;
   let adminToken: string;
   let candidateKeycloakId: string;
   let adminKeycloakId: string;
 
+  before(init(app));
+
   before(async () => {
-    app = await startTestApp(CvModule);
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
-    adminKeycloakId = Token.fromEncoded(adminToken).keycloakId;
-    candidateKeycloakId = Token.fromEncoded(candidateToken).keycloakId;
+    adminKeycloakId = tokenFromEncodedToken(adminToken).keycloakId;
+    candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
   });
 
+  beforeEach(clean(app));
+
   afterEach(async () => {
+    await removeCvByToken(adminToken, candidateToken);
     await removeEducationByToken(adminToken, candidateToken);
   });
 
-  after(async () => {
-    await removeCvByToken(adminToken, candidateToken);
-    await app.close();
-  });
+  after(clean(app));
+  after(close(app));
 
   describe(':keycloakId/cv/', () => {
     it('should return 200 - ok', async () => {
