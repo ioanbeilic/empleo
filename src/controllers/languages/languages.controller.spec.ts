@@ -1,11 +1,10 @@
 import { expect } from 'chai';
-import { userBuilder } from 'empleo-nestjs-authentication';
+import { PermissionsService, userBuilder } from 'empleo-nestjs-authentication';
 import faker from 'faker';
 import { anyOfClass, anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { languageCreateBuilder } from '../../builders/languages/language-create.builder';
 import { languageBuilder } from '../../builders/languages/language.builder';
 import { LanguageNotFoundException } from '../../errors/language-not-found.exception';
-import { PermissionsService } from '../../services/common/permissions.service';
 import { LanguagesService } from '../../services/languages/languages.service';
 import { LanguagesController } from './languages.controller';
 
