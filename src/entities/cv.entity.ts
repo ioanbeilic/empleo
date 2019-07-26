@@ -15,7 +15,6 @@ export class Cv {
   cvId!: string;
 
   @IsUUID()
-  @Exclude()
   @ApiModelProperty({ type: 'string', format: 'uuid', example: uuid() })
   @Column({ type: 'uuid', name: 'keycloak_id', unique: true })
   keycloakId!: string;

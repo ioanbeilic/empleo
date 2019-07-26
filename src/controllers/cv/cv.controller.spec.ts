@@ -4,7 +4,7 @@ import faker from 'faker';
 import { anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { CvNotFoundException } from '../../errors/cv-not-found.exception';
 import { PermissionsService } from '../../services/common/permissions.service';
-import { CvService } from '../../services/cv/cv.service';
+import { CvService, ResponseCvOption } from '../../services/cv/cv.service';
 import { CvController } from './cv.controller';
 
 describe('CvController', () => {
@@ -45,5 +45,25 @@ describe('CvController', () => {
 
     verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId: anotherKeycloakId } }))).once();
     verify(mockedCvService.deleteOne({ keycloakId: user.id })).never();
+  });
+
+  describe('#findByUser()', () => {
+    const cv: ResponseCvOption = {
+      cvId: faker.random.uuid(),
+      keycloakId: user.id,
+      educations: [],
+      experiences: [],
+      languages: []
+      // to do
+      //  documentations: []
+    };
+    it('should find the cv', async () => {
+      when(mockedCvService.findByUser(anything())).thenResolve(cv);
+
+      const response = await cvController.findCvByUser(user, { keycloakId: user.id });
+
+      verify(mockedCvService.findByUser(deepEqual({ keycloakId: user.id }))).once();
+      expect(response).equal(cv);
+    });
   });
 });
