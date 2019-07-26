@@ -40,3 +40,5 @@ export class Documentation extends DocumentationCreate {
   @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
   cv?: Cv;
 }
+
+export type DocumentationId = typeof Documentation.prototype.documentationId;
