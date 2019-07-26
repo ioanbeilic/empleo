@@ -3,7 +3,7 @@ import { NestApplication } from '@nestjs/core';
 import { plainToClass } from 'class-transformer';
 import { Token } from 'empleo-nestjs-authentication';
 import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
-import { documentationBuilder } from '../../src/builders/common/documentation.builder';
+import { additionalDocumentationBuilder } from '../../src/builders/common/additional-documentation.builder';
 import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { CvModule } from '../../src/cv.module';
 import { Education } from '../../src/entities/education.entity';
@@ -45,14 +45,14 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 201 - Created without documentation', async () => {
-      const educationWithoutDocumentation = educationCreateBuilder()
-        .withoutDocumentation()
+      const educationWithoutAdditionalDocumentation = educationCreateBuilder()
+        .withoutAdditionalDocumentation()
         .withValidData()
         .build();
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
-        .create({ payload: educationWithoutDocumentation })
+        .create({ payload: educationWithoutAdditionalDocumentation })
         .expectJson(HttpStatus.CREATED);
     });
 
@@ -137,7 +137,7 @@ describe('EducationController (POST) (e2e)', () => {
     it('should return 400 - Bad Request when the "documentation.name" is empty', async () => {
       const education = await createEducation();
 
-      const documentation = documentationBuilder()
+      const documentation = additionalDocumentationBuilder()
         .withValidData()
         .withName('')
         .build();
