@@ -23,7 +23,7 @@ redis:
 
 keycloak:
   issuer: https://sso.dev.universia.net/auth/realms/Empleo
-  realm: Empleo
 
 apiManager:
-  uri: https://api-manager.dev.universia.net
+  profileSvcUri: https://api-manager.dev.universia.net/empleo/profiles
+
