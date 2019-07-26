@@ -4,7 +4,7 @@ import { IsDate, IsUUID } from 'class-validator';
 import { CreatedAtColumn, UpdatedAtColumn } from 'empleo-nestjs-common';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
-import { Documentation } from '../domain/documentation';
+import { AdditionalDocumentation } from '../domain/additional-documentation';
 import { ExperienceCreate } from '../dto/experience-create.dto';
 import { Cv } from './cv.entity';
 
@@ -39,8 +39,8 @@ export class Experience extends ExperienceCreate {
   title!: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  @ApiModelProperty({ type: [Documentation] })
-  documentation?: Documentation[];
+  @ApiModelProperty({ type: [AdditionalDocumentation] })
+  documentation?: AdditionalDocumentation[];
 
   @IsDate()
   @CreatedAtColumn()

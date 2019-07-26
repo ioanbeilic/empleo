@@ -1,8 +1,8 @@
 import { plainToClass } from 'class-transformer';
 import { Builder } from 'empleo-nestjs-testing';
-import { Documentation } from '../../domain/documentation';
+import { AdditionalDocumentation } from '../../domain/additional-documentation';
 import { Education } from '../../entities/education.entity';
-import { documentationBuilder } from '../common/documentation.builder';
+import { additionalDocumentationBuilder } from '../common/additional-documentation.builder';
 
 export class EducationBuilder extends Builder<Education> {
   withEducationId(educationId = this.faker.random.uuid()): this {
@@ -33,7 +33,7 @@ export class EducationBuilder extends Builder<Education> {
     return this.with('category', category);
   }
 
-  withDocumentation(...documentation: Documentation[]): this {
+  withAdditionalDocumentation(...documentation: AdditionalDocumentation[]): this {
     return this.with('documentation', documentation);
   }
 
@@ -54,7 +54,7 @@ export class EducationBuilder extends Builder<Education> {
   }
 
   withValidData(): this {
-    const documentation = documentationBuilder()
+    const documentation = additionalDocumentationBuilder()
       .withValidData()
       .build();
 
@@ -67,7 +67,7 @@ export class EducationBuilder extends Builder<Education> {
       .withCategory()
       .withStartDate()
       .withEndDate()
-      .withDocumentation(documentation);
+      .withAdditionalDocumentation(documentation);
   }
 
   build(): Education {

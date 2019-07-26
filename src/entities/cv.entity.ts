@@ -3,6 +3,7 @@ import { Exclude } from 'class-transformer';
 import { IsUUID } from 'class-validator';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
+import { Documentation } from './documentation.entity';
 import { Education } from './education.entity';
 import { Experience } from './experience.entity';
 import { Language } from './language.entity';
@@ -27,6 +28,9 @@ export class Cv {
 
   @OneToMany(() => Language, language => language.cv)
   languages!: Language[];
+
+  @OneToMany(() => Documentation, documentation => documentation.cv)
+  documentations!: Documentation[];
 }
 
 export type CvId = typeof Cv.prototype.cvId;

@@ -1,9 +1,9 @@
 import { plainToClass } from 'class-transformer';
 import { Builder } from 'empleo-nestjs-testing';
-import { Documentation } from '../../domain/documentation';
+import { AdditionalDocumentation } from '../../domain/additional-documentation';
 import { EducationCreate } from '../../dto/education-create.dto';
 import { Education } from '../../entities/education.entity';
-import { documentationBuilder } from '../common/documentation.builder';
+import { additionalDocumentationBuilder } from '../common/additional-documentation.builder';
 
 export class EducationCreateBuilder extends Builder<EducationCreate> {
   withCenterType(centerType = this.faker.random.word()): this {
@@ -34,11 +34,11 @@ export class EducationCreateBuilder extends Builder<EducationCreate> {
     return this.with('endDate', endDate);
   }
 
-  withDocumentation(...documentation: Documentation[]): this {
+  withAdditionalDocumentation(...documentation: AdditionalDocumentation[]): this {
     return this.with('documentation', documentation);
   }
 
-  withoutDocumentation(): this {
+  withoutAdditionalDocumentation(): this {
     return this.without('documentation');
   }
 
@@ -47,7 +47,7 @@ export class EducationCreateBuilder extends Builder<EducationCreate> {
   }
 
   withValidData(): this {
-    const documentation = documentationBuilder()
+    const documentation = additionalDocumentationBuilder()
       .withValidData()
       .build();
 
@@ -56,7 +56,7 @@ export class EducationCreateBuilder extends Builder<EducationCreate> {
       .withCenterName()
       .withTitle()
       .withCategory()
-      .withDocumentation(documentation)
+      .withAdditionalDocumentation(documentation)
       .withStartDate()
       .withEndDate();
   }
