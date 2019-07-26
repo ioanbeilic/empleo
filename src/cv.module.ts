@@ -15,7 +15,6 @@ import { Documentation } from './entities/documentation.entity';
 import { Education } from './entities/education.entity';
 import { Experience } from './entities/experience.entity';
 import { Language } from './entities/language.entity';
-import { PermissionsService } from './services/common/permissions.service';
 import { CvService } from './services/cv/cv.service';
 import { DocumentationsService } from './services/documentations/documentations.service';
 import { EducationsService } from './services/educations/educations.service';
@@ -42,6 +41,6 @@ import { LanguagesService } from './services/languages/languages.service';
       inject: [POSTGRES_URI]
     })
   ],
-  providers: [CvOpenapi, EducationsService, PermissionsService, ExperiencesService, CvService, LanguagesService, DocumentationsService]
+  providers: [CvOpenapi, EducationsService, ExperiencesService, CvService, LanguagesService, DocumentationsService]
 })
 export class CvModule {}

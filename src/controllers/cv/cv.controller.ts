@@ -1,8 +1,7 @@
 import { ClassSerializerInterceptor, Controller, Delete, HttpCode, HttpStatus, Param, UseInterceptors } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiNoContentResponse, ApiNotFoundResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
-import { Authenticate, AuthenticatedUser, Authorize, User } from 'empleo-nestjs-authentication';
+import { Authenticate, AuthenticatedUser, Authorize, PermissionsService, User } from 'empleo-nestjs-authentication';
 import { ApiKeycloakIdParam, KeycloakIdParams } from 'empleo-nestjs-common';
-import { PermissionsService } from '../../services/common/permissions.service';
 import { CvService } from '../../services/cv/cv.service';
 
 @Controller()

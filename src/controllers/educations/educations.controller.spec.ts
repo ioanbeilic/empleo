@@ -1,11 +1,10 @@
 import { expect } from 'chai';
-import { userBuilder } from 'empleo-nestjs-authentication';
+import { PermissionsService, userBuilder } from 'empleo-nestjs-authentication';
 import faker from 'faker';
 import { anyOfClass, anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { educationCreateBuilder } from '../../builders/educations/education-create.builder';
 import { educationBuilder } from '../../builders/educations/education.builder';
 import { EducationNotFoundException } from '../../errors/education-not-found.exception';
-import { PermissionsService } from '../../services/common/permissions.service';
 import { EducationsService } from '../../services/educations/educations.service';
 import { EducationsController } from './educations.controller';
 

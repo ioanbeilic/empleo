@@ -19,12 +19,11 @@ import {
   ApiOperation,
   ApiUseTags
 } from '@nestjs/swagger';
-import { Authenticate, AuthenticatedUser, Authorize, User } from 'empleo-nestjs-authentication';
+import { Authenticate, AuthenticatedUser, Authorize, PermissionsService, User } from 'empleo-nestjs-authentication';
 import { ApiKeycloakIdParam, KeycloakIdParams } from 'empleo-nestjs-common';
 import { EducationCreate } from '../../dto/education-create.dto';
 import { Education } from '../../entities/education.entity';
 import { EducationNotFoundException } from '../../errors/education-not-found.exception';
-import { PermissionsService } from '../../services/common/permissions.service';
 import { EducationsService } from '../../services/educations/educations.service';
 import { ApiEducationIdParam, FindOneParamsEducation } from './find-one-education.params';
 

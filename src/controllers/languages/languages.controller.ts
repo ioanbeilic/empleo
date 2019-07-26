@@ -19,12 +19,11 @@ import {
   ApiOperation,
   ApiUseTags
 } from '@nestjs/swagger';
-import { Authenticate, AuthenticatedUser, Authorize, User } from 'empleo-nestjs-authentication';
+import { Authenticate, AuthenticatedUser, Authorize, PermissionsService, User } from 'empleo-nestjs-authentication';
 import { ApiKeycloakIdParam, KeycloakIdParams } from 'empleo-nestjs-common';
 import { LanguageCreate } from '../../dto/language-create.dto';
 import { Language } from '../../entities/language.entity';
 import { LanguageNotFoundException } from '../../errors/language-not-found.exception';
-import { PermissionsService } from '../../services/common/permissions.service';
 import { LanguagesService } from '../../services/languages/languages.service';
 import { ApiLanguageIdParam, FindOneParamsLanguage } from './find-one-language.params';
 
