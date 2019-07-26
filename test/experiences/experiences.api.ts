@@ -1,6 +1,6 @@
 import { NestApplication } from '@nestjs/core';
 import Bluebird from 'bluebird';
-import { Token } from 'empleo-nestjs-authentication';
+import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { Api } from 'empleo-nestjs-testing';
 import { getRepository } from 'typeorm';
 import { ExperienceCreate } from '../../src/dto/experience-create.dto';
@@ -28,7 +28,7 @@ export async function removeExperienceByToken(...tokens: string[]) {
   const experienceRepository = getRepository(Experience);
 
   await Bluebird.resolve(tokens)
-    .map(token => Token.fromEncoded(token))
+    .map(token => tokenFromEncodedToken(token))
     .map(({ keycloakId }) => keycloakId)
     .map(keycloakId => experienceRepository.delete({ keycloakId }));
 }

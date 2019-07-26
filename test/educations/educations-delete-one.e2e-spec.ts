@@ -1,7 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { NestApplication } from '@nestjs/core';
 import { plainToClass } from 'class-transformer';
-import { Token } from 'empleo-nestjs-authentication';
+import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
 import faker from 'faker';
 import { getRepository } from 'typeorm';
@@ -21,8 +21,8 @@ describe('EducationController (DELETE) (e2e)', () => {
     app = await startTestApp(CvModule);
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
 
-    adminKeycloakId = Token.fromEncoded(adminToken).keycloakId;
-    candidateKeycloakId = Token.fromEncoded(candidateToken).keycloakId;
+    adminKeycloakId = tokenFromEncodedToken(adminToken).keycloakId;
+    candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
 
     await removeEducationByToken(adminToken, candidateToken);
   });
