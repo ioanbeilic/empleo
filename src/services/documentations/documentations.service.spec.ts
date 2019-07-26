@@ -1,5 +1,5 @@
 import { userBuilder } from 'empleo-nestjs-authentication';
-import { anything, instance, mock, objectContaining, verify, when } from 'ts-mockito';
+import { anything, deepEqual, instance, mock, objectContaining, verify, when } from 'ts-mockito';
 import { Repository } from 'typeorm';
 import { documentationCreateBuilder } from '../../builders/documentations/documentations-create.builder';
 import { documentationBuilder } from '../../builders/documentations/documentations.builder';
@@ -40,12 +40,13 @@ describe('DocumentationsService', () => {
   describe('#create()', () => {
     it('should correctly create a documentation', async () => {
       when(mockedDocumentationRepository.create(anything() as Partial<Documentation>)).thenReturn(documentation);
-
+      when(mockedCvService.ensureExists(anything())).thenResolve();
       when(mockedDocumentationRepository.save(documentation)).thenResolve(createdDocumentation);
 
       await documentationsService.createDocumentation({ user, documentation: documentationCreate });
 
       verify(mockedDocumentationRepository.create(objectContaining({ ...documentationCreate, keycloakId: user.id }))).once();
+      verify(mockedCvService.ensureExists(deepEqual({ keycloakId: user.id })));
       verify(mockedDocumentationRepository.save(documentation)).once();
     });
   });
