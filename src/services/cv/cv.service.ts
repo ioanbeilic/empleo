@@ -4,6 +4,7 @@ import { isUniqueKeyViolationError } from 'empleo-nestjs-common';
 import { Repository } from 'typeorm';
 import uuid from 'uuid/v1';
 import { Cv } from '../../entities/cv.entity';
+import { Documentation } from '../../entities/documentation.entity';
 import { Education } from '../../entities/education.entity';
 import { Experience } from '../../entities/experience.entity';
 import { Language } from '../../entities/language.entity';
@@ -28,7 +29,7 @@ export class CvService {
       {
         keycloakId
       },
-      { relations: ['educations', 'experiences', 'languages'] }
+      { relations: ['educations', 'experiences', 'languages', 'documentations'] }
     );
 
     if (response === undefined) {
@@ -56,4 +57,5 @@ export interface ResponseCvOption extends Cv {
   educations: Education[];
   experiences: Experience[];
   languages: Language[];
+  documentations: Documentation[];
 }

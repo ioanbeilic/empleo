@@ -38,9 +38,8 @@ describe('CvService', () => {
       keycloakId: user.id,
       educations: [],
       experiences: [],
-      languages: []
-      // to do
-      // documentations: []
+      languages: [],
+      documentations: []
     };
     it('should find the cv', async () => {
       when(mockedCvRepository.findOne(anything(), anything())).thenResolve(cv);
@@ -48,7 +47,10 @@ describe('CvService', () => {
       const response = await cvService.findByUser({ keycloakId: user.id });
 
       verify(
-        mockedCvRepository.findOne(deepEqual({ keycloakId: user.id }), deepEqual({ relations: ['educations', 'experiences', 'languages'] }))
+        mockedCvRepository.findOne(
+          deepEqual({ keycloakId: user.id }),
+          deepEqual({ relations: ['educations', 'experiences', 'languages', 'documentations'] })
+        )
       ).once();
       expect(response).equal(cv);
     });

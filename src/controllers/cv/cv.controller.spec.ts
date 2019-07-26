@@ -53,9 +53,8 @@ describe('CvController', () => {
       keycloakId: user.id,
       educations: [],
       experiences: [],
-      languages: []
-      // to do
-      //  documentations: []
+      languages: [],
+      documentations: []
     };
     it('should find the cv', async () => {
       when(mockedCvService.findByUser(anything())).thenResolve(cv);
