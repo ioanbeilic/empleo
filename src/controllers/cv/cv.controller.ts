@@ -8,10 +8,9 @@ import {
   ApiOperation,
   ApiUseTags
 } from '@nestjs/swagger';
-import { Authenticate, AuthenticatedUser, Authorize, User } from 'empleo-nestjs-authentication';
+import { Authenticate, AuthenticatedUser, Authorize, PermissionsService, User } from 'empleo-nestjs-authentication';
 import { ApiKeycloakIdParam, KeycloakIdParams } from 'empleo-nestjs-common';
 import { Cv } from '../../entities/cv.entity';
-import { PermissionsService } from '../../services/common/permissions.service';
 import { CvService } from '../../services/cv/cv.service';
 
 @Controller()

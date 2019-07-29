@@ -19,12 +19,11 @@ import {
   ApiOperation,
   ApiUseTags
 } from '@nestjs/swagger';
-import { Authenticate, AuthenticatedUser, Authorize, User } from 'empleo-nestjs-authentication';
+import { Authenticate, AuthenticatedUser, Authorize, PermissionsService, User } from 'empleo-nestjs-authentication';
 import { ApiKeycloakIdParam, KeycloakIdParams } from 'empleo-nestjs-common';
 import { ExperienceCreate } from '../../dto/experience-create.dto';
 import { Experience } from '../../entities/experience.entity';
 import { ExperienceNotFoundException } from '../../errors/experience-not-found.exception';
-import { PermissionsService } from '../../services/common/permissions.service';
 import { ExperiencesService } from '../../services/experiences/experiences.service';
 import { ApiExperienceIdParam, FindOneParamsExperience } from './find-one-experience.params';
 

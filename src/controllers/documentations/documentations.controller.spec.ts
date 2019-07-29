@@ -1,11 +1,10 @@
 import { expect } from 'chai';
-import { userBuilder } from 'empleo-nestjs-authentication';
+import { PermissionsService, userBuilder } from 'empleo-nestjs-authentication';
 import faker from 'faker';
 import { anyOfClass, anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { documentationCreateBuilder } from '../../builders/documentations/documentations-create.builder';
 import { documentationBuilder } from '../../builders/documentations/documentations.builder';
 import { DocumentationNotFoundException } from '../../errors/documentation-not-found.exception';
-import { PermissionsService } from '../../services/common/permissions.service';
 import { DocumentationsService } from '../../services/documentations/documentations.service';
 import { DocumentationsController } from './documentations.controller';
 

@@ -28,7 +28,7 @@
     "@types/lodash": "^4.14.136",
     "@types/node": "^10.14.13",
     "class-validator": "^0.9.1",
-    "empleo-nestjs-authentication": "0.0.0-rc.20190721-1154",
+    "empleo-nestjs-authentication": "0.0.0-rc.20190726-1312",
     "empleo-nestjs-common": "0.0.0-rc.20190725-1627",
     "empleo-nestjs-configuration": "0.0.0-rc.20190726-0818",
     "lodash": "^4.17.15",

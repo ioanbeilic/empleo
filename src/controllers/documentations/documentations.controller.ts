@@ -8,12 +8,11 @@ import {
   ApiOperation,
   ApiUseTags
 } from '@nestjs/swagger';
-import { Authenticate, AuthenticatedUser, Authorize, User } from 'empleo-nestjs-authentication';
+import { Authenticate, AuthenticatedUser, Authorize, PermissionsService, User } from 'empleo-nestjs-authentication';
 import { ApiKeycloakIdParam, KeycloakIdParams } from 'empleo-nestjs-common';
 import { DocumentationCreate } from '../../dto/documentation-create.dto';
 import { Documentation } from '../../entities/documentation.entity';
 import { DocumentationNotFoundException } from '../../errors/documentation-not-found.exception';
-import { PermissionsService } from '../../services/common/permissions.service';
 import { DocumentationsService } from '../../services/documentations/documentations.service';
 import { ApiDocumentationIdParam, FindOneParamsDocumentation } from './find-one-documentation.params';
 

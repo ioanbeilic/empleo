@@ -1,9 +1,8 @@
 import { expect } from 'chai';
-import { userBuilder } from 'empleo-nestjs-authentication';
+import { PermissionsService, userBuilder } from 'empleo-nestjs-authentication';
 import faker from 'faker';
 import { anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { CvNotFoundException } from '../../errors/cv-not-found.exception';
-import { PermissionsService } from '../../services/common/permissions.service';
 import { CvService, ResponseCvOption } from '../../services/cv/cv.service';
 import { CvController } from './cv.controller';
 
