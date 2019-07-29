@@ -2,7 +2,7 @@ import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsDate, IsOptional, IsString, Length, ValidateNested } from 'class-validator';
 import { Default } from 'empleo-nestjs-common';
-import { AdditionalDocumentation } from '../domain/additional-documentation';
+import { AdditionalDocument } from '../domain/additional-document';
 
 export class ExperienceCreate {
   @IsString()
@@ -28,9 +28,9 @@ export class ExperienceCreate {
   @IsOptional()
   @ValidateNested({ each: true })
   @Default(() => [])
-  @Type(() => AdditionalDocumentation)
-  @ApiModelPropertyOptional({ type: [AdditionalDocumentation] })
-  documentation?: AdditionalDocumentation[];
+  @Type(() => AdditionalDocument)
+  @ApiModelPropertyOptional({ type: [AdditionalDocument] })
+  document?: AdditionalDocument[];
 
   @IsDate()
   @ApiModelProperty({ type: 'string', format: 'date', example: '2017-09-01' })

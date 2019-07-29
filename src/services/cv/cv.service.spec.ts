@@ -39,7 +39,7 @@ describe('CvService', () => {
       educations: [],
       experiences: [],
       languages: [],
-      documentations: []
+      documents: []
     };
 
     it('should find the cv', async () => {
@@ -50,7 +50,7 @@ describe('CvService', () => {
       verify(
         mockedCvRepository.findOne(
           deepEqual({ keycloakId: user.id }),
-          deepEqual({ relations: ['educations', 'experiences', 'languages', 'documentations'] })
+          deepEqual({ relations: ['educations', 'experiences', 'languages', 'documents'] })
         )
       ).once();
       expect(foundCv).to.be.equal(cv);

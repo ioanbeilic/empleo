@@ -4,7 +4,7 @@ import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
 import faker from 'faker';
 import { getRepository } from 'typeorm';
-import { additionalDocumentationBuilder } from '../../src/builders/common/additional-documentation.builder';
+import { additionalDocumentBuilder } from '../../src/builders/common/additional-document.builder';
 import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { educationBuilder } from '../../src/builders/educations/education.builder';
 import { CvModule } from '../../src/cv.module';
@@ -52,17 +52,17 @@ describe('EducationController (PUT) (e2e)', () => {
         .expect(HttpStatus.NO_CONTENT);
     });
 
-    it('should return 204 - No Content without documentation', async () => {
+    it('should return 204 - No Content without document', async () => {
       const education = await createEducation();
 
-      const educationWithoutAdditionalDocumentation = educationCreateBuilder()
-        .withoutAdditionalDocumentation()
+      const educationWithoutAdditionalDocument = educationCreateBuilder()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
-        .overrideOne({ identifier: education.educationId, payload: educationWithoutAdditionalDocumentation })
+        .overrideOne({ identifier: education.educationId, payload: educationWithoutAdditionalDocument })
         .expect(HttpStatus.NO_CONTENT);
     });
 
@@ -70,7 +70,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -84,7 +84,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -100,7 +100,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -116,7 +116,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -132,7 +132,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -148,7 +148,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -174,20 +174,20 @@ describe('EducationController (PUT) (e2e)', () => {
         .expect(HttpStatus.NO_CONTENT);
     });
 
-    it('should return 400 - Bad Request when the "documentation.name" is empty', async () => {
+    it('should return 400 - Bad Request when the "document.name" is empty', async () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
-      const documentation = additionalDocumentationBuilder()
+      const document = additionalDocumentBuilder()
         .withValidData()
         .withName('')
         .build();
 
-      educationUpdate.documentation = [documentation];
+      educationUpdate.document = [document];
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
@@ -199,7 +199,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -213,7 +213,7 @@ describe('EducationController (PUT) (e2e)', () => {
       const education = await createEducation();
 
       const educationUpdate = educationCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -225,7 +225,7 @@ describe('EducationController (PUT) (e2e)', () => {
 
     it('should return 404 - Not Found when the education does not exist', async () => {
       const educationUpdate = educationCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -254,7 +254,7 @@ describe('EducationController (PUT) (e2e)', () => {
 
       it('should return 404 - Not Found when the education does not belong to the user', async () => {
         const educationUpdate = educationCreateBuilder()
-          .withoutAdditionalDocumentation()
+          .withoutAdditionalDocument()
           .withValidData()
           .build();
 

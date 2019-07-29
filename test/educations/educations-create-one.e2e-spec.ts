@@ -2,7 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
-import { additionalDocumentationBuilder } from '../../src/builders/common/additional-documentation.builder';
+import { additionalDocumentBuilder } from '../../src/builders/common/additional-document.builder';
 import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { CvModule } from '../../src/cv.module';
 import { Education } from '../../src/entities/education.entity';
@@ -43,15 +43,15 @@ describe('EducationController (POST) (e2e)', () => {
         .expectJson(HttpStatus.CREATED);
     });
 
-    it('should return 201 - Created without documentation', async () => {
-      const educationWithoutAdditionalDocumentation = educationCreateBuilder()
-        .withoutAdditionalDocumentation()
+    it('should return 201 - Created without document', async () => {
+      const educationWithoutAdditionalDocument = educationCreateBuilder()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
-        .create({ payload: educationWithoutAdditionalDocumentation })
+        .create({ payload: educationWithoutAdditionalDocument })
         .expectJson(HttpStatus.CREATED);
     });
 
@@ -133,15 +133,15 @@ describe('EducationController (POST) (e2e)', () => {
         .expectJson(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return 400 - Bad Request when the "documentation.name" is empty', async () => {
+    it('should return 400 - Bad Request when the "document.name" is empty', async () => {
       const education = await createEducation();
 
-      const documentation = additionalDocumentationBuilder()
+      const document = additionalDocumentBuilder()
         .withValidData()
         .withName('')
         .build();
 
-      education.documentation = [documentation];
+      education.document = [document];
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })

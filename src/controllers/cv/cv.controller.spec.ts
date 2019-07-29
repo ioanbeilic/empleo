@@ -54,7 +54,7 @@ describe('CvController', () => {
       educations: [],
       experiences: [],
       languages: [],
-      documentations: []
+      documents: []
     };
 
     it('should find the cv', async () => {

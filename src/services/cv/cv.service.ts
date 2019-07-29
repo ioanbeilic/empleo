@@ -24,7 +24,7 @@ export class CvService {
   async findByUser(user: User): Promise<Cv> {
     const cv = await this.cvRepository.findOne(
       { keycloakId: user.id },
-      { relations: ['educations', 'experiences', 'languages', 'documentations'] }
+      { relations: ['educations', 'experiences', 'languages', 'documents'] }
     );
 
     if (!cv) {

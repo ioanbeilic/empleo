@@ -5,7 +5,7 @@ import { CreatedAtColumn, UpdatedAtColumn } from 'empleo-nestjs-common';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
 import { DateTransformer } from '../common/date.transformer';
-import { AdditionalDocumentation } from '../domain/additional-documentation';
+import { AdditionalDocument } from '../domain/additional-document';
 import { ExperienceCreate } from '../dto/experience-create.dto';
 import { Cv } from './cv.entity';
 
@@ -34,8 +34,8 @@ export class Experience extends ExperienceCreate {
   title!: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  @ApiModelProperty({ type: [AdditionalDocumentation] })
-  documentation?: AdditionalDocumentation[];
+  @ApiModelProperty({ type: [AdditionalDocument] })
+  document?: AdditionalDocument[];
 
   @Column({ type: 'date', name: 'date_start', transformer: DateTransformer.nullable() })
   startDate!: Date;

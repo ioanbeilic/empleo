@@ -1,8 +1,8 @@
 import { plainToClass } from 'class-transformer';
 import { Builder } from 'empleo-nestjs-testing';
-import { AdditionalDocumentation } from '../../domain/additional-documentation';
+import { DocumentCreate } from '../../dto/document-create.dto';
 
-export class AdditionalDocumentationBuilder extends Builder<AdditionalDocumentation> {
+export class DocumentCreateBuilder extends Builder<DocumentCreate> {
   withName(name = this.faker.lorem.sentence()): this {
     return this.with('name', name);
   }
@@ -15,11 +15,11 @@ export class AdditionalDocumentationBuilder extends Builder<AdditionalDocumentat
     return this.withName().withUrl();
   }
 
-  build(): AdditionalDocumentation {
-    return plainToClass(AdditionalDocumentation, this.data);
+  build(): DocumentCreate {
+    return plainToClass(DocumentCreate, this.data);
   }
 }
 
-export function additionalDocumentationBuilder() {
-  return new AdditionalDocumentationBuilder();
+export function documentCreateBuilder() {
+  return new DocumentCreateBuilder();
 }

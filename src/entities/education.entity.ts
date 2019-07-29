@@ -5,7 +5,7 @@ import { CreatedAtColumn, EntityColumnTransformer, UpdatedAtColumn } from 'emple
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
 import { DateTransformer } from '../common/date.transformer';
-import { AdditionalDocumentation } from '../domain/additional-documentation';
+import { AdditionalDocument } from '../domain/additional-document';
 import { EducationCreate } from '../dto/education-create.dto';
 import { Cv } from './cv.entity';
 
@@ -43,9 +43,9 @@ export class Education extends EducationCreate {
   @Column({ type: 'date', name: 'date_end', nullable: true, default: null, transformer: DateTransformer.nullable() })
   endDate?: Date;
 
-  @Column({ type: 'jsonb', transformer: new EntityColumnTransformer(AdditionalDocumentation) })
-  @ApiModelProperty({ type: [AdditionalDocumentation] })
-  documentation?: AdditionalDocumentation[];
+  @Column({ type: 'jsonb', transformer: new EntityColumnTransformer(AdditionalDocument) })
+  @ApiModelProperty({ type: [AdditionalDocument] })
+  document?: AdditionalDocument[];
 
   @IsDate()
   @CreatedAtColumn()

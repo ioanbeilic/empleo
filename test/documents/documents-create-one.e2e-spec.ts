@@ -2,13 +2,13 @@ import { HttpStatus } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
-import { documentationBuilder } from '../../src/builders/documentations/documentations.builder';
+import { documentBuilder } from '../../src/builders/documents/documents.builder';
 import { CvModule } from '../../src/cv.module';
-import { Documentation } from '../../src/entities/documentation.entity';
+import { Document } from '../../src/entities/document.entity';
 import { api } from '../api/api';
-import { removeDocumentationByToken } from './documentations.api';
+import { removeDocumentByToken } from './documents.api';
 
-describe('DocumentationsController (POST) (e2e)', () => {
+describe('DocumentsController (POST) (e2e)', () => {
   const app = new AppWrapper(CvModule);
 
   let candidateToken: string;
@@ -20,72 +20,72 @@ describe('DocumentationsController (POST) (e2e)', () => {
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
-    await removeDocumentationByToken(adminToken, candidateToken);
+    await removeDocumentByToken(adminToken, candidateToken);
   });
 
   beforeEach(clean(app));
 
   afterEach(async () => {
-    await removeDocumentationByToken(adminToken, candidateToken);
+    await removeDocumentByToken(adminToken, candidateToken);
   });
 
   after(clean(app));
   after(close(app));
 
-  describe(':keycloakId/documentations', () => {
+  describe(':keycloakId/documents', () => {
     it('should return 201 - Created', async () => {
-      const documentation = await createDocumentation();
+      const document = await createDocument();
 
       await api(app, { token: candidateToken })
-        .documentations({ keycloakId: candidateKeycloakId })
-        .create({ payload: documentation })
+        .documents({ keycloakId: candidateKeycloakId })
+        .create({ payload: document })
         .expectJson(HttpStatus.CREATED);
     });
 
     it('should return 201 - Created when the "url" is null', async () => {
-      const documentation = await createDocumentation();
+      const document = await createDocument();
 
-      documentation.url = null;
+      document.url = null;
 
       await api(app, { token: candidateToken })
-        .documentations({ keycloakId: candidateKeycloakId })
-        .create({ payload: documentation })
+        .documents({ keycloakId: candidateKeycloakId })
+        .create({ payload: document })
         .expectJson(HttpStatus.CREATED);
     });
 
     it('should return 400 - Bad Request when the "name" is invalid', async () => {
-      const documentation = await createDocumentation();
-      documentation.name = '';
+      const document = await createDocument();
+      document.name = '';
 
       await api(app, { token: candidateToken })
-        .documentations({ keycloakId: candidateKeycloakId })
-        .create({ payload: documentation })
+        .documents({ keycloakId: candidateKeycloakId })
+        .create({ payload: document })
         .expectJson(HttpStatus.BAD_REQUEST);
     });
 
     it('should return 400 - Bad Request when the "url" is invalid', async () => {
-      const documentation = await createDocumentation();
+      const document = await createDocument();
 
-      documentation.url = '';
+      document.url = '';
 
       await api(app, { token: candidateToken })
-        .documentations({ keycloakId: candidateKeycloakId })
-        .create({ payload: documentation })
+        .documents({ keycloakId: candidateKeycloakId })
+        .create({ payload: document })
         .expectJson(HttpStatus.BAD_REQUEST);
     });
   });
 
-  async function createDocumentation() {
-    const documentation = documentationBuilder()
+  async function createDocument() {
+    const document = documentBuilder()
       .withValidData()
       .build();
 
-    const createdDocumentation = await api(app, { token: candidateToken })
-      .documentations({ keycloakId: candidateKeycloakId })
-      .create({ payload: documentation })
+    const createdDocument = await api(app, { token: candidateToken })
+      .documents({ keycloakId: candidateKeycloakId })
+      .create({ payload: document })
       .expectJson(HttpStatus.CREATED)
       .body();
 
-    return plainToClass(Documentation, createdDocumentation);
+    return plainToClass(Document, createdDocument);
   }
 });

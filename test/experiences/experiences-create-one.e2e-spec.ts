@@ -2,7 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
-import { additionalDocumentationBuilder } from '../../src/builders/common/additional-documentation.builder';
+import { additionalDocumentBuilder } from '../../src/builders/common/additional-document.builder';
 import { experienceCreateBuilder } from '../../src/builders/experiences/experience-create.builder';
 import { experienceBuilder } from '../../src/builders/experiences/experience.builder';
 import { CvModule } from '../../src/cv.module';
@@ -46,15 +46,15 @@ describe('ExperiencesController (POST) (e2e)', () => {
         .expectJson(HttpStatus.CREATED);
     });
 
-    it('should return 201 - Created without documentation', async () => {
-      const experiencesWithoutAdditionalDocumentation = experienceCreateBuilder()
-        .withoutAdditionalDocumentation()
+    it('should return 201 - Created without document', async () => {
+      const experiencesWithoutAdditionalDocument = experienceCreateBuilder()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })
-        .create({ payload: experiencesWithoutAdditionalDocumentation })
+        .create({ payload: experiencesWithoutAdditionalDocument })
         .expectJson(HttpStatus.CREATED);
     });
 
@@ -112,17 +112,17 @@ describe('ExperiencesController (POST) (e2e)', () => {
         .expectJson(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return 400 - Bad Request when the "documentation.name" is empty', async () => {
+    it('should return 400 - Bad Request when the "document.name" is empty', async () => {
       const experience = experienceBuilder()
         .withValidData()
         .build();
 
-      const documentation = additionalDocumentationBuilder()
+      const document = additionalDocumentBuilder()
         .withValidData()
         .withName('')
         .build();
 
-      experience.documentation = [documentation];
+      experience.document = [document];
 
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })

@@ -1,9 +1,9 @@
 import { NestApplication } from '@nestjs/core';
 import { Api } from 'empleo-nestjs-testing';
-import { DocumentationCreate } from '../../src/dto/documentation-create.dto';
-import { Documentation } from '../../src/entities/documentation.entity';
+import { DocumentCreate } from '../../src/dto/document-create.dto';
+import { Document } from '../../src/entities/document.entity';
 
-export class DocumentationsApi extends Api<Documentation, DocumentationCreate> {
+export class DocumentsApi extends Api<Document, DocumentCreate> {
   constructor({ app, token, path }: { app: NestApplication; path: string; token?: string }) {
     super({
       server: app.getHttpServer(),

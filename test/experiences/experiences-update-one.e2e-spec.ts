@@ -4,7 +4,7 @@ import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
 import faker from 'faker';
 import { getRepository } from 'typeorm';
-import { additionalDocumentationBuilder } from '../../src/builders/common/additional-documentation.builder';
+import { additionalDocumentBuilder } from '../../src/builders/common/additional-document.builder';
 import { experienceCreateBuilder } from '../../src/builders/experiences/experience-create.builder';
 import { experienceBuilder } from '../../src/builders/experiences/experience.builder';
 import { CvModule } from '../../src/cv.module';
@@ -52,17 +52,17 @@ describe('ExperienceController (PUT) (e2e)', () => {
         .expect(HttpStatus.NO_CONTENT);
     });
 
-    it('should return 204 - No Content without documentation', async () => {
+    it('should return 204 - No Content without document', async () => {
       const experience = await createExperience();
 
-      const experienceWithoutAdditionalDocumentation = experienceCreateBuilder()
-        .withoutAdditionalDocumentation()
+      const experienceWithoutAdditionalDocument = experienceCreateBuilder()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })
-        .overrideOne({ identifier: experience.experienceId, payload: experienceWithoutAdditionalDocumentation })
+        .overrideOne({ identifier: experience.experienceId, payload: experienceWithoutAdditionalDocument })
         .expect(HttpStatus.NO_CONTENT);
     });
 
@@ -84,7 +84,7 @@ describe('ExperienceController (PUT) (e2e)', () => {
       const experience = await createExperience();
 
       const experienceUpdate = experienceCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -100,7 +100,7 @@ describe('ExperienceController (PUT) (e2e)', () => {
       const experience = await createExperience();
 
       const experienceUpdate = experienceCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -116,7 +116,7 @@ describe('ExperienceController (PUT) (e2e)', () => {
       const experience = await createExperience();
 
       const experienceUpdate = experienceCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -132,7 +132,7 @@ describe('ExperienceController (PUT) (e2e)', () => {
       const experience = await createExperience();
 
       const experienceUpdate = experienceCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -144,20 +144,20 @@ describe('ExperienceController (PUT) (e2e)', () => {
         .expectJson(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return 400 - Bad Request when the "documentation.name" is empty', async () => {
+    it('should return 400 - Bad Request when the "document.name" is empty', async () => {
       const experience = await createExperience();
 
       const experienceUpdate = experienceCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
-      const documentation = additionalDocumentationBuilder()
+      const document = additionalDocumentBuilder()
         .withValidData()
         .withName('')
         .build();
 
-      experienceUpdate.documentation = [documentation];
+      experienceUpdate.document = [document];
 
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })
@@ -169,7 +169,7 @@ describe('ExperienceController (PUT) (e2e)', () => {
       const experience = await createExperience();
 
       const experienceUpdate = experienceCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -183,7 +183,7 @@ describe('ExperienceController (PUT) (e2e)', () => {
       const experience = await createExperience();
 
       const experienceUpdate = experienceCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -195,7 +195,7 @@ describe('ExperienceController (PUT) (e2e)', () => {
 
     it('should return 404 - Not Found when the experience does not exist', async () => {
       const experienceUpdate = experienceCreateBuilder()
-        .withoutAdditionalDocumentation()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
@@ -224,7 +224,7 @@ describe('ExperienceController (PUT) (e2e)', () => {
 
       it('should return 404 - Not Found when the experience does not belong to the user', async () => {
         const experienceUpdate = experienceCreateBuilder()
-          .withoutAdditionalDocumentation()
+          .withoutAdditionalDocument()
           .withValidData()
           .build();
 

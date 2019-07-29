@@ -1,9 +1,9 @@
 import { plainToClass } from 'class-transformer';
 import { format } from 'date-fns';
 import { Builder } from 'empleo-nestjs-testing';
-import { AdditionalDocumentation } from '../../domain/additional-documentation';
+import { AdditionalDocument } from '../../domain/additional-document';
 import { Education } from '../../entities/education.entity';
-import { additionalDocumentationBuilder } from '../common/additional-documentation.builder';
+import { additionalDocumentBuilder } from '../common/additional-document.builder';
 
 export class EducationBuilder extends Builder<Education> {
   withEducationId(educationId = this.faker.random.uuid()): this {
@@ -34,8 +34,8 @@ export class EducationBuilder extends Builder<Education> {
     return this.with('category', category);
   }
 
-  withAdditionalDocumentation(...documentation: AdditionalDocumentation[]): this {
-    return this.with('documentation', documentation);
+  withAdditionalDocument(...document: AdditionalDocument[]): this {
+    return this.with('document', document);
   }
 
   withStartDate(startDate = new Date(format(this.faker.date.past(), 'YYYY-MM-DD'))): this {
@@ -55,7 +55,7 @@ export class EducationBuilder extends Builder<Education> {
   }
 
   withValidData(): this {
-    const documentation = additionalDocumentationBuilder()
+    const document = additionalDocumentBuilder()
       .withValidData()
       .build();
 
@@ -68,7 +68,7 @@ export class EducationBuilder extends Builder<Education> {
       .withCategory()
       .withStartDate()
       .withEndDate()
-      .withAdditionalDocumentation(documentation);
+      .withAdditionalDocument(document);
   }
 
   build(): Education {

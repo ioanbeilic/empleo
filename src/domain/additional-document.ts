@@ -2,7 +2,7 @@ import { ApiModelPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, IsUrl, Length } from 'class-validator';
 import { Default } from 'empleo-nestjs-common';
 
-export class DocumentationCreate {
+export class AdditionalDocument {
   @IsString()
   @Length(1, 255)
   @ApiModelPropertyOptional({
