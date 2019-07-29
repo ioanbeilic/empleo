@@ -1,8 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
-import { NestApplication } from '@nestjs/core';
 import { plainToClass } from 'class-transformer';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
-import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
+import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
 import faker from 'faker';
 import { languageCreateBuilder } from '../../src/builders/languages/language-create.builder';
 import { languageBuilder } from '../../src/builders/languages/language.builder';
@@ -11,14 +10,16 @@ import { Language } from '../../src/entities/language.entity';
 import { api, removeLanguageByToken } from './languages.api';
 
 describe('LanguagesController (POST) (e2e)', () => {
-  let app: NestApplication;
+  const app = new AppWrapper(CvModule);
+
   let candidateToken: string;
   let adminToken: string;
   let adminKeycloakId: string;
   let candidateKeycloakId: string;
 
+  before(init(app));
+
   before(async () => {
-    app = await startTestApp(CvModule);
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
 
     adminKeycloakId = tokenFromEncodedToken(adminToken).keycloakId;
@@ -31,10 +32,8 @@ describe('LanguagesController (POST) (e2e)', () => {
     await removeLanguageByToken(adminToken, candidateToken);
   });
 
-  after(async () => {
-    await removeLanguageByToken(adminToken, candidateToken);
-    await app.close();
-  });
+  after(clean(app));
+  after(close(app));
 
   describe(':keycloakId/languages', () => {
     it('should return 201 - Created', async () => {
