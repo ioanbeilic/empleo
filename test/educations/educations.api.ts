@@ -1,7 +1,7 @@
 import { NestApplication } from '@nestjs/core';
 import Bluebird from 'bluebird';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
-import { Api } from 'empleo-nestjs-testing';
+import { Api, AppWrapper } from 'empleo-nestjs-testing';
 import { getRepository } from 'typeorm';
 import { EducationCreate } from '../../src/dto/education-create.dto';
 import { Education } from '../../src/entities/education.entity';
@@ -16,7 +16,7 @@ export class EducationsApi extends Api<Education, EducationCreate> {
   }
 }
 
-export function api(app: NestApplication, { token }: { token?: string } = {}) {
+export function api({ app }: AppWrapper, { token }: { token?: string } = {}) {
   return {
     educations({ keycloakId }: { keycloakId: string }) {
       return new EducationsApi({ app, token, path: `/${keycloakId}/educations` });
