@@ -1,8 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
-import { NestApplication } from '@nestjs/core';
 import { plainToClass } from 'class-transformer';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
-import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
+import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
 import { additionalDocumentationBuilder } from '../../src/builders/common/additional-documentation.builder';
 import { experienceCreateBuilder } from '../../src/builders/experiences/experience-create.builder';
 import { experienceBuilder } from '../../src/builders/experiences/experience.builder';
@@ -11,14 +10,16 @@ import { Experience } from '../../src/entities/experience.entity';
 import { api, removeExperienceByToken } from './experiences.api';
 
 describe('ExperiencesController (POST) (e2e)', () => {
-  let app: NestApplication;
+  const app = new AppWrapper(CvModule);
+
   let candidateToken: string;
   let adminToken: string;
   let adminKeycloakId: string;
   let candidateKeycloakId: string;
 
+  before(init(app));
+
   before(async () => {
-    app = await startTestApp(CvModule);
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
 
     adminKeycloakId = tokenFromEncodedToken(adminToken).keycloakId;
@@ -31,10 +32,8 @@ describe('ExperiencesController (POST) (e2e)', () => {
     await removeExperienceByToken(adminToken, candidateToken);
   });
 
-  after(async () => {
-    await removeExperienceByToken(adminToken, candidateToken);
-    await app.close();
-  });
+  after(clean(app));
+  after(close(app));
 
   describe(':keycloakId/experiences', () => {
     it('should return 201 - Created', async () => {
