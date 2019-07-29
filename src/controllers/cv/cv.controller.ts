@@ -32,7 +32,7 @@ export class CvController {
   async deleteOneCv(@AuthenticatedUser() user: User, @Param() { keycloakId }: KeycloakIdParams): Promise<void> {
     this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } });
 
-    await this.cvService.deleteOne({ keycloakId: user.id });
+    await this.cvService.deleteOne(keycloakId);
   }
 
   @Get(':keycloakId/cv')
@@ -43,8 +43,9 @@ export class CvController {
   })
   @ApiKeycloakIdParam()
   @ApiOkResponse({ type: Cv, isArray: true })
-  async findCvByUser(@AuthenticatedUser() user: User, @Param() { keycloakId }: KeycloakIdParams): Promise<Cv | undefined> {
+  async findCvByUser(@AuthenticatedUser() user: User, @Param() { keycloakId }: KeycloakIdParams): Promise<Cv> {
     this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } });
-    return this.cvService.findByUser({ keycloakId: user.id });
+
+    return this.cvService.findByUser(user);
   }
 }

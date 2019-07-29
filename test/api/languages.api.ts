@@ -1,7 +1,7 @@
 import { NestApplication } from '@nestjs/core';
 import Bluebird from 'bluebird';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
-import { Api, AppWrapper } from 'empleo-nestjs-testing';
+import { Api } from 'empleo-nestjs-testing';
 import { getRepository } from 'typeorm';
 import { LanguageCreate } from '../../src/dto/language-create.dto';
 import { Language } from '../../src/entities/language.entity';
@@ -14,14 +14,6 @@ export class LanguagesApi extends Api<Language, LanguageCreate> {
       token
     });
   }
-}
-
-export function api({ app }: AppWrapper, { token }: { token?: string } = {}) {
-  return {
-    languages({ keycloakId }: { keycloakId: string }) {
-      return new LanguagesApi({ app, token, path: `/${keycloakId}/languages` });
-    }
-  };
 }
 
 export async function removeLanguageByToken(...tokens: string[]) {

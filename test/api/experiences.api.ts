@@ -1,7 +1,7 @@
 import { NestApplication } from '@nestjs/core';
 import Bluebird from 'bluebird';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
-import { Api, AppWrapper } from 'empleo-nestjs-testing';
+import { Api } from 'empleo-nestjs-testing';
 import { getRepository } from 'typeorm';
 import { ExperienceCreate } from '../../src/dto/experience-create.dto';
 import { Experience } from '../../src/entities/experience.entity';
@@ -14,14 +14,6 @@ export class ExperiencesApi extends Api<Experience, ExperienceCreate> {
       token
     });
   }
-}
-
-export function api({ app }: AppWrapper, { token }: { token?: string } = {}) {
-  return {
-    experiences({ keycloakId }: { keycloakId: string }) {
-      return new ExperiencesApi({ app, token, path: `/${keycloakId}/experiences` });
-    }
-  };
 }
 
 export async function removeExperienceByToken(...tokens: string[]) {

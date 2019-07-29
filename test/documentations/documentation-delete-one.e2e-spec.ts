@@ -7,7 +7,8 @@ import { getRepository } from 'typeorm';
 import { documentationBuilder } from '../../src/builders/documentations/documentations.builder';
 import { CvModule } from '../../src/cv.module';
 import { Documentation } from '../../src/entities/documentation.entity';
-import { api, removeDocumentationByToken } from './documentations.api';
+import { api } from '../api/api';
+import { removeDocumentationByToken } from './documentations.api';
 
 describe('DocumentationController (DELETE) (e2e)', () => {
   const app = new AppWrapper(CvModule);

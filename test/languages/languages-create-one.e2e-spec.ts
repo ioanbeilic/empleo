@@ -7,7 +7,8 @@ import { languageCreateBuilder } from '../../src/builders/languages/language-cre
 import { languageBuilder } from '../../src/builders/languages/language.builder';
 import { CvModule } from '../../src/cv.module';
 import { Language } from '../../src/entities/language.entity';
-import { api, removeLanguageByToken } from './languages.api';
+import { api } from '../api/api';
+import { removeLanguageByToken } from '../api/languages.api';
 
 describe('LanguagesController (POST) (e2e)', () => {
   const app = new AppWrapper(CvModule);

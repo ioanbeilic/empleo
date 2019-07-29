@@ -9,7 +9,8 @@ import { educationCreateBuilder } from '../../src/builders/educations/education-
 import { educationBuilder } from '../../src/builders/educations/education.builder';
 import { CvModule } from '../../src/cv.module';
 import { Education } from '../../src/entities/education.entity';
-import { api, removeEducationByToken } from './educations.api';
+import { api } from '../api/api';
+import { removeEducationByToken } from '../api/educations.api';
 
 describe('EducationController (PUT) (e2e)', () => {
   const app = new AppWrapper(CvModule);

@@ -7,7 +7,8 @@ import { getRepository } from 'typeorm';
 import { educationBuilder } from '../../src/builders/educations/education.builder';
 import { CvModule } from '../../src/cv.module';
 import { Education } from '../../src/entities/education.entity';
-import { api, removeEducationByToken } from './educations.api';
+import { api } from '../api/api';
+import { removeEducationByToken } from '../api/educations.api';
 
 describe('EducationController (DELETE) (e2e)', () => {
   const app = new AppWrapper(CvModule);
