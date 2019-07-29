@@ -1,4 +1,3 @@
-import { NestApplication } from '@nestjs/core';
 import { AppWrapper } from 'empleo-nestjs-testing';
 import { CvApi } from './cv.api';
 import { DocumentationsApi } from './documentations.api';
@@ -6,22 +5,22 @@ import { EducationsApi } from './educations.api';
 import { ExperiencesApi } from './experiences.api';
 import { LanguagesApi } from './languages.api';
 
-export function api(app: AppWrapper | NestApplication, { token }: { token?: string } = {}) {
+export function api({ app }: AppWrapper, { token }: { token?: string } = {}) {
   return {
     cv({ keycloakId }: ApiPath) {
-      return new CvApi({ app: app instanceof AppWrapper ? app.app : app, token, path: `/${keycloakId}/cv` });
+      return new CvApi({ app, token, path: `/${keycloakId}/cv` });
     },
     educations({ keycloakId }: ApiPath) {
-      return new EducationsApi({ app: app instanceof AppWrapper ? app.app : app, token, path: `/${keycloakId}/educations` });
+      return new EducationsApi({ app, token, path: `/${keycloakId}/educations` });
     },
     documentations({ keycloakId }: ApiPath) {
-      return new DocumentationsApi({ app: app instanceof AppWrapper ? app.app : app, token, path: `/${keycloakId}/documentations` });
+      return new DocumentationsApi({ app, token, path: `/${keycloakId}/documentations` });
     },
     languages({ keycloakId }: ApiPath) {
-      return new LanguagesApi({ app: app instanceof AppWrapper ? app.app : app, token, path: `/${keycloakId}/languages` });
+      return new LanguagesApi({ app, token, path: `/${keycloakId}/languages` });
     },
     experiences({ keycloakId }: ApiPath) {
-      return new ExperiencesApi({ app: app instanceof AppWrapper ? app.app : app, token, path: `/${keycloakId}/experiences` });
+      return new ExperiencesApi({ app, token, path: `/${keycloakId}/experiences` });
     }
   };
 }

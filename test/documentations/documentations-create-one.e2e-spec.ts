@@ -1,8 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
-import { NestApplication } from '@nestjs/core';
 import { plainToClass } from 'class-transformer';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
-import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-testing';
+import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
 import { documentationBuilder } from '../../src/builders/documentations/documentations.builder';
 import { CvModule } from '../../src/cv.module';
 import { Documentation } from '../../src/entities/documentation.entity';
@@ -10,28 +9,28 @@ import { api } from '../api/api';
 import { removeDocumentationByToken } from './documentations.api';
 
 describe('DocumentationsController (POST) (e2e)', () => {
-  let app: NestApplication;
+  const app = new AppWrapper(CvModule);
+
   let candidateToken: string;
   let adminToken: string;
   let candidateKeycloakId: string;
 
+  before(init(app));
+
   before(async () => {
-    app = await startTestApp(CvModule);
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
-
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
-
     await removeDocumentationByToken(adminToken, candidateToken);
   });
+
+  beforeEach(clean(app));
 
   afterEach(async () => {
     await removeDocumentationByToken(adminToken, candidateToken);
   });
 
-  after(async () => {
-    await removeDocumentationByToken(adminToken, candidateToken);
-    await app.close();
-  });
+  after(clean(app));
+  after(close(app));
 
   describe(':keycloakId/documentations', () => {
     it('should return 201 - Created', async () => {
