@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'empleo-nestjs-authentication';
 import { isUniqueKeyViolationError } from 'empleo-nestjs-common';
 import { Repository } from 'typeorm';
 import uuid from 'uuid/v1';
@@ -10,7 +11,7 @@ import { CvNotFoundException } from '../../errors/cv-not-found.exception';
 export class CvService {
   constructor(@InjectRepository(Cv) private readonly cvRepository: Repository<Cv>) {}
 
-  async ensureExists({ keycloakId }: CreateCvOptions): Promise<void> {
+  async ensureExists(keycloakId: string): Promise<void> {
     try {
       await this.cvRepository.save({ cvId: uuid(), keycloakId });
     } catch (err) {
@@ -20,7 +21,20 @@ export class CvService {
     }
   }
 
-  async deleteOne({ keycloakId }: DeleteCvOptions) {
+  async findByUser(user: User): Promise<Cv> {
+    const cv = await this.cvRepository.findOne(
+      { keycloakId: user.id },
+      { relations: ['educations', 'experiences', 'languages', 'documentations'] }
+    );
+
+    if (!cv) {
+      throw new CvNotFoundException();
+    }
+
+    return cv;
+  }
+
+  async deleteOne(keycloakId: string) {
     const { affected } = await this.cvRepository.delete({ keycloakId });
 
     if (!affected) {
@@ -29,10 +43,6 @@ export class CvService {
   }
 }
 
-export interface CreateCvOptions {
-  keycloakId: string;
-}
-
-export interface DeleteCvOptions {
+export interface CvOptions {
   keycloakId: string;
 }

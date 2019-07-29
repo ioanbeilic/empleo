@@ -1,5 +1,4 @@
 import { ApiModelProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
 import { IsUUID } from 'class-validator';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
@@ -16,21 +15,24 @@ export class Cv {
   cvId!: string;
 
   @IsUUID()
-  @Exclude()
   @ApiModelProperty({ type: 'string', format: 'uuid', example: uuid() })
   @Column({ type: 'uuid', name: 'keycloak_id', unique: true })
   keycloakId!: string;
 
   @OneToMany(() => Education, education => education.cv)
+  @ApiModelProperty({ type: [Education] })
   educations!: Education[];
 
   @OneToMany(() => Experience, experience => experience.cv)
+  @ApiModelProperty({ type: [Experience] })
   experiences!: Experience[];
 
   @OneToMany(() => Language, language => language.cv)
+  @ApiModelProperty({ type: [Language] })
   languages!: Language[];
 
   @OneToMany(() => Documentation, documentation => documentation.cv)
+  @ApiModelProperty({ type: [Documentation] })
   documentations!: Documentation[];
 }
 

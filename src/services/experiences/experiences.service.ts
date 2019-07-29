@@ -22,7 +22,7 @@ export class ExperiencesService {
       keycloakId: user.id
     });
 
-    await this.cvService.ensureExists({ keycloakId: user.id });
+    await this.cvService.ensureExists(user.id);
 
     return this.experienceRepository.save(experience);
   }

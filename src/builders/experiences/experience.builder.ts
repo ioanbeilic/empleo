@@ -1,4 +1,5 @@
 import { plainToClass } from 'class-transformer';
+import { format } from 'date-fns';
 import { Builder } from 'empleo-nestjs-testing';
 import { AdditionalDocumentation } from '../../domain/additional-documentation';
 import { Experience } from '../../entities/experience.entity';
@@ -13,11 +14,11 @@ export class ExperienceBuilder extends Builder<Experience> {
     return this.with('keycloakId', keycloakId);
   }
 
-  withStartDate(startDate = this.faker.date.past()): this {
+  withStartDate(startDate = new Date(format(this.faker.date.past(), 'YYYY-MM-DD'))): this {
     return this.with('startDate', startDate);
   }
 
-  withEndDate(endDate = this.faker.date.future()): this {
+  withEndDate(endDate = new Date(format(this.faker.date.future(), 'YYYY-MM-DD'))): this {
     return this.with('endDate', endDate);
   }
 

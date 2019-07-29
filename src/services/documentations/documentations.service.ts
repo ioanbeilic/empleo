@@ -22,7 +22,7 @@ export class DocumentationsService {
       keycloakId: user.id
     });
 
-    await this.cvService.ensureExists({ keycloakId: user.id });
+    await this.cvService.ensureExists(user.id);
 
     return this.documentationRepository.save(documentation);
   }

@@ -4,6 +4,7 @@ import { IsDate, IsUUID } from 'class-validator';
 import { CreatedAtColumn, UpdatedAtColumn } from 'empleo-nestjs-common';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
+import { DateTransformer } from '../common/date.transformer';
 import { AdditionalDocumentation } from '../domain/additional-documentation';
 import { ExperienceCreate } from '../dto/experience-create.dto';
 import { Cv } from './cv.entity';
@@ -20,12 +21,6 @@ export class Experience extends ExperienceCreate {
   @ApiModelProperty({ type: 'string', format: 'uuid', example: uuid() })
   keycloakId!: string;
 
-  @Column({ type: 'date', name: 'date_start' })
-  startDate!: Date;
-
-  @Column({ type: 'date', nullable: true, default: null, name: 'date_end' })
-  endDate?: Date;
-
   @Column({ type: 'varchar', name: 'company_name', length: 50 })
   companyName!: string;
 
@@ -41,6 +36,12 @@ export class Experience extends ExperienceCreate {
   @Column({ type: 'jsonb', nullable: true })
   @ApiModelProperty({ type: [AdditionalDocumentation] })
   documentation?: AdditionalDocumentation[];
+
+  @Column({ type: 'date', name: 'date_start', transformer: DateTransformer.nullable() })
+  startDate!: Date;
+
+  @Column({ type: 'date', name: 'date_end', nullable: true, default: null, transformer: DateTransformer.nullable() })
+  endDate?: Date;
 
   @IsDate()
   @CreatedAtColumn()

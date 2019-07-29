@@ -6,7 +6,8 @@ import { getAdminToken, getCandidateToken, startTestApp } from 'empleo-nestjs-te
 import { documentationBuilder } from '../../src/builders/documentations/documentations.builder';
 import { CvModule } from '../../src/cv.module';
 import { Documentation } from '../../src/entities/documentation.entity';
-import { api, removeDocumentationByToken } from './documentations.api';
+import { api } from '../api/api';
+import { removeDocumentationByToken } from './documentations.api';
 
 describe('DocumentationsController (POST) (e2e)', () => {
   let app: NestApplication;

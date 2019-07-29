@@ -1,8 +1,8 @@
 import { plainToClass } from 'class-transformer';
+import { format } from 'date-fns';
 import { Builder } from 'empleo-nestjs-testing';
 import { AdditionalDocumentation } from '../../domain/additional-documentation';
 import { EducationCreate } from '../../dto/education-create.dto';
-import { Education } from '../../entities/education.entity';
 import { additionalDocumentationBuilder } from '../common/additional-documentation.builder';
 
 export class EducationCreateBuilder extends Builder<EducationCreate> {
@@ -26,11 +26,11 @@ export class EducationCreateBuilder extends Builder<EducationCreate> {
     return this.with('category', category);
   }
 
-  withStartDate(startDate = this.faker.date.past()): this {
+  withStartDate(startDate = new Date(format(this.faker.date.past(), 'YYYY-MM-DD'))): this {
     return this.with('startDate', startDate);
   }
 
-  withEndDate(endDate = this.faker.date.future()): this {
+  withEndDate(endDate = new Date(format(this.faker.date.future(), 'YYYY-MM-DD'))): this {
     return this.with('endDate', endDate);
   }
 
@@ -61,8 +61,8 @@ export class EducationCreateBuilder extends Builder<EducationCreate> {
       .withEndDate();
   }
 
-  build(): Education {
-    return plainToClass(Education, this.data);
+  build(): EducationCreate {
+    return plainToClass(EducationCreate, this.data);
   }
 }
 

@@ -4,6 +4,7 @@ import { IsDate, IsUUID } from 'class-validator';
 import { CreatedAtColumn, EntityColumnTransformer, UpdatedAtColumn } from 'empleo-nestjs-common';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
+import { DateTransformer } from '../common/date.transformer';
 import { AdditionalDocumentation } from '../domain/additional-documentation';
 import { EducationCreate } from '../dto/education-create.dto';
 import { Cv } from './cv.entity';
@@ -36,10 +37,10 @@ export class Education extends EducationCreate {
   @Column({ type: 'varchar', length: 255 })
   category!: string;
 
-  @Column({ type: 'date', name: 'date_start' })
+  @Column({ type: 'date', name: 'date_start', transformer: new DateTransformer() })
   startDate!: Date;
 
-  @Column({ type: 'date', name: 'date_end', nullable: true })
+  @Column({ type: 'date', name: 'date_end', nullable: true, default: null, transformer: DateTransformer.nullable() })
   endDate?: Date;
 
   @Column({ type: 'jsonb', transformer: new EntityColumnTransformer(AdditionalDocumentation) })
