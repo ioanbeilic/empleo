@@ -1,7 +1,7 @@
 import { NestApplication } from '@nestjs/core';
 import Bluebird from 'bluebird';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
-import { Api } from 'empleo-nestjs-testing';
+import { Api, AppWrapper } from 'empleo-nestjs-testing';
 import { getRepository } from 'typeorm';
 import { DocumentationCreate } from '../../src/dto/documentation-create.dto';
 import { Documentation } from '../../src/entities/documentation.entity';
@@ -16,7 +16,7 @@ export class DocumentationsApi extends Api<Documentation, DocumentationCreate> {
   }
 }
 
-export function api(app: NestApplication, { token }: { token?: string } = {}) {
+export function api({ app }: AppWrapper, { token }: { token?: string } = {}) {
   return {
     documentations({ keycloakId }: { keycloakId: string }) {
       return new DocumentationsApi({ app, token, path: `/${keycloakId}/documentations` });
