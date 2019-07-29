@@ -1,20 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'empleo-nestjs-authentication';
 import { isUniqueKeyViolationError } from 'empleo-nestjs-common';
 import { Repository } from 'typeorm';
 import uuid from 'uuid/v1';
 import { Cv } from '../../entities/cv.entity';
-import { Documentation } from '../../entities/documentation.entity';
-import { Education } from '../../entities/education.entity';
-import { Experience } from '../../entities/experience.entity';
-import { Language } from '../../entities/language.entity';
 import { CvNotFoundException } from '../../errors/cv-not-found.exception';
 
 @Injectable()
 export class CvService {
   constructor(@InjectRepository(Cv) private readonly cvRepository: Repository<Cv>) {}
 
-  async ensureExists({ keycloakId }: CvOptions): Promise<void> {
+  async ensureExists(keycloakId: string): Promise<void> {
     try {
       await this.cvRepository.save({ cvId: uuid(), keycloakId });
     } catch (err) {
@@ -24,22 +21,20 @@ export class CvService {
     }
   }
 
-  async findByUser({ keycloakId }: CvOptions): Promise<ResponseCvOption | undefined> {
-    const response = await this.cvRepository.findOne(
-      {
-        keycloakId
-      },
+  async findByUser(user: User): Promise<Cv> {
+    const cv = await this.cvRepository.findOne(
+      { keycloakId: user.id },
       { relations: ['educations', 'experiences', 'languages', 'documentations'] }
     );
 
-    if (response === undefined) {
+    if (!cv) {
       throw new CvNotFoundException();
     }
 
-    return response;
+    return cv;
   }
 
-  async deleteOne({ keycloakId }: CvOptions) {
+  async deleteOne(keycloakId: string) {
     const { affected } = await this.cvRepository.delete({ keycloakId });
 
     if (!affected) {
@@ -50,12 +45,4 @@ export class CvService {
 
 export interface CvOptions {
   keycloakId: string;
-}
-
-export interface ResponseCvOption extends Cv {
-  cvId: string;
-  educations: Education[];
-  experiences: Experience[];
-  languages: Language[];
-  documentations: Documentation[];
 }

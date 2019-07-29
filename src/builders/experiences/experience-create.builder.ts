@@ -1,15 +1,16 @@
 import { plainToClass } from 'class-transformer';
+import { format } from 'date-fns';
 import { Builder } from 'empleo-nestjs-testing';
 import { AdditionalDocumentation } from '../../domain/additional-documentation';
 import { ExperienceCreate } from '../../dto/experience-create.dto';
 import { additionalDocumentationBuilder } from '../common/additional-documentation.builder';
 
 export class ExperienceCreateBuilder extends Builder<ExperienceCreate> {
-  withStartDate(startDate = this.faker.date.past()): this {
+  withStartDate(startDate = new Date(format(this.faker.date.past(), 'YYYY-MM-DD'))): this {
     return this.with('startDate', startDate);
   }
 
-  withEndDate(endDate = this.faker.date.future()): this {
+  withEndDate(endDate = new Date(format(this.faker.date.future(), 'YYYY-MM-DD'))): this {
     return this.with('endDate', endDate);
   }
 

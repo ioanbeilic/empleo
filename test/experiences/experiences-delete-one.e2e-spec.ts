@@ -8,7 +8,8 @@ import { getRepository } from 'typeorm';
 import { experienceBuilder } from '../../src/builders/experiences/experience.builder';
 import { CvModule } from '../../src/cv.module';
 import { Experience } from '../../src/entities/experience.entity';
-import { api, removeExperienceByToken } from './experiences.api';
+import { api } from '../api/api';
+import { removeExperienceByToken } from '../api/experiences.api';
 
 describe('ExperienceController (DELETE) (e2e)', () => {
   let app: NestApplication;

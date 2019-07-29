@@ -7,7 +7,8 @@ import { additionalDocumentationBuilder } from '../../src/builders/common/additi
 import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { CvModule } from '../../src/cv.module';
 import { Education } from '../../src/entities/education.entity';
-import { api, removeEducationByToken } from './educations.api';
+import { api } from '../api/api';
+import { removeEducationByToken } from '../api/educations.api';
 
 describe('EducationController (POST) (e2e)', () => {
   let app: NestApplication;

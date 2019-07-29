@@ -1,12 +1,12 @@
 import { NestApplication } from '@nestjs/core';
 import Bluebird from 'bluebird';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
-import { Api } from 'empleo-nestjs-testing';
+import { Api, TypedTest } from 'empleo-nestjs-testing';
 import { getRepository } from 'typeorm';
-import { EducationCreate } from '../../src/dto/education-create.dto';
+import { Cv } from '../../src/entities/cv.entity';
 import { Education } from '../../src/entities/education.entity';
 
-export class EducationsApi extends Api<Education, EducationCreate> {
+export class CvApi extends Api<Cv, Education> {
   constructor({ app, token, path }: { app: NestApplication; path: string; token?: string }) {
     super({
       server: app.getHttpServer(),
@@ -14,14 +14,28 @@ export class EducationsApi extends Api<Education, EducationCreate> {
       token
     });
   }
+
+  removeWithKeycloakId(): TypedTest<void> {
+    return this.delete(this.uri({ path: `/` }));
+  }
+
+  findCvByKeycloakId(): TypedTest<Cv> {
+    return this.get(this.uri({ path: `/` }));
+  }
 }
 
-export function api(app: NestApplication, { token }: { token?: string } = {}) {
-  return {
-    educations({ keycloakId }: { keycloakId: string }) {
-      return new EducationsApi({ app, token, path: `/${keycloakId}/educations` });
-    }
-  };
+export async function removeCvByToken(...tokens: string[]) {
+  const cvRepository = getRepository(Cv);
+
+  await Bluebird.resolve(tokens)
+    .map(token => tokenFromEncodedToken(token))
+    .map(({ keycloakId }) => keycloakId)
+    .map(keycloakId => cvRepository.delete({ keycloakId }));
+}
+
+export async function removeCvById(cvId: string) {
+  const cvRepository = getRepository(Cv);
+  return cvRepository.delete(cvId);
 }
 
 export async function removeEducationByToken(...tokens: string[]) {
@@ -31,9 +45,4 @@ export async function removeEducationByToken(...tokens: string[]) {
     .map(token => tokenFromEncodedToken(token))
     .map(({ keycloakId }) => keycloakId)
     .map(keycloakId => educationRepository.delete({ keycloakId }));
-}
-
-export async function removeEducationById(educationId: string) {
-  const educationRepository = getRepository(Education);
-  return educationRepository.delete(educationId);
 }

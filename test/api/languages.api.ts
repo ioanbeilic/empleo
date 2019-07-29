@@ -16,14 +16,6 @@ export class LanguagesApi extends Api<Language, LanguageCreate> {
   }
 }
 
-export function api(app: NestApplication, { token }: { token?: string } = {}) {
-  return {
-    languages({ keycloakId }: { keycloakId: string }) {
-      return new LanguagesApi({ app, token, path: `/${keycloakId}/languages` });
-    }
-  };
-}
-
 export async function removeLanguageByToken(...tokens: string[]) {
   const languageRepository = getRepository(Language);
 

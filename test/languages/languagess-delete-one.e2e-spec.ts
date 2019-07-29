@@ -8,7 +8,8 @@ import { getRepository } from 'typeorm';
 import { languageBuilder } from '../../src/builders/languages/language.builder';
 import { CvModule } from '../../src/cv.module';
 import { Language } from '../../src/entities/language.entity';
-import { api, removeLanguageByToken } from './languages.api';
+import { api } from '../api/api';
+import { removeLanguageByToken } from '../api/languages.api';
 
 describe('LanguageController (DELETE) (e2e)', () => {
   let app: NestApplication;

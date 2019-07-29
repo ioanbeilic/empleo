@@ -5,7 +5,8 @@ import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from
 import { educationBuilder } from '../../src/builders/educations/education.builder';
 import { CvModule } from '../../src/cv.module';
 import { Education } from '../../src/entities/education.entity';
-import { api, apiEducation, removeCvByToken, removeEducationByToken } from './cv.api';
+import { api } from '../api/api';
+import { removeCvByToken, removeEducationByToken } from '../api/cv.api';
 
 describe('CvController (DELETE) (e2e)', () => {
   const app = new AppWrapper(CvModule);
@@ -32,7 +33,7 @@ describe('CvController (DELETE) (e2e)', () => {
   after(close(app));
 
   describe(':keycloakId/cv/:cvId', () => {
-    it('should return 204 - NO_CONTENT', async () => {
+    it('should return 204 - No Content', async () => {
       await createCv();
 
       await api(app, { token: candidateToken })
@@ -57,7 +58,7 @@ describe('CvController (DELETE) (e2e)', () => {
       });
 
       it('should return 404 - Not Found when try to get a education from a deleted Cv', async () => {
-        await apiEducation(app, { token: candidateToken })
+        await api(app, { token: candidateToken })
           .educations({ keycloakId: candidateKeycloakId })
           .create({ payload: education })
           .expectJson(HttpStatus.CREATED);
@@ -72,7 +73,7 @@ describe('CvController (DELETE) (e2e)', () => {
           .findOne({ identifier: candidateKeycloakId })
           .expect(HttpStatus.NOT_FOUND);
 
-        await apiEducation(app, { token: candidateToken })
+        await api(app, { token: candidateToken })
           .educations({ keycloakId: candidateKeycloakId })
           .findOne({ identifier: education.educationId })
           .expect(HttpStatus.NOT_FOUND);
@@ -108,7 +109,7 @@ describe('CvController (DELETE) (e2e)', () => {
       .withValidData()
       .build();
 
-    const createdEducation = await apiEducation(app, { token: candidateToken })
+    const createdEducation = await api(app, { token: candidateToken })
       .educations({ keycloakId: candidateKeycloakId })
       .create({ payload: education })
       .expectJson(HttpStatus.CREATED)

@@ -22,7 +22,7 @@ export class LanguagesService {
       keycloakId: user.id
     });
 
-    await this.cvService.ensureExists({ keycloakId: user.id });
+    await this.cvService.ensureExists(user.id);
 
     return this.languageRepository.save(language);
   }

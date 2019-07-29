@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
-import faker = require('faker');
+import faker from 'faker';
 import { anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { Repository } from 'typeorm';
 import { Cv } from '../../entities/cv.entity';
-import { CvService, ResponseCvOption } from './cv.service';
+import { CvService } from './cv.service';
 
 describe('CvService', () => {
   let mockedCvRepository: Repository<Cv>;
@@ -26,14 +26,14 @@ describe('CvService', () => {
     it('should correctly insert keycloakId to cv', async () => {
       when(mockedCvRepository.create(anything())).thenResolve();
 
-      await cvService.ensureExists({ keycloakId: user.id });
+      await cvService.ensureExists(user.id);
 
       verify(mockedCvRepository.save(anything())).once();
     });
   });
 
   describe('#findByUser()', () => {
-    const cv: ResponseCvOption = {
+    const cv: Cv = {
       cvId: faker.random.uuid(),
       keycloakId: user.id,
       educations: [],
@@ -41,10 +41,11 @@ describe('CvService', () => {
       languages: [],
       documentations: []
     };
+
     it('should find the cv', async () => {
       when(mockedCvRepository.findOne(anything(), anything())).thenResolve(cv);
 
-      const response = await cvService.findByUser({ keycloakId: user.id });
+      const foundCv = await cvService.findByUser(user);
 
       verify(
         mockedCvRepository.findOne(
@@ -52,7 +53,7 @@ describe('CvService', () => {
           deepEqual({ relations: ['educations', 'experiences', 'languages', 'documentations'] })
         )
       ).once();
-      expect(response).equal(cv);
+      expect(foundCv).to.be.equal(cv);
     });
   });
 });

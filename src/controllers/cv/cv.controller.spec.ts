@@ -2,8 +2,9 @@ import { expect } from 'chai';
 import { PermissionsService, userBuilder } from 'empleo-nestjs-authentication';
 import faker from 'faker';
 import { anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
+import { Cv } from '../../entities/cv.entity';
 import { CvNotFoundException } from '../../errors/cv-not-found.exception';
-import { CvService, ResponseCvOption } from '../../services/cv/cv.service';
+import { CvService } from '../../services/cv/cv.service';
 import { CvController } from './cv.controller';
 
 describe('CvController', () => {
@@ -29,7 +30,7 @@ describe('CvController', () => {
 
       const response = await cvController.deleteOneCv(user, { keycloakId });
 
-      verify(mockedCvService.deleteOne(deepEqual({ keycloakId }))).once();
+      verify(mockedCvService.deleteOne(keycloakId)).once();
       expect(response).to.be.undefined;
     });
   });
@@ -43,11 +44,11 @@ describe('CvController', () => {
     await expect(cvController.deleteOneCv(user, { keycloakId: anotherKeycloakId })).to.be.rejectedWith(CvNotFoundException);
 
     verify(mockedPermissionsService.isOwnerOrNotFound(deepEqual({ user, resource: { keycloakId: anotherKeycloakId } }))).once();
-    verify(mockedCvService.deleteOne({ keycloakId: user.id })).never();
+    verify(mockedCvService.deleteOne(user.id)).never();
   });
 
   describe('#findByUser()', () => {
-    const cv: ResponseCvOption = {
+    const cv: Cv = {
       cvId: faker.random.uuid(),
       keycloakId: user.id,
       educations: [],
@@ -55,13 +56,14 @@ describe('CvController', () => {
       languages: [],
       documentations: []
     };
+
     it('should find the cv', async () => {
       when(mockedCvService.findByUser(anything())).thenResolve(cv);
 
       const response = await cvController.findCvByUser(user, { keycloakId: user.id });
 
-      verify(mockedCvService.findByUser(deepEqual({ keycloakId: user.id }))).once();
-      expect(response).equal(cv);
+      verify(mockedCvService.findByUser(user)).once();
+      expect(response).to.be.equal(cv);
     });
   });
 });

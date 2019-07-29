@@ -1,12 +1,17 @@
 import { HttpStatus } from '@nestjs/common';
+import { expect } from 'chai';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
-import { educationBuilder } from '../../src/builders/educations/education.builder';
+import { documentationCreateBuilder } from '../../src/builders/documentations/documentations-create.builder';
+import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
+import { experienceCreateBuilder } from '../../src/builders/experiences/experience-create.builder';
+import { languageCreateBuilder } from '../../src/builders/languages/language-create.builder';
 import { CvModule } from '../../src/cv.module';
-import { Education } from '../../src/entities/education.entity';
-import { api, apiEducation, removeCvByToken, removeEducationByToken } from './cv.api';
+import { Cv } from '../../src/entities/cv.entity';
+import { api } from '../api/api';
+import { removeCvByToken, removeEducationByToken } from '../api/cv.api';
 
-describe('CvController (FIND) (e2e)', () => {
+describe('CvController (GET) (e2e)', () => {
   const app = new AppWrapper(CvModule);
 
   let candidateToken: string;
@@ -32,16 +37,20 @@ describe('CvController (FIND) (e2e)', () => {
   after(clean(app));
   after(close(app));
 
-  describe(':keycloakId/cv/', () => {
-    it('should return 200 - ok', async () => {
-      await createCv();
-      await api(app, { token: candidateToken })
+  describe(':keycloakId/cv', () => {
+    it('should return 200 - Ok', async () => {
+      const cvInfo = await createCv();
+
+      const cv = await api(app, { token: candidateToken })
         .cv({ keycloakId: candidateKeycloakId })
         .findCvByKeycloakId()
-        .expect(HttpStatus.OK);
+        .expect(HttpStatus.OK)
+        .body();
+
+      expect(cv).to.containSubset(cvInfo);
     });
 
-    it('should return 404 - NOT_FOUND when intent to find inexistent Cv', async () => {
+    it('should return 404 - Not Found when the CV does not exist', async () => {
       await api(app, { token: candidateToken })
         .cv({ keycloakId: candidateKeycloakId })
         .findOne({ identifier: candidateKeycloakId })
@@ -58,6 +67,7 @@ describe('CvController (FIND) (e2e)', () => {
 
     it('should return 403 - Forbidden  when user is not candidate', async () => {
       await createCv();
+
       await api(app, { token: adminToken })
         .cv({ keycloakId: candidateKeycloakId })
         .removeWithKeycloakId()
@@ -73,16 +83,51 @@ describe('CvController (FIND) (e2e)', () => {
     });
   });
 
-  async function createCv() {
-    let education: Education;
-
-    education = educationBuilder()
+  async function createCv(): Promise<Partial<Cv>> {
+    const educationCreate = educationCreateBuilder()
       .withValidData()
-      .withKeycloakId(candidateKeycloakId)
       .build();
-    await apiEducation(app, { token: candidateToken })
-      .educations({ keycloakId: candidateKeycloakId })
-      .create({ payload: education })
-      .expectJson(HttpStatus.CREATED);
+
+    const experienceCreate = experienceCreateBuilder()
+      .withValidData()
+      .build();
+
+    const languageCreate = languageCreateBuilder()
+      .withValidData()
+      .build();
+
+    const documentationCreate = documentationCreateBuilder()
+      .withValidData()
+      .build();
+
+    const [education, experience, language, document] = await Promise.all([
+      api(app, { token: candidateToken })
+        .educations({ keycloakId: candidateKeycloakId })
+        .create({ payload: educationCreate })
+        .expectJson(HttpStatus.CREATED)
+        .body(),
+      api(app, { token: candidateToken })
+        .experiences({ keycloakId: candidateKeycloakId })
+        .create({ payload: experienceCreate })
+        .expectJson(HttpStatus.CREATED)
+        .body(),
+      api(app, { token: candidateToken })
+        .languages({ keycloakId: candidateKeycloakId })
+        .create({ payload: languageCreate })
+        .expectJson(HttpStatus.CREATED)
+        .body(),
+      api(app, { token: candidateToken })
+        .documentations({ keycloakId: candidateKeycloakId })
+        .create({ payload: documentationCreate })
+        .expectJson(HttpStatus.CREATED)
+        .body()
+    ]);
+
+    return {
+      educations: [education],
+      experiences: [experience],
+      languages: [language],
+      documentations: [document]
+    };
   }
 });

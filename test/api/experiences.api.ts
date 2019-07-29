@@ -16,14 +16,6 @@ export class ExperiencesApi extends Api<Experience, ExperienceCreate> {
   }
 }
 
-export function api(app: NestApplication, { token }: { token?: string } = {}) {
-  return {
-    experiences({ keycloakId }: { keycloakId: string }) {
-      return new ExperiencesApi({ app, token, path: `/${keycloakId}/experiences` });
-    }
-  };
-}
-
 export async function removeExperienceByToken(...tokens: string[]) {
   const experienceRepository = getRepository(Experience);
 
