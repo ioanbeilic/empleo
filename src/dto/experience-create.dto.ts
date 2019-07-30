@@ -30,7 +30,7 @@ export class ExperienceCreate {
   @Default(() => [])
   @Type(() => AdditionalDocument)
   @ApiModelPropertyOptional({ type: [AdditionalDocument] })
-  document?: AdditionalDocument[];
+  documents?: AdditionalDocument[];
 
   @IsDate()
   @ApiModelProperty({ type: 'string', format: 'date', example: '2017-09-01' })

@@ -157,7 +157,7 @@ describe('ExperienceController (PUT) (e2e)', () => {
         .withName('')
         .build();
 
-      experienceUpdate.document = [document];
+      experienceUpdate.documents = [document];
 
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })

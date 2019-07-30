@@ -34,12 +34,12 @@ export class EducationCreateBuilder extends Builder<EducationCreate> {
     return this.with('endDate', endDate);
   }
 
-  withAdditionalDocument(...document: AdditionalDocument[]): this {
-    return this.with('document', document);
+  withAdditionalDocument(...documents: AdditionalDocument[]): this {
+    return this.with('documents', documents);
   }
 
   withoutAdditionalDocument(): this {
-    return this.without('document');
+    return this.without('documents');
   }
 
   withoutEndDate() {

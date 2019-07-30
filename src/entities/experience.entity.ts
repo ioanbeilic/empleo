@@ -1,7 +1,7 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { IsDate, IsUUID } from 'class-validator';
-import { CreatedAtColumn, UpdatedAtColumn } from 'empleo-nestjs-common';
+import { CreatedAtColumn, EntityColumnTransformer, UpdatedAtColumn } from 'empleo-nestjs-common';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
 import { DateTransformer } from '../common/date.transformer';
@@ -33,9 +33,9 @@ export class Experience extends ExperienceCreate {
   @Column({ type: 'varchar', length: 100 })
   title!: string;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'jsonb', transformer: new EntityColumnTransformer(AdditionalDocument), default: [] })
   @ApiModelProperty({ type: [AdditionalDocument] })
-  document?: AdditionalDocument[];
+  documents!: AdditionalDocument[];
 
   @Column({ type: 'date', name: 'date_start', transformer: DateTransformer.nullable() })
   startDate!: Date;

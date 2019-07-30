@@ -39,7 +39,7 @@ export class ExperienceBuilder extends Builder<Experience> {
   }
 
   withAdditionalDocument(...document: AdditionalDocument[]): this {
-    return this.with('document', document);
+    return this.with('documents', document);
   }
 
   withoutExperienceId() {

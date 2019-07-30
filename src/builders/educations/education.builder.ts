@@ -34,8 +34,8 @@ export class EducationBuilder extends Builder<Education> {
     return this.with('category', category);
   }
 
-  withAdditionalDocument(...document: AdditionalDocument[]): this {
-    return this.with('document', document);
+  withAdditionalDocument(...documents: AdditionalDocument[]): this {
+    return this.with('documents', documents);
   }
 
   withStartDate(startDate = new Date(format(this.faker.date.past(), 'YYYY-MM-DD'))): this {

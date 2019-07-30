@@ -43,9 +43,9 @@ export class Education extends EducationCreate {
   @Column({ type: 'date', name: 'date_end', nullable: true, default: null, transformer: DateTransformer.nullable() })
   endDate?: Date;
 
-  @Column({ type: 'jsonb', transformer: new EntityColumnTransformer(AdditionalDocument) })
+  @Column({ type: 'jsonb', transformer: new EntityColumnTransformer(AdditionalDocument), default: [] })
   @ApiModelProperty({ type: [AdditionalDocument] })
-  document?: AdditionalDocument[];
+  documents!: AdditionalDocument[];
 
   @IsDate()
   @CreatedAtColumn()

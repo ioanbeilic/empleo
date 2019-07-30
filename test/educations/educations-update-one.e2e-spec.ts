@@ -187,7 +187,7 @@ describe('EducationController (PUT) (e2e)', () => {
         .withName('')
         .build();
 
-      educationUpdate.document = [document];
+      educationUpdate.documents = [document];
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })

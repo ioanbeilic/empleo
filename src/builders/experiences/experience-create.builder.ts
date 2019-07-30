@@ -31,11 +31,11 @@ export class ExperienceCreateBuilder extends Builder<ExperienceCreate> {
   }
 
   withAdditionalDocument(...document: AdditionalDocument[]): this {
-    return this.with('document', document);
+    return this.with('documents', document);
   }
 
   withoutAdditionalDocument(): this {
-    return this.without('document');
+    return this.without('documents');
   }
 
   withoutEndDate() {

@@ -141,7 +141,7 @@ describe('EducationController (POST) (e2e)', () => {
         .withName('')
         .build();
 
-      education.document = [document];
+      education.documents = [document];
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })

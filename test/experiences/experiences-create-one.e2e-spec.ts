@@ -122,7 +122,7 @@ describe('ExperiencesController (POST) (e2e)', () => {
         .withName('')
         .build();
 
-      experience.document = [document];
+      experience.documents = [document];
 
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })

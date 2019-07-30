@@ -49,5 +49,5 @@ export class EducationCreate {
   @Default(() => [])
   @Type(() => AdditionalDocument)
   @ApiModelPropertyOptional({ type: [AdditionalDocument] })
-  document?: AdditionalDocument[];
+  documents?: AdditionalDocument[];
 }
