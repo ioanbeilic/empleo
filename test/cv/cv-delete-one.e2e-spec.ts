@@ -32,7 +32,7 @@ describe('CvController (DELETE) (e2e)', () => {
   after(clean(app));
   after(close(app));
 
-  describe(':keycloakId/cv/:cvId', () => {
+  describe(':keycloakId/:cvId', () => {
     it('should return 204 - No Content', async () => {
       await createCv();
 
