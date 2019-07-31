@@ -11,9 +11,10 @@ import { CvModule } from '../../src/cv.module';
 import { Experience } from '../../src/entities/experience.entity';
 import { api } from '../api/api';
 import { removeExperienceByToken } from '../api/experiences.api';
+import { ExperienceTestSeed } from '../seeds/experiences-test.seed';
 
 describe('ExperienceController (PUT) (e2e)', () => {
-  const app = new AppWrapper(CvModule);
+  const app = new AppWrapper(CvModule, { providers: [ExperienceTestSeed] });
 
   let candidateToken: string;
   let adminToken: string;
@@ -31,9 +32,7 @@ describe('ExperienceController (PUT) (e2e)', () => {
     await removeExperienceByToken(adminToken, candidateToken);
   });
 
-  afterEach(async () => {
-    await removeExperienceByToken(adminToken, candidateToken);
-  });
+  afterEach(clean(app, [ExperienceTestSeed]));
 
   after(clean(app));
   after(close(app));
