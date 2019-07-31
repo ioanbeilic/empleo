@@ -9,9 +9,10 @@ import { CvModule } from '../../src/cv.module';
 import { Language } from '../../src/entities/language.entity';
 import { api } from '../api/api';
 import { removeLanguageByToken } from '../api/languages.api';
+import { LanguageTestSeed } from '../seeds/languages-test.seed';
 
 describe('LanguageController (DELETE) (e2e)', () => {
-  const app = new AppWrapper(CvModule);
+  const app = new AppWrapper(CvModule, { providers: [LanguageTestSeed] });
 
   let candidateToken: string;
   let adminToken: string;
@@ -27,9 +28,7 @@ describe('LanguageController (DELETE) (e2e)', () => {
     await removeLanguageByToken(adminToken, candidateToken);
   });
 
-  afterEach(async () => {
-    await removeLanguageByToken(adminToken, candidateToken);
-  });
+  beforeEach(clean(app));
 
   after(clean(app));
   after(close(app));
