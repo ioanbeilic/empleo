@@ -10,7 +10,6 @@ import { experienceBuilder } from '../../src/builders/experiences/experience.bui
 import { CvModule } from '../../src/cv.module';
 import { Experience } from '../../src/entities/experience.entity';
 import { api } from '../api/api';
-import { removeExperienceByToken } from '../api/experiences.api';
 import { ExperienceTestSeed } from '../seeds/experiences-test.seed';
 
 describe('ExperienceController (PUT) (e2e)', () => {
@@ -25,11 +24,8 @@ describe('ExperienceController (PUT) (e2e)', () => {
 
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
-
     adminKeycloakId = tokenFromEncodedToken(adminToken).keycloakId;
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
-
-    await removeExperienceByToken(adminToken, candidateToken);
   });
 
   afterEach(clean(app, [ExperienceTestSeed]));
