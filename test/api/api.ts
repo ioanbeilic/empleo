@@ -1,6 +1,6 @@
 import { AppWrapper } from 'empleo-nestjs-testing';
 import { CvApi } from './cv.api';
-import { DocumentationsApi } from './documentations.api';
+import { DocumentsApi } from './documents.api';
 import { EducationsApi } from './educations.api';
 import { ExperiencesApi } from './experiences.api';
 import { LanguagesApi } from './languages.api';
@@ -13,8 +13,8 @@ export function api({ app }: AppWrapper, { token }: { token?: string } = {}) {
     educations({ keycloakId }: ApiPath) {
       return new EducationsApi({ app, token, path: `/${keycloakId}/educations` });
     },
-    documentations({ keycloakId }: ApiPath) {
-      return new DocumentationsApi({ app, token, path: `/${keycloakId}/documentations` });
+    documents({ keycloakId }: ApiPath) {
+      return new DocumentsApi({ app, token, path: `/${keycloakId}/documents` });
     },
     languages({ keycloakId }: ApiPath) {
       return new LanguagesApi({ app, token, path: `/${keycloakId}/languages` });

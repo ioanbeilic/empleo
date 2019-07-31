@@ -1,12 +1,9 @@
 import { HttpStatus } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
-import { additionalDocumentationBuilder } from '../../src/builders/common/additional-documentation.builder';
+import { additionalDocumentBuilder } from '../../src/builders/common/additional-document.builder';
 import { experienceCreateBuilder } from '../../src/builders/experiences/experience-create.builder';
-import { experienceBuilder } from '../../src/builders/experiences/experience.builder';
 import { CvModule } from '../../src/cv.module';
-import { Experience } from '../../src/entities/experience.entity';
 import { api } from '../api/api';
 import { removeExperienceByToken } from '../api/experiences.api';
 
@@ -38,7 +35,9 @@ describe('ExperiencesController (POST) (e2e)', () => {
 
   describe(':keycloakId/experiences', () => {
     it('should return 201 - Created', async () => {
-      const experience = await createExperience();
+      const experience = experienceCreateBuilder()
+        .withValidData()
+        .build();
 
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })
@@ -46,22 +45,23 @@ describe('ExperiencesController (POST) (e2e)', () => {
         .expectJson(HttpStatus.CREATED);
     });
 
-    it('should return 201 - Created without documentation', async () => {
-      const experiencesWithoutAdditionalDocumentation = experienceCreateBuilder()
-        .withoutAdditionalDocumentation()
+    it('should return 201 - Created without document', async () => {
+      const experiencesWithoutAdditionalDocument = experienceCreateBuilder()
+        .withoutAdditionalDocument()
         .withValidData()
         .build();
 
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })
-        .create({ payload: experiencesWithoutAdditionalDocumentation })
+        .create({ payload: experiencesWithoutAdditionalDocument })
         .expectJson(HttpStatus.CREATED);
     });
 
     it('should return 201 - Created without  "endDate"', async () => {
-      const experience = await createExperience();
-
-      delete experience.endDate;
+      const experience = experienceCreateBuilder()
+        .withValidData()
+        .withoutEndDate()
+        .build();
 
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })
@@ -70,8 +70,10 @@ describe('ExperiencesController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "companyName" is invalid', async () => {
-      const experience = await createExperience();
-      experience.companyName = '';
+      const experience = experienceCreateBuilder()
+        .withValidData()
+        .withoutCompanyName()
+        .build();
 
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })
@@ -80,7 +82,10 @@ describe('ExperiencesController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "description" is invalid', async () => {
-      const experience = await createExperience();
+      const experience = experienceCreateBuilder()
+        .withValidData()
+        .withoutDescription()
+        .build();
 
       experience.description = '';
 
@@ -91,7 +96,10 @@ describe('ExperiencesController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "position" is invalid', async () => {
-      const experience = await createExperience();
+      const experience = experienceCreateBuilder()
+        .withValidData()
+        .withoutPosition()
+        .build();
 
       experience.position = '';
 
@@ -102,9 +110,10 @@ describe('ExperiencesController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "title" is invalid', async () => {
-      const experience = await createExperience();
-
-      experience.title = '';
+      const experience = experienceCreateBuilder()
+        .withValidData()
+        .withoutTitle()
+        .build();
 
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })
@@ -112,17 +121,16 @@ describe('ExperiencesController (POST) (e2e)', () => {
         .expectJson(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return 400 - Bad Request when the "documentation.name" is empty', async () => {
-      const experience = experienceBuilder()
+    it('should return 400 - Bad Request when the "document.name" is empty', async () => {
+      const experience = experienceCreateBuilder()
         .withValidData()
+        .withAdditionalDocument(
+          additionalDocumentBuilder()
+            .withValidData()
+            .withName('')
+            .build()
+        )
         .build();
-
-      const documentation = additionalDocumentationBuilder()
-        .withValidData()
-        .withName('')
-        .build();
-
-      experience.documentation = [documentation];
 
       await api(app, { token: candidateToken })
         .experiences({ keycloakId: candidateKeycloakId })
@@ -131,7 +139,7 @@ describe('ExperiencesController (POST) (e2e)', () => {
     });
 
     it('should return 401 - Unauthorized when user is not logged in', async () => {
-      const experience = experienceBuilder()
+      const experience = experienceCreateBuilder()
         .withValidData()
         .build();
 
@@ -142,7 +150,7 @@ describe('ExperiencesController (POST) (e2e)', () => {
     });
 
     it('should return 403 - Forbidden when the user is not a candidate', async () => {
-      const experience = experienceBuilder()
+      const experience = experienceCreateBuilder()
         .withValidData()
         .build();
 
@@ -152,18 +160,4 @@ describe('ExperiencesController (POST) (e2e)', () => {
         .expectJson(HttpStatus.FORBIDDEN);
     });
   });
-
-  async function createExperience() {
-    const experience = experienceBuilder()
-      .withValidData()
-      .build();
-
-    const createdExperience = await api(app, { token: candidateToken })
-      .experiences({ keycloakId: candidateKeycloakId })
-      .create({ payload: experience })
-      .expectJson(HttpStatus.CREATED)
-      .body();
-
-    return plainToClass(Experience, createdExperience);
-  }
 });

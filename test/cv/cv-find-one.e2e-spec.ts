@@ -2,7 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import { expect } from 'chai';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
-import { documentationCreateBuilder } from '../../src/builders/documentations/documentations-create.builder';
+import { documentCreateBuilder } from '../../src/builders/document/document-create.builder';
 import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { experienceCreateBuilder } from '../../src/builders/experiences/experience-create.builder';
 import { languageCreateBuilder } from '../../src/builders/languages/language-create.builder';
@@ -96,7 +96,7 @@ describe('CvController (GET) (e2e)', () => {
       .withValidData()
       .build();
 
-    const documentationCreate = documentationCreateBuilder()
+    const documentCreate = documentCreateBuilder()
       .withValidData()
       .build();
 
@@ -117,8 +117,8 @@ describe('CvController (GET) (e2e)', () => {
         .expectJson(HttpStatus.CREATED)
         .body(),
       api(app, { token: candidateToken })
-        .documentations({ keycloakId: candidateKeycloakId })
-        .create({ payload: documentationCreate })
+        .documents({ keycloakId: candidateKeycloakId })
+        .create({ payload: documentCreate })
         .expectJson(HttpStatus.CREATED)
         .body()
     ]);
@@ -127,7 +127,7 @@ describe('CvController (GET) (e2e)', () => {
       educations: [education],
       experiences: [experience],
       languages: [language],
-      documentations: [document]
+      documents: [document]
     };
   }
 });

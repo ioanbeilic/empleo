@@ -1,12 +1,9 @@
 import { HttpStatus } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
 import faker from 'faker';
 import { languageCreateBuilder } from '../../src/builders/languages/language-create.builder';
-import { languageBuilder } from '../../src/builders/languages/language.builder';
 import { CvModule } from '../../src/cv.module';
-import { Language } from '../../src/entities/language.entity';
 import { api } from '../api/api';
 import { removeLanguageByToken } from '../api/languages.api';
 
@@ -38,7 +35,9 @@ describe('LanguagesController (POST) (e2e)', () => {
 
   describe(':keycloakId/languages', () => {
     it('should return 201 - Created', async () => {
-      const language = await createLanguage();
+      const language = languageCreateBuilder()
+        .withValidData()
+        .build();
 
       await api(app, { token: candidateToken })
         .languages({ keycloakId: candidateKeycloakId })
@@ -47,9 +46,10 @@ describe('LanguagesController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "language" is not valid', async () => {
-      const language = await createLanguage();
-
-      language.language = '';
+      const language = languageCreateBuilder()
+        .withValidData()
+        .withoutLanguage()
+        .build();
 
       await api(app, { token: candidateToken })
         .languages({ keycloakId: candidateKeycloakId })
@@ -58,9 +58,10 @@ describe('LanguagesController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "level" is not valid', async () => {
-      const language = await createLanguage();
-
-      language.level = 6;
+      const language = languageCreateBuilder()
+        .withValidData()
+        .withoutLevel()
+        .build();
 
       await api(app, { token: candidateToken })
         .languages({ keycloakId: candidateKeycloakId })
@@ -69,7 +70,7 @@ describe('LanguagesController (POST) (e2e)', () => {
     });
 
     it('should return 401 - Unauthorized when user is not logged in', async () => {
-      const language = languageBuilder()
+      const language = languageCreateBuilder()
         .withValidData()
         .build();
 
@@ -80,7 +81,7 @@ describe('LanguagesController (POST) (e2e)', () => {
     });
 
     it('should return 403 - Forbidden when the user is not a candidate', async () => {
-      const language = languageBuilder()
+      const language = languageCreateBuilder()
         .withValidData()
         .build();
 
@@ -91,7 +92,7 @@ describe('LanguagesController (POST) (e2e)', () => {
     });
 
     it('should return 404 - Not Found when a non admin is trying to add a language to a CV from another user', async () => {
-      const language = languageBuilder()
+      const language = languageCreateBuilder()
         .withValidData()
         .build();
 
@@ -101,18 +102,4 @@ describe('LanguagesController (POST) (e2e)', () => {
         .expectJson(HttpStatus.NOT_FOUND);
     });
   });
-
-  async function createLanguage() {
-    const language = languageCreateBuilder()
-      .withValidData()
-      .build();
-
-    const createdLanguage = await api(app, { token: candidateToken })
-      .languages({ keycloakId: candidateKeycloakId })
-      .create({ payload: language })
-      .expectJson(HttpStatus.CREATED)
-      .body();
-
-    return plainToClass(Language, createdLanguage);
-  }
 });

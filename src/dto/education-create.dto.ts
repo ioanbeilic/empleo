@@ -2,7 +2,7 @@ import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsDate, IsOptional, IsString, Length, ValidateNested } from 'class-validator';
 import { Default } from 'empleo-nestjs-common';
-import { AdditionalDocumentation } from '../domain/additional-documentation';
+import { AdditionalDocument } from '../domain/additional-document';
 
 export class EducationCreate {
   @IsString()
@@ -47,7 +47,7 @@ export class EducationCreate {
   @IsOptional()
   @ValidateNested({ each: true })
   @Default(() => [])
-  @Type(() => AdditionalDocumentation)
-  @ApiModelPropertyOptional({ type: [AdditionalDocumentation] })
-  documentation?: AdditionalDocumentation[];
+  @Type(() => AdditionalDocument)
+  @ApiModelPropertyOptional({ type: [AdditionalDocument] })
+  documents?: AdditionalDocument[];
 }

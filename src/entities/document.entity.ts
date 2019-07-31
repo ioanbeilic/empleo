@@ -4,15 +4,15 @@ import { IsDate, IsUUID } from 'class-validator';
 import { CreatedAtColumn, UpdatedAtColumn } from 'empleo-nestjs-common';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
-import { DocumentationCreate } from '../dto/documentation-create.dto';
+import { DocumentCreate } from '../dto/document-create.dto';
 import { Cv } from './cv.entity';
 
 @Entity()
-export class Documentation extends DocumentationCreate {
+export class Document extends DocumentCreate {
   @IsUUID()
   @ApiModelProperty({ type: 'string', format: 'uuid', example: uuid() })
   @PrimaryColumn({ type: 'uuid', name: 'id', generated: false })
-  documentationId!: string;
+  documentId!: string;
 
   @IsUUID()
   @Exclude()
@@ -36,9 +36,9 @@ export class Documentation extends DocumentationCreate {
   @Exclude()
   updatedAt!: Date;
 
-  @ManyToOne(() => Cv, cv => cv.documentations, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @ManyToOne(() => Cv, cv => cv.documents, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
   cv?: Cv;
 }
 
-export type DocumentationId = typeof Documentation.prototype.documentationId;
+export type DocumentId = typeof Document.prototype.documentId;
