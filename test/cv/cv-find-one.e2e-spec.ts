@@ -2,7 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import { expect } from 'chai';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
-import { documentCreateBuilder } from '../../src/builders/documents/documents-create.builder';
+import { documentCreateBuilder } from '../../src/builders/document/document-create.builder';
 import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { experienceCreateBuilder } from '../../src/builders/experiences/experience-create.builder';
 import { languageCreateBuilder } from '../../src/builders/languages/language-create.builder';

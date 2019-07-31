@@ -1,10 +1,8 @@
 import { HttpStatus } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
-import { documentBuilder } from '../../src/builders/documents/documents.builder';
+import { documentCreateBuilder } from '../../src/builders/document/document-create.builder';
 import { CvModule } from '../../src/cv.module';
-import { Document } from '../../src/entities/document.entity';
 import { api } from '../api/api';
 import { removeDocumentByToken } from './documents.api';
 
@@ -34,7 +32,9 @@ describe('DocumentsController (POST) (e2e)', () => {
 
   describe(':keycloakId/documents', () => {
     it('should return 201 - Created', async () => {
-      const document = await createDocument();
+      const document = await documentCreateBuilder()
+        .withValidData()
+        .build();
 
       await api(app, { token: candidateToken })
         .documents({ keycloakId: candidateKeycloakId })
@@ -43,9 +43,10 @@ describe('DocumentsController (POST) (e2e)', () => {
     });
 
     it('should return 201 - Created when the "url" is null', async () => {
-      const document = await createDocument();
-
-      document.url = null;
+      const document = documentCreateBuilder()
+        .withValidData()
+        .withUrl(null)
+        .build();
 
       await api(app, { token: candidateToken })
         .documents({ keycloakId: candidateKeycloakId })
@@ -54,8 +55,10 @@ describe('DocumentsController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "name" is invalid', async () => {
-      const document = await createDocument();
-      document.name = '';
+      const document = documentCreateBuilder()
+        .withValidData()
+        .withoutName()
+        .build();
 
       await api(app, { token: candidateToken })
         .documents({ keycloakId: candidateKeycloakId })
@@ -64,9 +67,10 @@ describe('DocumentsController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "url" is invalid', async () => {
-      const document = await createDocument();
-
-      document.url = '';
+      const document = documentCreateBuilder()
+        .withValidData()
+        .withUrl('')
+        .build();
 
       await api(app, { token: candidateToken })
         .documents({ keycloakId: candidateKeycloakId })
@@ -74,18 +78,4 @@ describe('DocumentsController (POST) (e2e)', () => {
         .expectJson(HttpStatus.BAD_REQUEST);
     });
   });
-
-  async function createDocument() {
-    const document = documentBuilder()
-      .withValidData()
-      .build();
-
-    const createdDocument = await api(app, { token: candidateToken })
-      .documents({ keycloakId: candidateKeycloakId })
-      .create({ payload: document })
-      .expectJson(HttpStatus.CREATED)
-      .body();
-
-    return plainToClass(Document, createdDocument);
-  }
 });
