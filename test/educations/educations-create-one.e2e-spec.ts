@@ -23,7 +23,7 @@ describe('EducationController (POST) (e2e)', () => {
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
   });
 
-  beforeEach(clean(app, [EducationTestSeed]));
+  afterEach(clean(app, [EducationTestSeed]));
 
   after(clean(app));
   after(close(app));
