@@ -37,7 +37,7 @@ describe('CvController (GET) (e2e)', () => {
   after(clean(app));
   after(close(app));
 
-  describe(':keycloakId/cv', () => {
+  describe(':keycloakId', () => {
     it('should return 200 - Ok', async () => {
       const cvInfo = await createCv();
 
