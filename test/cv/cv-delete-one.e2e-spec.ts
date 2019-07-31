@@ -7,9 +7,10 @@ import { CvModule } from '../../src/cv.module';
 import { Education } from '../../src/entities/education.entity';
 import { api } from '../api/api';
 import { removeCvByToken, removeEducationByToken } from '../api/cv.api';
+import { CvTestSeed } from '../seeds/cv-test.seed';
 
 describe('CvController (DELETE) (e2e)', () => {
-  const app = new AppWrapper(CvModule);
+  const app = new AppWrapper(CvModule, { providers: [CvTestSeed] });
 
   let candidateToken: string;
   let adminToken: string;
@@ -23,7 +24,7 @@ describe('CvController (DELETE) (e2e)', () => {
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
   });
 
-  beforeEach(clean(app));
+  afterEach(clean(app, [CvTestSeed]));
 
   afterEach(async () => {
     await removeCvByToken(adminToken, candidateToken);
