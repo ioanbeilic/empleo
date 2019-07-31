@@ -2,7 +2,7 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { IsDate, IsUUID } from 'class-validator';
 import { CreatedAtColumn, UpdatedAtColumn } from 'empleo-nestjs-common';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
 import { DocumentCreate } from '../dto/document-create.dto';
 import { Cv } from './cv.entity';
@@ -39,6 +39,11 @@ export class Document extends DocumentCreate {
   @ManyToOne(() => Cv, cv => cv.documents, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
   cv?: Cv;
+
+  @BeforeInsert()
+  beforeInsert() {
+    this.documentId = uuid();
+  }
 }
 
 export type DocumentId = typeof Document.prototype.documentId;

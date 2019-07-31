@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'empleo-nestjs-authentication';
 import { Repository } from 'typeorm';
-import uuid from 'uuid/v1';
 import { ExperienceCreate } from '../../dto/experience-create.dto';
 import { Experience, ExperienceId } from '../../entities/experience.entity';
 import { ExperienceNotFoundException } from '../../errors/experience-not-found.exception';
@@ -18,7 +17,6 @@ export class ExperiencesService {
   async createExperience({ user, experience: experienceCreate }: CreateExperienceOptions): Promise<Experience> {
     const experience = this.experienceRepository.create({
       ...experienceCreate,
-      experienceId: uuid(),
       keycloakId: user.id
     });
 

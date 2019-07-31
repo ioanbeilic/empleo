@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'empleo-nestjs-authentication';
 import { Repository } from 'typeorm';
-import uuid from 'uuid/v1';
 import { DocumentCreate } from '../../dto/document-create.dto';
 import { Document } from '../../entities/document.entity';
 import { DocumentNotFoundException } from '../../errors/documents-not-found.exception';
@@ -18,7 +17,6 @@ export class DocumentsService {
   async createDocument({ user, document: documentCreate }: CreateDocumentOptions): Promise<Document> {
     const document = this.documentRepository.create({
       ...documentCreate,
-      documentId: uuid(),
       keycloakId: user.id
     });
 

@@ -2,7 +2,7 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { IsDate, IsUUID } from 'class-validator';
 import { CreatedAtColumn, UpdatedAtColumn } from 'empleo-nestjs-common';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
 import { LanguageLevel } from '../domain/language-level.enum';
 import { LanguageCreate } from '../dto/language-create.dto';
@@ -39,6 +39,11 @@ export class Language extends LanguageCreate {
   @ManyToOne(() => Cv, cv => cv.languages, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
   cv?: Cv;
+
+  @BeforeInsert()
+  beforeInsert() {
+    this.languageId = uuid();
+  }
 }
 
 export type LanguageId = typeof Language.prototype.languageId;
