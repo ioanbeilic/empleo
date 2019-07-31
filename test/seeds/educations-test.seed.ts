@@ -2,14 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NamedSeed } from 'empleo-nestjs-common';
 import { getEnv } from 'empleo-nestjs-testing';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CvConfigurationService } from '../../src/configuration/cv-configuration.service';
 import { Education } from '../../src/entities/education.entity';
 
 @Injectable()
 export class EducationTestSeed extends NamedSeed {
   private logger = new Logger(this.constructor.name);
-  private testKeycloakIds = new Set();
 
   constructor(
     private readonly cvConfigurationService: CvConfigurationService,
@@ -27,18 +26,18 @@ export class EducationTestSeed extends NamedSeed {
   }
 
   isEnabled(): boolean | Promise<boolean> {
-    // create a set with all keycloakId
-    this.testKeycloakIds.add([this.candidateId, this.adminId]);
-
     return this.cvConfigurationService.isTest;
   }
 
   async down(): Promise<void> {
-    const { affected } = await this.educationRepository.delete({ keycloakId: In([...this.testKeycloakIds]) });
-    this.testKeycloakIds.clear();
+    const candidateResponse = await this.educationRepository.delete({ keycloakId: this.candidateId });
+    const adminResponse = await this.educationRepository.delete({ keycloakId: this.adminId });
 
-    if (affected) {
+    if (candidateResponse.affected) {
       this.logger.debug(`removed eduction for user: ${this.candidateId}`);
+    }
+    if (adminResponse.affected) {
+      this.logger.debug(`removed eduction for admin: ${this.adminId}`);
     }
   }
 }

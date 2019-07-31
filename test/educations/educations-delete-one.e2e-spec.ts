@@ -8,10 +8,10 @@ import { educationBuilder } from '../../src/builders/educations/education.builde
 import { CvModule } from '../../src/cv.module';
 import { Education } from '../../src/entities/education.entity';
 import { api } from '../api/api';
-import { removeEducationByToken } from '../api/educations.api';
+import { EducationTestSeed } from '../seeds/educations-test.seed';
 
 describe('EducationController (DELETE) (e2e)', () => {
-  const app = new AppWrapper(CvModule);
+  const app = new AppWrapper(CvModule, { providers: [EducationTestSeed] });
 
   let candidateToken: string;
   let adminToken: string;
@@ -25,13 +25,9 @@ describe('EducationController (DELETE) (e2e)', () => {
 
     adminKeycloakId = tokenFromEncodedToken(adminToken).keycloakId;
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
-
-    await removeEducationByToken(adminToken, candidateToken);
   });
 
-  afterEach(async () => {
-    await removeEducationByToken(adminToken, candidateToken);
-  });
+  beforeEach(clean(app, [EducationTestSeed]));
 
   after(clean(app));
   after(close(app));
