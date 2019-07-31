@@ -46,6 +46,30 @@ export class EducationCreateBuilder extends Builder<EducationCreate> {
     return this.without('endDate');
   }
 
+  withoutCenterType() {
+    return this.without('centerType');
+  }
+
+  withoutCountry() {
+    return this.without('country');
+  }
+
+  withoutCenterName() {
+    return this.without('centerName');
+  }
+
+  withoutTitle() {
+    return this.without('title');
+  }
+
+  withoutCategory() {
+    return this.without('category');
+  }
+
+  withoutStartDate() {
+    return this.without('startDate');
+  }
+
   withValidData(): this {
     const document = additionalDocumentBuilder()
       .withValidData()

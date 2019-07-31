@@ -42,6 +42,22 @@ export class ExperienceCreateBuilder extends Builder<ExperienceCreate> {
     return this.without('endDate');
   }
 
+  withoutCompanyName() {
+    return this.without('companyName');
+  }
+
+  withoutDescription() {
+    return this.without('description');
+  }
+
+  withoutPosition() {
+    return this.without('position');
+  }
+
+  withoutTitle() {
+    return this.without('title');
+  }
+
   withValidData(): this {
     const document = additionalDocumentBuilder()
       .withValidData()

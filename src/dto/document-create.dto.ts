@@ -17,5 +17,5 @@ export class DocumentCreate {
   @Default(null)
   @Length(0, 255)
   @ApiModelPropertyOptional({ type: 'string', maxLength: 255, example: 'https://example.com/profile/certification' })
-  url!: string | null;
+  url?: string | null;
 }
