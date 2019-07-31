@@ -5,7 +5,6 @@ import faker from 'faker';
 import { languageCreateBuilder } from '../../src/builders/languages/language-create.builder';
 import { CvModule } from '../../src/cv.module';
 import { api } from '../api/api';
-import { removeLanguageByToken } from '../api/languages.api';
 import { LanguageTestSeed } from '../seeds/languages-test.seed';
 
 describe('LanguagesController (POST) (e2e)', () => {
@@ -23,11 +22,9 @@ describe('LanguagesController (POST) (e2e)', () => {
 
     adminKeycloakId = tokenFromEncodedToken(adminToken).keycloakId;
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
-
-    await removeLanguageByToken(adminToken, candidateToken);
   });
 
-  beforeEach(clean(app));
+  afterEach(clean(app, [LanguageTestSeed]));
 
   after(clean(app));
   after(close(app));

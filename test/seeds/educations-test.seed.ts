@@ -34,10 +34,10 @@ export class EducationTestSeed extends NamedSeed {
     const adminResponse = await this.educationRepository.delete({ keycloakId: this.adminId });
 
     if (candidateResponse.affected) {
-      this.logger.debug(`removed eduction for user: ${this.candidateId}`);
+      this.logger.debug(`removed education for user: ${this.candidateId}`);
     }
     if (adminResponse.affected) {
-      this.logger.debug(`removed eduction for admin: ${this.adminId}`);
+      this.logger.debug(`removed education for admin: ${this.adminId}`);
     }
   }
 }

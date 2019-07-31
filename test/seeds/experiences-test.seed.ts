@@ -34,10 +34,10 @@ export class ExperienceTestSeed extends NamedSeed {
     const adminResponse = await this.experienceRepository.delete({ keycloakId: this.adminId });
 
     if (candidateResponse.affected) {
-      this.logger.debug(`removed eduction for user: ${this.candidateId}`);
+      this.logger.debug(`removed experience for user: ${this.candidateId}`);
     }
     if (adminResponse.affected) {
-      this.logger.debug(`removed eduction for admin: ${this.adminId}`);
+      this.logger.debug(`removed experience for admin: ${this.adminId}`);
     }
   }
 }

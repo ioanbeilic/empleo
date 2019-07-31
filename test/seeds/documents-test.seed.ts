@@ -34,10 +34,10 @@ export class DocumentTestSeed extends NamedSeed {
     const adminResponse = await this.documentRepository.delete({ keycloakId: this.adminId });
 
     if (candidateResponse.affected) {
-      this.logger.debug(`removed eduction for user: ${this.candidateId}`);
+      this.logger.debug(`removed document for user: ${this.candidateId}`);
     }
     if (adminResponse.affected) {
-      this.logger.debug(`removed eduction for admin: ${this.adminId}`);
+      this.logger.debug(`removed document for admin: ${this.adminId}`);
     }
   }
 }

@@ -8,7 +8,6 @@ import { languageBuilder } from '../../src/builders/languages/language.builder';
 import { CvModule } from '../../src/cv.module';
 import { Language } from '../../src/entities/language.entity';
 import { api } from '../api/api';
-import { removeLanguageByToken } from '../api/languages.api';
 import { LanguageTestSeed } from '../seeds/languages-test.seed';
 
 describe('LanguageController (DELETE) (e2e)', () => {
@@ -22,13 +21,10 @@ describe('LanguageController (DELETE) (e2e)', () => {
 
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
-
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
-
-    await removeLanguageByToken(adminToken, candidateToken);
   });
 
-  beforeEach(clean(app));
+  afterEach(clean(app, [LanguageTestSeed]));
 
   after(clean(app));
   after(close(app));
