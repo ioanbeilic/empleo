@@ -11,6 +11,10 @@ export class DocumentCreateBuilder extends Builder<DocumentCreate> {
     return this.with('url', url);
   }
 
+  withoutName() {
+    return this.without('name');
+  }
+
   withValidData(): this {
     return this.withName().withUrl();
   }

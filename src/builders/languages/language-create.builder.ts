@@ -12,6 +12,14 @@ export class LanguageCreateBuilder extends Builder<LanguageCreate> {
     return this.with('level', level);
   }
 
+  withoutLanguage() {
+    return this.without('language');
+  }
+
+  withoutLevel() {
+    return this.without('level');
+  }
+
   withValidData(): this {
     return this.withLanguage().withLevel();
   }

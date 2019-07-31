@@ -39,7 +39,7 @@ export class CvController {
   @Authorize.Candidates()
   @ApiOperation({
     title: 'List a cv of logged user',
-    description: 'The response only include the education, experience, languages, document created by the authenticated user'
+    description: 'The response will include the full CV, including educations, experiences, languages and documents'
   })
   @ApiKeycloakIdParam()
   @ApiOkResponse({ type: Cv, isArray: true })

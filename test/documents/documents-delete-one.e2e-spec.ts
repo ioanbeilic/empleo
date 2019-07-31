@@ -4,7 +4,7 @@ import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
 import faker from 'faker';
 import { getRepository } from 'typeorm';
-import { documentBuilder } from '../../src/builders/documents/documents.builder';
+import { documentBuilder } from '../../src/builders/document/document.builder';
 import { CvModule } from '../../src/cv.module';
 import { Document } from '../../src/entities/document.entity';
 import { api } from '../api/api';

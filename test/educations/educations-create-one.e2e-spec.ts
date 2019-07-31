@@ -1,11 +1,9 @@
 import { HttpStatus } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
 import { tokenFromEncodedToken } from 'empleo-nestjs-authentication';
 import { AppWrapper, clean, close, getAdminToken, getCandidateToken, init } from 'empleo-nestjs-testing';
 import { additionalDocumentBuilder } from '../../src/builders/common/additional-document.builder';
 import { educationCreateBuilder } from '../../src/builders/educations/education-create.builder';
 import { CvModule } from '../../src/cv.module';
-import { Education } from '../../src/entities/education.entity';
 import { api } from '../api/api';
 import { EducationTestSeed } from '../seeds/educations-test.seed';
 
@@ -32,7 +30,9 @@ describe('EducationController (POST) (e2e)', () => {
 
   describe(':keycloakId/educations', () => {
     it('should return 201 - Created', async () => {
-      const education = await createEducation();
+      const education = await educationCreateBuilder()
+        .withValidData()
+        .build();
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
@@ -65,9 +65,10 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "centerType" is invalid', async () => {
-      const education = await createEducation();
-
-      education.centerType = '';
+      const education = educationCreateBuilder()
+        .withValidData()
+        .withoutCenterType()
+        .build();
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
@@ -76,9 +77,10 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "country" is invalid', async () => {
-      const education = await createEducation();
-
-      education.country = '';
+      const education = educationCreateBuilder()
+        .withValidData()
+        .withoutCountry()
+        .build();
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
@@ -87,9 +89,10 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "centerName" is invalid', async () => {
-      const education = await createEducation();
-
-      education.country = '';
+      const education = educationCreateBuilder()
+        .withValidData()
+        .withoutCenterName()
+        .build();
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
@@ -98,9 +101,10 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "title" is invalid', async () => {
-      const education = await createEducation();
-
-      education.title = '';
+      const education = educationCreateBuilder()
+        .withValidData()
+        .withoutTitle()
+        .build();
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
@@ -109,9 +113,10 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "category" is invalid', async () => {
-      const education = await createEducation();
-
-      education.category = '';
+      const education = educationCreateBuilder()
+        .withValidData()
+        .withoutCategory()
+        .build();
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
@@ -120,9 +125,10 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "startDate" is invalid', async () => {
-      const education = await createEducation();
-
-      education.startDate = 'this is an invalid date' as any;
+      const education = educationCreateBuilder()
+        .withValidData()
+        .withoutStartDate()
+        .build();
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
@@ -131,14 +137,15 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 400 - Bad Request when the "document.name" is empty', async () => {
-      const education = await createEducation();
-
-      const document = additionalDocumentBuilder()
+      const education = educationCreateBuilder()
         .withValidData()
-        .withName('')
+        .withAdditionalDocument(
+          additionalDocumentBuilder()
+            .withValidData()
+            .withName('')
+            .build()
+        )
         .build();
-
-      education.documents = [document];
 
       await api(app, { token: candidateToken })
         .educations({ keycloakId: candidateKeycloakId })
@@ -147,7 +154,9 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 401 - Unauthorized when user is not logged in', async () => {
-      const education = await createEducation();
+      const education = educationCreateBuilder()
+        .withValidData()
+        .build();
 
       await api(app)
         .educations({ keycloakId: candidateKeycloakId })
@@ -156,7 +165,9 @@ describe('EducationController (POST) (e2e)', () => {
     });
 
     it('should return 403 - Forbidden when the user is not a candidate', async () => {
-      const education = await createEducation();
+      const education = educationCreateBuilder()
+        .withValidData()
+        .build();
 
       await api(app, { token: adminToken })
         .educations({ keycloakId: adminKeycloakId })
@@ -164,18 +175,4 @@ describe('EducationController (POST) (e2e)', () => {
         .expectJson(HttpStatus.FORBIDDEN);
     });
   });
-
-  async function createEducation() {
-    const education = educationCreateBuilder()
-      .withValidData()
-      .build();
-
-    const createdEducation = await api(app, { token: candidateToken })
-      .educations({ keycloakId: candidateKeycloakId })
-      .create({ payload: education })
-      .expectJson(HttpStatus.CREATED)
-      .body();
-
-    return plainToClass(Education, createdEducation, { enableImplicitConversion: true });
-  }
 });
