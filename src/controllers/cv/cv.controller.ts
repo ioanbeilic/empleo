@@ -21,7 +21,7 @@ import { CvService } from '../../services/cv/cv.service';
 export class CvController {
   constructor(private readonly cvService: CvService, private readonly permissionsService: PermissionsService) {}
 
-  @Delete(':keycloakId/cv')
+  @Delete(':keycloakId')
   @Authorize.Candidates()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ title: 'Completely removes a CV' })
@@ -35,7 +35,7 @@ export class CvController {
     await this.cvService.deleteOne(keycloakId);
   }
 
-  @Get(':keycloakId/cv')
+  @Get(':keycloakId')
   @Authorize.Candidates()
   @ApiOperation({
     title: 'List a cv of logged user',

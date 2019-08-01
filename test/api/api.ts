@@ -8,7 +8,7 @@ import { LanguagesApi } from './languages.api';
 export function api({ app }: AppWrapper, { token }: { token?: string } = {}) {
   return {
     cv({ keycloakId }: ApiPath) {
-      return new CvApi({ app, token, path: `/${keycloakId}/cv` });
+      return new CvApi({ app, token, path: `/${keycloakId}` });
     },
     educations({ keycloakId }: ApiPath) {
       return new EducationsApi({ app, token, path: `/${keycloakId}/educations` });
