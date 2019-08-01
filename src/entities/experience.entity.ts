@@ -1,10 +1,9 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { IsDate, IsUUID } from 'class-validator';
-import { CreatedAtColumn, EntityColumnTransformer, UpdatedAtColumn } from 'empleo-nestjs-common';
+import { CreatedAtColumn, DateTransformer, EntityColumnTransformer, UpdatedAtColumn } from 'empleo-nestjs-common';
 import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import uuid from 'uuid/v4';
-import { DateTransformer } from '../common/date.transformer';
 import { AdditionalDocument } from '../domain/additional-document';
 import { ExperienceCreate } from '../dto/experience-create.dto';
 import { Cv } from './cv.entity';

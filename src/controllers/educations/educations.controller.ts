@@ -10,15 +10,7 @@ import {
   Put,
   UseInterceptors
 } from '@nestjs/common';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiNoContentResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiUseTags
-} from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { Authenticate, AuthenticatedUser, Authorize, PermissionsService, User } from 'empleo-nestjs-authentication';
 import { ApiKeycloakIdParam, KeycloakIdParams } from 'empleo-nestjs-common';
 import { EducationCreate } from '../../dto/education-create.dto';
@@ -32,7 +24,6 @@ const educationNotFoundException = new EducationNotFoundException();
 @Controller()
 @ApiUseTags('educations')
 @Authenticate()
-@ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor)
 export class EducationsController {
   constructor(private readonly educationsService: EducationsService, private readonly permissionsService: PermissionsService) {}

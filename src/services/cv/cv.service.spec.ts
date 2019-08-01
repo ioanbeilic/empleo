@@ -48,7 +48,7 @@ describe('CvService', () => {
     it('should find the cv', async () => {
       when(mockedCvRepository.findOne(anything(), anything())).thenResolve(cv);
 
-      const foundCv = await cvService.findByUser(user);
+      const foundCv = await cvService.findByKeycloakId(user.id);
 
       verify(
         mockedCvRepository.findOne(
