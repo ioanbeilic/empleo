@@ -34,12 +34,11 @@ export class Cv {
   @OneToMany(() => Document, document => document.cv)
   @ApiModelProperty({ type: [Document] })
   documents!: Document[];
-  /*
+
   @BeforeInsert()
-  generateCvId() {
+  setPrimaryKey() {
     this.cvId = uuid();
   }
-  */
 }
 
 export type CvId = typeof Cv.prototype.cvId;

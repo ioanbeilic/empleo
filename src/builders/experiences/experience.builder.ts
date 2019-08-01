@@ -55,7 +55,8 @@ export class ExperienceBuilder extends Builder<Experience> {
       .withValidData()
       .build();
 
-    return this.withKeycloakId()
+    return this.withExperienceId()
+      .withKeycloakId()
       .withStartDate()
       .withEndDate()
       .withCompanyName()

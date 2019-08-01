@@ -41,7 +41,7 @@ export class Language extends LanguageCreate {
   cv?: Cv;
 
   @BeforeInsert()
-  generateLanguageId() {
+  setPrimaryKey() {
     this.languageId = uuid();
   }
 }

@@ -3,6 +3,10 @@ import { Builder } from 'empleo-nestjs-testing';
 import { Document } from '../../entities/document.entity';
 
 export class DocumentBuilder extends Builder<Document> {
+  withDocumentId(documentId = this.faker.random.uuid()): this {
+    return this.with('documentId', documentId);
+  }
+
   withKeycloakId(keycloakId = this.faker.random.uuid()): this {
     return this.with('keycloakId', keycloakId);
   }
@@ -20,7 +24,8 @@ export class DocumentBuilder extends Builder<Document> {
   }
 
   withValidData(): this {
-    return this.withKeycloakId()
+    return this.withDocumentId()
+      .withKeycloakId()
       .withName()
       .withUrl();
   }

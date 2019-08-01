@@ -39,7 +39,10 @@ describe('CvService', () => {
       educations: [],
       experiences: [],
       languages: [],
-      documents: []
+      documents: [],
+      setPrimaryKey() {
+        this.cvId = '';
+      }
     };
 
     it('should find the cv', async () => {
