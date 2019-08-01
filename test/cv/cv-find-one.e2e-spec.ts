@@ -17,13 +17,11 @@ describe('CvController (GET) (e2e)', () => {
   let candidateToken: string;
   let adminToken: string;
   let candidateKeycloakId: string;
-  let adminKeycloakId: string;
 
   before(init(app));
 
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
-    adminKeycloakId = tokenFromEncodedToken(adminToken).keycloakId;
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
   });
 
@@ -61,25 +59,27 @@ describe('CvController (GET) (e2e)', () => {
       await createCv();
       await api(app)
         .cv({ keycloakId: candidateKeycloakId })
-        .removeWithKeycloakId()
+        .findCvByKeycloakId()
         .expect(HttpStatus.UNAUTHORIZED);
     });
 
-    it('should return 403 - Forbidden  when user is not candidate', async () => {
+    it('should return 200 - OK  when user is not candidate', async () => {
       await createCv();
 
       await api(app, { token: adminToken })
         .cv({ keycloakId: candidateKeycloakId })
-        .removeWithKeycloakId()
-        .expect(HttpStatus.FORBIDDEN);
+        .findCvByKeycloakId()
+        .expect(HttpStatus.OK)
+        .body();
     });
 
-    it('should return 404 - Not Found when the url keycloakId not belong to logged user', async () => {
+    it('should return 200 - ok when the url keycloakId not belong to logged user', async () => {
       await createCv();
-      await api(app, { token: candidateToken })
-        .cv({ keycloakId: adminKeycloakId })
-        .removeWithKeycloakId()
-        .expect(HttpStatus.NOT_FOUND);
+      await api(app, { token: adminToken })
+        .cv({ keycloakId: candidateKeycloakId })
+        .findCvByKeycloakId()
+        .expect(HttpStatus.OK)
+        .body();
     });
   });
 
