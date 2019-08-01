@@ -36,16 +36,13 @@ export class CvController {
   }
 
   @Get(':keycloakId')
-  @Authorize.Candidates()
   @ApiOperation({
     title: 'List a cv of logged user',
     description: 'The response will include the full CV, including educations, experiences, languages and documents'
   })
   @ApiKeycloakIdParam()
   @ApiOkResponse({ type: Cv, isArray: true })
-  async findCvByUser(@AuthenticatedUser() user: User, @Param() { keycloakId }: KeycloakIdParams): Promise<Cv> {
-    this.permissionsService.isOwnerOrNotFound({ user, resource: { keycloakId } });
-
-    return this.cvService.findByUser(user);
+  async findByKeycloakId(@Param() { keycloakId }: KeycloakIdParams): Promise<Cv> {
+    return this.cvService.findByKeycloakId(keycloakId);
   }
 }
