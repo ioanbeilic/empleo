@@ -1,13 +1,5 @@
 import { ClassSerializerInterceptor, Controller, Delete, Get, HttpCode, HttpStatus, Param, UseInterceptors } from '@nestjs/common';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiNoContentResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiUseTags
-} from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { Authenticate, AuthenticatedUser, Authorize, PermissionsService, User } from 'empleo-nestjs-authentication';
 import { ApiKeycloakIdParam, KeycloakIdParams } from 'empleo-nestjs-common';
 import { Cv } from '../../entities/cv.entity';
@@ -16,7 +8,6 @@ import { CvService } from '../../services/cv/cv.service';
 @Controller()
 @ApiUseTags('cv')
 @Authenticate()
-@ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor)
 export class CvController {
   constructor(private readonly cvService: CvService, private readonly permissionsService: PermissionsService) {}

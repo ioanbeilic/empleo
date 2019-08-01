@@ -1,13 +1,5 @@
 import { Body, ClassSerializerInterceptor, Controller, Delete, HttpCode, HttpStatus, Param, Post, UseInterceptors } from '@nestjs/common';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiNoContentResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiUseTags
-} from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { Authenticate, AuthenticatedUser, Authorize, PermissionsService, User } from 'empleo-nestjs-authentication';
 import { ApiKeycloakIdParam, KeycloakIdParams } from 'empleo-nestjs-common';
 import { DocumentCreate } from '../../dto/document-create.dto';
@@ -21,7 +13,6 @@ const documentNotFoundException = new DocumentNotFoundException();
 @Controller()
 @ApiUseTags('documents')
 @Authenticate()
-@ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor)
 export class DocumentsController {
   constructor(private readonly documentsService: DocumentsService, private readonly permissionsService: PermissionsService) {}

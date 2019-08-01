@@ -48,6 +48,16 @@ describe('CvController (GET) (e2e)', () => {
       expect(cv).to.containSubset(cvInfo);
     });
 
+    it('should return 200 - Ok when requesting the cv from a different user', async () => {
+      await createCv();
+
+      await api(app, { token: adminToken })
+        .cv({ keycloakId: candidateKeycloakId })
+        .findCvByKeycloakId()
+        .expect(HttpStatus.OK)
+        .body();
+    });
+
     it('should return 404 - Not Found when the CV does not exist', async () => {
       await api(app, { token: candidateToken })
         .cv({ keycloakId: candidateKeycloakId })
@@ -61,25 +71,6 @@ describe('CvController (GET) (e2e)', () => {
         .cv({ keycloakId: candidateKeycloakId })
         .findCvByKeycloakId()
         .expect(HttpStatus.UNAUTHORIZED);
-    });
-
-    it('should return 200 - OK  when user is not candidate', async () => {
-      await createCv();
-
-      await api(app, { token: adminToken })
-        .cv({ keycloakId: candidateKeycloakId })
-        .findCvByKeycloakId()
-        .expect(HttpStatus.OK)
-        .body();
-    });
-
-    it('should return 200 - ok when the url keycloakId not belong to logged user', async () => {
-      await createCv();
-      await api(app, { token: adminToken })
-        .cv({ keycloakId: candidateKeycloakId })
-        .findCvByKeycloakId()
-        .expect(HttpStatus.OK)
-        .body();
     });
   });
 
