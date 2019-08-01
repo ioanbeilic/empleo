@@ -58,11 +58,11 @@ describe('CvController', () => {
     };
 
     it('should find the cv', async () => {
-      when(mockedCvService.findByUser(anything())).thenResolve(cv);
+      when(mockedCvService.findByKeycloakId(anything())).thenResolve(cv);
 
-      const response = await cvController.findCvByUser(user, { keycloakId: user.id });
+      const response = await cvController.findByKeycloakId({ keycloakId: user.id });
 
-      verify(mockedCvService.findByUser(user)).once();
+      verify(mockedCvService.findByKeycloakId(user.id)).once();
       expect(response).to.be.equal(cv);
     });
   });

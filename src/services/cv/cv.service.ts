@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'empleo-nestjs-authentication';
 import { isUniqueKeyViolationError } from 'empleo-nestjs-common';
 import { Repository } from 'typeorm';
 import uuid from 'uuid/v1';
@@ -21,11 +20,8 @@ export class CvService {
     }
   }
 
-  async findByUser(user: User): Promise<Cv> {
-    const cv = await this.cvRepository.findOne(
-      { keycloakId: user.id },
-      { relations: ['educations', 'experiences', 'languages', 'documents'] }
-    );
+  async findByKeycloakId(keycloakId: string): Promise<Cv> {
+    const cv = await this.cvRepository.findOne({ keycloakId }, { relations: ['educations', 'experiences', 'languages', 'documents'] });
 
     if (!cv) {
       throw new CvNotFoundException();
