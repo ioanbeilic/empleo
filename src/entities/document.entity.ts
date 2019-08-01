@@ -41,7 +41,7 @@ export class Document extends DocumentCreate {
   cv?: Cv;
 
   @BeforeInsert()
-  beforeInsert() {
+  generateDocumentId() {
     this.documentId = uuid();
   }
 }

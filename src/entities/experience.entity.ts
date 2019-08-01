@@ -58,7 +58,7 @@ export class Experience extends ExperienceCreate {
   cv?: Cv;
 
   @BeforeInsert()
-  beforeInsert() {
+  generateExperienceId() {
     this.experienceId = uuid();
   }
 }

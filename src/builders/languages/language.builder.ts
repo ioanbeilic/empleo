@@ -4,10 +4,6 @@ import { LanguageLevel } from '../../domain/language-level.enum';
 import { Language } from '../../entities/language.entity';
 
 export class LanguageBuilder extends Builder<Language> {
-  withLanguageId(languageId = this.faker.random.uuid()): this {
-    return this.with('languageId', languageId);
-  }
-
   withKeycloakId(keycloakId = this.faker.random.uuid()): this {
     return this.with('keycloakId', keycloakId);
   }
@@ -21,8 +17,7 @@ export class LanguageBuilder extends Builder<Language> {
   }
 
   withValidData(): this {
-    return this.withLanguageId()
-      .withKeycloakId()
+    return this.withKeycloakId()
       .withLanguage()
       .withLevel();
   }

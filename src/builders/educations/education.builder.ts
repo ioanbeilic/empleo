@@ -6,10 +6,6 @@ import { Education } from '../../entities/education.entity';
 import { additionalDocumentBuilder } from '../common/additional-document.builder';
 
 export class EducationBuilder extends Builder<Education> {
-  withEducationId(educationId = this.faker.random.uuid()): this {
-    return this.with('educationId', educationId);
-  }
-
   withKeycloakId(keycloakId = this.faker.random.uuid()): this {
     return this.with('keycloakId', keycloakId);
   }
@@ -59,8 +55,7 @@ export class EducationBuilder extends Builder<Education> {
       .withValidData()
       .build();
 
-    return this.withEducationId()
-      .withKeycloakId()
+    return this.withKeycloakId()
       .withCenterType()
       .withCountry()
       .withCenterName()

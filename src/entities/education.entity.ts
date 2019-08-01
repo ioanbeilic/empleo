@@ -62,7 +62,7 @@ export class Education extends EducationCreate {
   cv?: Cv;
 
   @BeforeInsert()
-  beforeInsert() {
+  generateEducationId() {
     this.educationId = uuid();
   }
 }
