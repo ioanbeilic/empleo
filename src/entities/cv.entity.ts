@@ -1,7 +1,7 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { IsUUID } from 'class-validator';
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
-import uuid from 'uuid/v4';
+import { BeforeInsert, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import uuid from 'uuid/v1';
 import { Document } from './document.entity';
 import { Education } from './education.entity';
 import { Experience } from './experience.entity';
@@ -34,6 +34,11 @@ export class Cv {
   @OneToMany(() => Document, document => document.cv)
   @ApiModelProperty({ type: [Document] })
   documents!: Document[];
+
+  @BeforeInsert()
+  setPrimaryKey() {
+    this.cvId = uuid();
+  }
 }
 
 export type CvId = typeof Cv.prototype.cvId;

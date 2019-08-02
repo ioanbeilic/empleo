@@ -9,32 +9,24 @@ import { languageCreateBuilder } from '../../src/builders/languages/language-cre
 import { CvModule } from '../../src/cv.module';
 import { Cv } from '../../src/entities/cv.entity';
 import { api } from '../api/api';
-import { removeCvByToken, removeEducationByToken } from '../api/cv.api';
+import { CvTestSeed } from '../seeds/cv-test.seed';
 
 describe('CvController (GET) (e2e)', () => {
-  const app = new AppWrapper(CvModule);
+  const app = new AppWrapper(CvModule, { providers: [CvTestSeed] });
 
   let candidateToken: string;
   let adminToken: string;
   let candidateKeycloakId: string;
-  let adminKeycloakId: string;
 
   before(init(app));
+  before(clean(app, [CvTestSeed]));
 
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
-    adminKeycloakId = tokenFromEncodedToken(adminToken).keycloakId;
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
   });
 
-  beforeEach(clean(app));
-
-  afterEach(async () => {
-    await removeCvByToken(adminToken, candidateToken);
-    await removeEducationByToken(adminToken, candidateToken);
-  });
-
-  after(clean(app));
+  afterEach(clean(app, [CvTestSeed]));
   after(close(app));
 
   describe(':keycloakId', () => {
@@ -50,6 +42,16 @@ describe('CvController (GET) (e2e)', () => {
       expect(cv).to.containSubset(cvInfo);
     });
 
+    it('should return 200 - Ok when requesting the cv from a different user', async () => {
+      await createCv();
+
+      await api(app, { token: adminToken })
+        .cv({ keycloakId: candidateKeycloakId })
+        .findCvByKeycloakId()
+        .expect(HttpStatus.OK)
+        .body();
+    });
+
     it('should return 404 - Not Found when the CV does not exist', async () => {
       await api(app, { token: candidateToken })
         .cv({ keycloakId: candidateKeycloakId })
@@ -61,25 +63,8 @@ describe('CvController (GET) (e2e)', () => {
       await createCv();
       await api(app)
         .cv({ keycloakId: candidateKeycloakId })
-        .removeWithKeycloakId()
+        .findCvByKeycloakId()
         .expect(HttpStatus.UNAUTHORIZED);
-    });
-
-    it('should return 403 - Forbidden  when user is not candidate', async () => {
-      await createCv();
-
-      await api(app, { token: adminToken })
-        .cv({ keycloakId: candidateKeycloakId })
-        .removeWithKeycloakId()
-        .expect(HttpStatus.FORBIDDEN);
-    });
-
-    it('should return 404 - Not Found when the url keycloakId not belong to logged user', async () => {
-      await createCv();
-      await api(app, { token: candidateToken })
-        .cv({ keycloakId: adminKeycloakId })
-        .removeWithKeycloakId()
-        .expect(HttpStatus.NOT_FOUND);
     });
   });
 

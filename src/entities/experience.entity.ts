@@ -1,10 +1,9 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { IsDate, IsUUID } from 'class-validator';
-import { CreatedAtColumn, EntityColumnTransformer, UpdatedAtColumn } from 'empleo-nestjs-common';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import uuid from 'uuid/v4';
-import { DateTransformer } from '../common/date.transformer';
+import { CreatedAtColumn, DateTransformer, EntityColumnTransformer, UpdatedAtColumn } from 'empleo-nestjs-common';
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import uuid from 'uuid/v1';
 import { AdditionalDocument } from '../domain/additional-document';
 import { ExperienceCreate } from '../dto/experience-create.dto';
 import { Cv } from './cv.entity';
@@ -56,6 +55,11 @@ export class Experience extends ExperienceCreate {
   @ManyToOne(() => Cv, cv => cv.educations, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
   cv?: Cv;
+
+  @BeforeInsert()
+  setPrimaryKey() {
+    this.experienceId = uuid();
+  }
 }
 
 export type ExperienceId = typeof Experience.prototype.experienceId;
