@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
 import faker from 'faker';
-import { anything, deepEqual, instance, mock, objectContaining, verify, when } from 'ts-mockito';
+import { anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { DeleteResult, Repository } from 'typeorm';
 import { educationCreateBuilder } from '../../builders/educations/education-create.builder';
 import { educationBuilder } from '../../builders/educations/education.builder';
@@ -34,6 +34,7 @@ describe('EducationService', () => {
 
   const createdEducation = educationBuilder()
     .hydrate(education)
+    .withEducationId()
     .withKeycloakId(user.id)
     .build();
 
@@ -51,18 +52,14 @@ describe('EducationService', () => {
   describe('#create()', () => {
     it('should correctly create a education', async () => {
       when(mockedEducationRepository.create(anything() as Partial<Education>)).thenReturn(education);
-      when(mockedEducationRepository.save(education)).thenResolve(createdEducation);
+      when(mockedEducationRepository.save(anything())).thenResolve(createdEducation);
 
-      await educationService.createEducation({ user, education: educationCreate });
+      const result = await educationService.createEducation({ user, education: educationCreate });
 
-      verify(
-        mockedEducationRepository.create(
-          objectContaining({
-            ...educationCreate,
-            keycloakId: user.id
-          })
-        )
-      ).once();
+      expect(result).to.be.equal(createdEducation);
+
+      verify(mockedEducationRepository.create(deepEqual({ ...educationCreate, keycloakId: user.id }))).once();
+      verify(mockedCvService.ensureExists(user.id)).once();
       verify(mockedEducationRepository.save(education)).once();
     });
   });

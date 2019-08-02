@@ -3,7 +3,7 @@ import { Exclude } from 'class-transformer';
 import { IsDate, IsUUID } from 'class-validator';
 import { CreatedAtColumn, UpdatedAtColumn } from 'empleo-nestjs-common';
 import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import uuid from 'uuid/v4';
+import uuid from 'uuid/v1';
 import { LanguageLevel } from '../domain/language-level.enum';
 import { LanguageCreate } from '../dto/language-create.dto';
 import { Cv } from './cv.entity';

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
-import { anything, deepEqual, instance, mock, objectContaining, verify, when } from 'ts-mockito';
+import { anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { DeleteResult, Repository } from 'typeorm';
 import { documentCreateBuilder } from '../../builders/document/document-create.builder';
 import { documentBuilder } from '../../builders/document/document.builder';
@@ -47,8 +47,8 @@ describe('DocumentsService', () => {
 
       await documentsService.createDocument({ user, document: documentCreate });
 
-      verify(mockedDocumentRepository.create(objectContaining({ ...documentCreate, keycloakId: user.id }))).once();
-      verify(mockedCvService.ensureExists(deepEqual({ keycloakId: user.id })));
+      verify(mockedDocumentRepository.create(deepEqual({ ...documentCreate, keycloakId: user.id }))).once();
+      verify(mockedCvService.ensureExists(user.id));
       verify(mockedDocumentRepository.save(document)).once();
     });
   });

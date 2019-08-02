@@ -1,10 +1,9 @@
 import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
-import { anything, deepEqual, instance, mock, objectContaining, verify, when } from 'ts-mockito';
+import { anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { DeleteResult, Repository } from 'typeorm';
 import { languageCreateBuilder } from '../../builders/languages/language-create.builder';
 import { languageBuilder } from '../../builders/languages/language.builder';
-import { LanguageCreate } from '../../dto/language-create.dto';
 import { Language } from '../../entities/language.entity';
 import { LanguageNotFoundException } from '../../errors/language-not-found.exception';
 import { CvService } from '../cv/cv.service';
@@ -20,11 +19,11 @@ describe('LanguagesService', () => {
     .asAdmin()
     .build();
 
-  const languageCreate: LanguageCreate = languageCreateBuilder()
+  const languageCreate = languageCreateBuilder()
     .withValidData()
     .build();
 
-  const language: Language = languageBuilder()
+  const language = languageBuilder()
     .withValidData()
     .build();
 
@@ -51,7 +50,8 @@ describe('LanguagesService', () => {
 
       await languagesService.createLanguage({ user, language: languageCreate });
 
-      verify(mockedLanguageRepository.create(objectContaining({ ...languageCreate, keycloakId: user.id }))).once();
+      verify(mockedLanguageRepository.create(deepEqual({ ...languageCreate, keycloakId: user.id }))).once();
+      verify(mockedCvService.ensureExists(user.id)).once();
       verify(mockedLanguageRepository.save(language)).once();
     });
   });

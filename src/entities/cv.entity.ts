@@ -1,7 +1,7 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { IsUUID } from 'class-validator';
 import { BeforeInsert, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
-import uuid from 'uuid/v4';
+import uuid from 'uuid/v1';
 import { Document } from './document.entity';
 import { Education } from './education.entity';
 import { Experience } from './experience.entity';
