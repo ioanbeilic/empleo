@@ -10,10 +10,10 @@ import { experienceBuilder } from '../../src/builders/experiences/experience.bui
 import { CvModule } from '../../src/cv.module';
 import { Experience } from '../../src/entities/experience.entity';
 import { api } from '../api/api';
-import { removeExperienceByToken } from '../api/experiences.api';
+import { CvTestSeed } from '../seeds/cv-test.seed';
 
 describe('ExperienceController (PUT) (e2e)', () => {
-  const app = new AppWrapper(CvModule);
+  const app = new AppWrapper(CvModule, { providers: [CvTestSeed] });
 
   let candidateToken: string;
   let adminToken: string;
@@ -21,21 +21,15 @@ describe('ExperienceController (PUT) (e2e)', () => {
   let candidateKeycloakId: string;
 
   before(init(app));
+  before(clean(app, [CvTestSeed]));
 
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
-
     adminKeycloakId = tokenFromEncodedToken(adminToken).keycloakId;
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
-
-    await removeExperienceByToken(adminToken, candidateToken);
   });
 
-  afterEach(async () => {
-    await removeExperienceByToken(adminToken, candidateToken);
-  });
-
-  after(clean(app));
+  afterEach(clean(app, [CvTestSeed]));
   after(close(app));
 
   describe(':keycloakId/experiences/:experiencesId', () => {

@@ -8,32 +8,25 @@ import { documentBuilder } from '../../src/builders/document/document.builder';
 import { CvModule } from '../../src/cv.module';
 import { Document } from '../../src/entities/document.entity';
 import { api } from '../api/api';
-import { removeDocumentByToken } from './documents.api';
+import { CvTestSeed } from '../seeds/cv-test.seed';
 
 describe('DocumentController (DELETE) (e2e)', () => {
-  const app = new AppWrapper(CvModule);
+  const app = new AppWrapper(CvModule, { providers: [CvTestSeed] });
 
   let candidateToken: string;
   let adminToken: string;
   let candidateKeycloakId: string;
 
   before(init(app));
+  before(clean(app, [CvTestSeed]));
 
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
 
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
-
-    await removeDocumentByToken(adminToken, candidateToken);
   });
 
-  beforeEach(clean(app));
-
-  afterEach(async () => {
-    await removeDocumentByToken(adminToken, candidateToken);
-  });
-
-  after(clean(app));
+  afterEach(clean(app, [CvTestSeed]));
   after(close(app));
 
   describe(':keycloakId/documents/:documentsId', () => {

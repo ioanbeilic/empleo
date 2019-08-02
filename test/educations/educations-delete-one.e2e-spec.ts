@@ -8,10 +8,10 @@ import { educationBuilder } from '../../src/builders/educations/education.builde
 import { CvModule } from '../../src/cv.module';
 import { Education } from '../../src/entities/education.entity';
 import { api } from '../api/api';
-import { removeEducationByToken } from '../api/educations.api';
+import { CvTestSeed } from '../seeds/cv-test.seed';
 
 describe('EducationController (DELETE) (e2e)', () => {
-  const app = new AppWrapper(CvModule);
+  const app = new AppWrapper(CvModule, { providers: [CvTestSeed] });
 
   let candidateToken: string;
   let adminToken: string;
@@ -19,21 +19,16 @@ describe('EducationController (DELETE) (e2e)', () => {
   let adminKeycloakId: string;
 
   before(init(app));
+  before(clean(app, [CvTestSeed]));
 
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
 
     adminKeycloakId = tokenFromEncodedToken(adminToken).keycloakId;
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
-
-    await removeEducationByToken(adminToken, candidateToken);
   });
 
-  afterEach(async () => {
-    await removeEducationByToken(adminToken, candidateToken);
-  });
-
-  after(clean(app));
+  afterEach(clean(app, [CvTestSeed]));
   after(close(app));
 
   describe(':keycloakId/educations/:educationsId', () => {

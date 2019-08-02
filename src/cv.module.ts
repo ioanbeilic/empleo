@@ -22,6 +22,7 @@ import { ExperiencesService } from './services/experiences/experiences.service';
 import { LanguagesService } from './services/languages/languages.service';
 
 @Module({
+  exports: [CvConfigurationModule, TypeOrmModule.forFeature([Education, Experience, Cv, Language, Document])],
   controllers: [EducationsController, ExperiencesController, CvController, LanguagesController, DocumentsController],
   imports: [
     AuthenticationModule,

@@ -9,30 +9,24 @@ import { languageCreateBuilder } from '../../src/builders/languages/language-cre
 import { CvModule } from '../../src/cv.module';
 import { Cv } from '../../src/entities/cv.entity';
 import { api } from '../api/api';
-import { removeCvByToken, removeEducationByToken } from '../api/cv.api';
+import { CvTestSeed } from '../seeds/cv-test.seed';
 
 describe('CvController (GET) (e2e)', () => {
-  const app = new AppWrapper(CvModule);
+  const app = new AppWrapper(CvModule, { providers: [CvTestSeed] });
 
   let candidateToken: string;
   let adminToken: string;
   let candidateKeycloakId: string;
 
   before(init(app));
+  before(clean(app, [CvTestSeed]));
 
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
   });
 
-  beforeEach(clean(app));
-
-  afterEach(async () => {
-    await removeCvByToken(adminToken, candidateToken);
-    await removeEducationByToken(adminToken, candidateToken);
-  });
-
-  after(clean(app));
+  afterEach(clean(app, [CvTestSeed]));
   after(close(app));
 
   describe(':keycloakId', () => {
