@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { PermissionsService, userBuilder } from 'empleo-nestjs-authentication';
 import faker from 'faker';
 import { anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
-import { Cv } from '../../entities/cv.entity';
+import { cvBuilder } from '../../builders/cv.builder';
 import { CvNotFoundException } from '../../errors/cv-not-found.exception';
 import { CvService } from '../../services/cv/cv.service';
 import { CvController } from './cv.controller';
@@ -48,16 +48,12 @@ describe('CvController', () => {
   });
 
   describe('#findByUser()', () => {
-    const cv: Cv = {
-      cvId: faker.random.uuid(),
-      keycloakId: user.id,
-      educations: [],
-      experiences: [],
-      languages: [],
-      documents: []
-    };
-
     it('should find the cv', async () => {
+      const cv = cvBuilder()
+        .withValidData()
+        .withKeycloakId(user.id)
+        .build();
+
       when(mockedCvService.findByKeycloakId(anything())).thenResolve(cv);
 
       const response = await cvController.findByKeycloakId({ keycloakId: user.id });

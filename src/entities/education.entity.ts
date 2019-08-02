@@ -2,8 +2,8 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { IsDate, IsUUID } from 'class-validator';
 import { CreatedAtColumn, DateTransformer, EntityColumnTransformer, UpdatedAtColumn } from 'empleo-nestjs-common';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import uuid from 'uuid/v4';
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import uuid from 'uuid/v1';
 import { AdditionalDocument } from '../domain/additional-document';
 import { EducationCreate } from '../dto/education-create.dto';
 import { Cv } from './cv.entity';
@@ -59,6 +59,11 @@ export class Education extends EducationCreate {
   @ManyToOne(() => Cv, cv => cv.experiences, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'keycloak_id', referencedColumnName: 'keycloakId' })
   cv?: Cv;
+
+  @BeforeInsert()
+  setPrimaryKey() {
+    this.educationId = uuid();
+  }
 }
 
 export type EducationId = typeof Education.prototype.educationId;

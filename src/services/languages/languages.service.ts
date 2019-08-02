@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'empleo-nestjs-authentication';
 import { Repository } from 'typeorm';
-import uuid from 'uuid/v1';
 import { LanguageCreate } from '../../dto/language-create.dto';
 import { Language, LanguageId } from '../../entities/language.entity';
 import { LanguageNotFoundException } from '../../errors/language-not-found.exception';
@@ -18,7 +17,6 @@ export class LanguagesService {
   async createLanguage({ user, language: languageCreate }: CreateLanguageOptions): Promise<Language> {
     const language = this.languageRepository.create({
       ...languageCreate,
-      languageId: uuid(),
       keycloakId: user.id
     });
 

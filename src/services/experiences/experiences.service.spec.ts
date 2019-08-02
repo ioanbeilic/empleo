@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { userBuilder } from 'empleo-nestjs-authentication';
-import { anything, deepEqual, instance, mock, objectContaining, verify, when } from 'ts-mockito';
+import { anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { DeleteResult, Repository } from 'typeorm';
 import { experienceCreateBuilder } from '../../builders/experiences/experience-create.builder';
 import { experienceBuilder } from '../../builders/experiences/experience.builder';
@@ -51,7 +51,8 @@ describe('ExperiencesService', () => {
 
       await experiencesService.createExperience({ user, experience: experienceCreate });
 
-      verify(mockedExperienceRepository.create(objectContaining({ ...experienceCreate, keycloakId: user.id }))).once();
+      verify(mockedExperienceRepository.create(deepEqual({ ...experienceCreate, keycloakId: user.id }))).once();
+      verify(mockedCvService.ensureExists(user.id)).once();
       verify(mockedExperienceRepository.save(experience)).once();
     });
   });

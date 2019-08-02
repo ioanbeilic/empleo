@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'empleo-nestjs-authentication';
 import { Repository } from 'typeorm';
-import uuid from 'uuid/v4';
 import { EducationCreate } from '../../dto/education-create.dto';
 import { Education, EducationId } from '../../entities/education.entity';
 import { EducationNotFoundException } from '../../errors/education-not-found.exception';
@@ -18,7 +17,6 @@ export class EducationsService {
   async createEducation({ user, education: educationCreate }: CreateEducationOptions): Promise<Education> {
     const education = await this.educationRepository.create({
       ...educationCreate,
-      educationId: uuid(),
       keycloakId: user.id
     });
 
