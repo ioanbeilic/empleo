@@ -38,7 +38,7 @@ export class LanguagesService {
   }
 
   /**
-   * find a specifica language by id
+   * find a specific language by id
    * @param { languageId, user } - language id and logged user
    */
   async findUserLanguageById({ languageId, user }: { languageId: LanguageId; user: User }): Promise<Language> {
