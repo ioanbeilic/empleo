@@ -27,8 +27,10 @@ export class CvTestSeed extends NamedSeed {
   }
 
   async down(): Promise<void> {
-    const candidateResponse = await this.cvRepository.delete({ keycloakId: this.candidateId });
-    const adminResponse = await this.cvRepository.delete({ keycloakId: this.adminId });
+    const [candidateResponse, adminResponse] = await Promise.all([
+      this.cvRepository.delete({ keycloakId: this.candidateId }),
+      this.cvRepository.delete({ keycloakId: this.adminId })
+    ]);
 
     if (candidateResponse.affected) {
       this.logger.debug(`removed cv for user: ${this.candidateId}`);

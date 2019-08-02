@@ -6,7 +6,6 @@ import { educationBuilder } from '../../src/builders/educations/education.builde
 import { CvModule } from '../../src/cv.module';
 import { Education } from '../../src/entities/education.entity';
 import { api } from '../api/api';
-import { removeCvByToken, removeEducationByToken } from '../api/cv.api';
 import { CvTestSeed } from '../seeds/cv-test.seed';
 
 describe('CvController (DELETE) (e2e)', () => {
@@ -18,6 +17,7 @@ describe('CvController (DELETE) (e2e)', () => {
   let adminKeycloakId: string;
 
   before(init(app));
+  before(clean(app, [CvTestSeed]));
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
     adminKeycloakId = tokenFromEncodedToken(adminToken).keycloakId;
@@ -25,12 +25,6 @@ describe('CvController (DELETE) (e2e)', () => {
   });
 
   afterEach(clean(app, [CvTestSeed]));
-
-  afterEach(async () => {
-    await removeCvByToken(adminToken, candidateToken);
-  });
-
-  after(clean(app));
   after(close(app));
 
   describe(':keycloakId/cv/:cvId', () => {
@@ -52,10 +46,6 @@ describe('CvController (DELETE) (e2e)', () => {
 
       before(async () => {
         education = await createCv();
-      });
-
-      after(async () => {
-        await removeEducationByToken(candidateToken);
       });
 
       it('should return 404 - Not Found when try to get a education from a deleted Cv', async () => {

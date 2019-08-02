@@ -8,16 +8,17 @@ import { documentBuilder } from '../../src/builders/document/document.builder';
 import { CvModule } from '../../src/cv.module';
 import { Document } from '../../src/entities/document.entity';
 import { api } from '../api/api';
-import { DocumentTestSeed } from '../seeds/documents-test.seed';
+import { CvTestSeed } from '../seeds/cv-test.seed';
 
 describe('DocumentController (DELETE) (e2e)', () => {
-  const app = new AppWrapper(CvModule, { providers: [DocumentTestSeed] });
+  const app = new AppWrapper(CvModule, { providers: [CvTestSeed] });
 
   let candidateToken: string;
   let adminToken: string;
   let candidateKeycloakId: string;
 
   before(init(app));
+  before(clean(app, [CvTestSeed]));
 
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
@@ -25,9 +26,7 @@ describe('DocumentController (DELETE) (e2e)', () => {
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
   });
 
-  beforeEach(clean(app));
-
-  after(clean(app));
+  afterEach(clean(app, [CvTestSeed]));
   after(close(app));
 
   describe(':keycloakId/documents/:documentsId', () => {

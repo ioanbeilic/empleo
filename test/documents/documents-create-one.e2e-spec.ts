@@ -4,24 +4,23 @@ import { AppWrapper, clean, close, getCandidateToken, init } from 'empleo-nestjs
 import { documentCreateBuilder } from '../../src/builders/document/document-create.builder';
 import { CvModule } from '../../src/cv.module';
 import { api } from '../api/api';
-import { DocumentTestSeed } from '../seeds/documents-test.seed';
+import { CvTestSeed } from '../seeds/cv-test.seed';
 
 describe('DocumentsController (POST) (e2e)', () => {
-  const app = new AppWrapper(CvModule, { providers: [DocumentTestSeed] });
+  const app = new AppWrapper(CvModule, { providers: [CvTestSeed] });
 
   let candidateToken: string;
   let candidateKeycloakId: string;
 
   before(init(app));
+  before(clean(app, [CvTestSeed]));
 
   before(async () => {
     candidateToken = await getCandidateToken();
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
   });
 
-  afterEach(clean(app, [DocumentTestSeed]));
-
-  after(clean(app));
+  afterEach(clean(app, [CvTestSeed]));
   after(close(app));
 
   describe(':keycloakId/documents', () => {

@@ -9,7 +9,6 @@ import { languageCreateBuilder } from '../../src/builders/languages/language-cre
 import { CvModule } from '../../src/cv.module';
 import { Cv } from '../../src/entities/cv.entity';
 import { api } from '../api/api';
-import { removeCvByToken, removeEducationByToken } from '../api/cv.api';
 import { CvTestSeed } from '../seeds/cv-test.seed';
 
 describe('CvController (GET) (e2e)', () => {
@@ -21,6 +20,7 @@ describe('CvController (GET) (e2e)', () => {
   let adminKeycloakId: string;
 
   before(init(app));
+  before(clean(app, [CvTestSeed]));
 
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
@@ -29,13 +29,6 @@ describe('CvController (GET) (e2e)', () => {
   });
 
   afterEach(clean(app, [CvTestSeed]));
-
-  afterEach(async () => {
-    await removeCvByToken(adminToken, candidateToken);
-    await removeEducationByToken(adminToken, candidateToken);
-  });
-
-  after(clean(app));
   after(close(app));
 
   describe(':keycloakId/cv', () => {

@@ -8,25 +8,24 @@ import { languageBuilder } from '../../src/builders/languages/language.builder';
 import { CvModule } from '../../src/cv.module';
 import { Language } from '../../src/entities/language.entity';
 import { api } from '../api/api';
-import { LanguageTestSeed } from '../seeds/languages-test.seed';
+import { CvTestSeed } from '../seeds/cv-test.seed';
 
 describe('LanguageController (DELETE) (e2e)', () => {
-  const app = new AppWrapper(CvModule, { providers: [LanguageTestSeed] });
+  const app = new AppWrapper(CvModule, { providers: [CvTestSeed] });
 
   let candidateToken: string;
   let adminToken: string;
   let candidateKeycloakId: string;
 
   before(init(app));
+  before(clean(app, [CvTestSeed]));
 
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
   });
 
-  afterEach(clean(app, [LanguageTestSeed]));
-
-  after(clean(app));
+  afterEach(clean(app, [CvTestSeed]));
   after(close(app));
 
   describe(':keycloakId/languages/:languagesId', () => {

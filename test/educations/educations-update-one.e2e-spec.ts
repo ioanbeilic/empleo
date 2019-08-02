@@ -10,10 +10,10 @@ import { educationBuilder } from '../../src/builders/educations/education.builde
 import { CvModule } from '../../src/cv.module';
 import { Education } from '../../src/entities/education.entity';
 import { api } from '../api/api';
-import { EducationTestSeed } from '../seeds/educations-test.seed';
+import { CvTestSeed } from '../seeds/cv-test.seed';
 
 describe('EducationController (PUT) (e2e)', () => {
-  const app = new AppWrapper(CvModule, { providers: [EducationTestSeed] });
+  const app = new AppWrapper(CvModule, { providers: [CvTestSeed] });
 
   let candidateToken: string;
   let adminToken: string;
@@ -21,6 +21,7 @@ describe('EducationController (PUT) (e2e)', () => {
   let candidateKeycloakId: string;
 
   before(init(app));
+  before(clean(app, [CvTestSeed]));
 
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
@@ -29,9 +30,7 @@ describe('EducationController (PUT) (e2e)', () => {
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
   });
 
-  afterEach(clean(app, [EducationTestSeed]));
-
-  after(clean(app));
+  afterEach(clean(app, [CvTestSeed]));
   after(close(app));
 
   describe(':keycloakId/educations/:educationsId', () => {

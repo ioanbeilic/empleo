@@ -5,10 +5,10 @@ import faker from 'faker';
 import { languageCreateBuilder } from '../../src/builders/languages/language-create.builder';
 import { CvModule } from '../../src/cv.module';
 import { api } from '../api/api';
-import { LanguageTestSeed } from '../seeds/languages-test.seed';
+import { CvTestSeed } from '../seeds/cv-test.seed';
 
 describe('LanguagesController (POST) (e2e)', () => {
-  const app = new AppWrapper(CvModule, { providers: [LanguageTestSeed] });
+  const app = new AppWrapper(CvModule, { providers: [CvTestSeed] });
 
   let candidateToken: string;
   let adminToken: string;
@@ -16,6 +16,7 @@ describe('LanguagesController (POST) (e2e)', () => {
   let candidateKeycloakId: string;
 
   before(init(app));
+  before(clean(app, [CvTestSeed]));
 
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
@@ -24,9 +25,7 @@ describe('LanguagesController (POST) (e2e)', () => {
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
   });
 
-  afterEach(clean(app, [LanguageTestSeed]));
-
-  after(clean(app));
+  afterEach(clean(app, [CvTestSeed]));
   after(close(app));
 
   describe(':keycloakId/languages', () => {

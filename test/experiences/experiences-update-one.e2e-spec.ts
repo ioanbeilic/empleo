@@ -10,10 +10,10 @@ import { experienceBuilder } from '../../src/builders/experiences/experience.bui
 import { CvModule } from '../../src/cv.module';
 import { Experience } from '../../src/entities/experience.entity';
 import { api } from '../api/api';
-import { ExperienceTestSeed } from '../seeds/experiences-test.seed';
+import { CvTestSeed } from '../seeds/cv-test.seed';
 
 describe('ExperienceController (PUT) (e2e)', () => {
-  const app = new AppWrapper(CvModule, { providers: [ExperienceTestSeed] });
+  const app = new AppWrapper(CvModule, { providers: [CvTestSeed] });
 
   let candidateToken: string;
   let adminToken: string;
@@ -21,6 +21,7 @@ describe('ExperienceController (PUT) (e2e)', () => {
   let candidateKeycloakId: string;
 
   before(init(app));
+  before(clean(app, [CvTestSeed]));
 
   before(async () => {
     [adminToken, candidateToken] = await Promise.all([getAdminToken(), getCandidateToken()]);
@@ -28,9 +29,7 @@ describe('ExperienceController (PUT) (e2e)', () => {
     candidateKeycloakId = tokenFromEncodedToken(candidateToken).keycloakId;
   });
 
-  afterEach(clean(app, [ExperienceTestSeed]));
-
-  after(clean(app));
+  afterEach(clean(app, [CvTestSeed]));
   after(close(app));
 
   describe(':keycloakId/experiences/:experiencesId', () => {
