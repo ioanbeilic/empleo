@@ -9,11 +9,6 @@ import { CvService } from '../cv/cv.service';
 
 @Injectable()
 export class LanguagesService {
-  /**
-   *
-   * @param languageRepository - repository for entity language
-   * @param cvService - dependency injection to create a new cv if not exist with method  ensureExists
-   */
   constructor(
     @InjectRepository(Language) private readonly languageRepository: Repository<Language>,
     private readonly cvService: CvService
@@ -22,7 +17,34 @@ export class LanguagesService {
   /**
    * create/add new language to a cv
    * If cv don`t exist is created
-   * @param { user, language: languageCreate } where user is loggedIn user ans language is form data from front side
+   * @param user user entity
+   * @param language: languageCreate dto
+   * crate the cv if not exist with method ensureExists from CvServices
+   * return a created language
+   *
+   * @example
+   *
+   * ```ts
+   *
+   * import { LanguageCreate } from '../../dto/language-create.dto';
+   * import { Language } from '../../entities/language.entity';
+   * import { LanguagesService } from '../../services/languages/languages.service';
+   *
+   * export class DemoCreateLanguage {
+   *  constructor(private readonly languagesService: LanguagesService) {}
+   *
+   *  @Post()
+   *  @Authorize.Candidates()
+   *  async createLanguage(
+   *     @AuthenticatedUser() user: User,
+   *     @Body() language: LanguageCreate
+   *   ): Promise<Language> {
+   *     return this.languagesService.createLanguage({ user, language });
+   *   }
+   * }
+   *
+   * ```
+   *
    */
   async createLanguage({ user, language: languageCreate }: CreateLanguageOptions): Promise<Language> {
     const language = this.languageRepository.create({
@@ -36,10 +58,31 @@ export class LanguagesService {
   }
 
   /**
-   * find a specific language by id
-   * @param { languageId, user } - language id and logged user
+   * find a specific language by id and user
+   * @param languageId
+   * @param user
+   * return Language
+   *
+   * @example
+   *
+   * ```ts
+   * import { LanguageCreate } from '../../dto/language-create.dto';
+   * import { Language } from '../../entities/language.entity';
+   * import { ApiLanguageIdParam, FindOneParamsLanguage } from './find-one-language.params';
+   *
+   *  @Get()
+   *  @Authorize.Candidates()
+   *  @ApiLanguageIdParam()
+   *  async demoFindUserLanguageById(
+   *     @AuthenticatedUser() user: User,
+   *     @Param() { languageId, keycloakId }: FindOneParamsLanguage
+   *   ): Promise<Language> {
+   *     return await this.languagesService.findUserLanguageById({ languageId, user });
+   *   }
+   *
+   * ```
    */
-  async findUserLanguageById({ languageId, user }: { languageId: LanguageId; user: User }): Promise<Language> {
+  async findUserLanguageById({ languageId, user }: FindUserLanguageByIdOption): Promise<Language> {
     const language = await this.languageRepository.findOne({ languageId, keycloakId: user.id });
 
     if (!language) {
@@ -51,7 +94,25 @@ export class LanguagesService {
 
   /**
    * update a existing language
-   * @param { languageId, user } - language id and logged user
+   * @param language language that will be updated
+   * @param update language to which it is updated
+   *
+   * @example
+   *
+   * ```ts
+   * import { LanguageCreate } from '../../dto/language-create.dto';
+   * import { Language } from '../../entities/language.entity';
+   * import { ApiLanguageIdParam, FindOneParamsLanguage } from './find-one-language.params';
+   *
+   *  @Put()
+   *  async updateLanguage(
+   *    @Body() update: LanguageCreate,
+   *  ): Promise<void> {
+   *    const language = await this.languagesService.findUserLanguageById({ languageId, user });
+   *    await this.languagesService.updateOne({ language, update });
+   *  }
+   *
+   * ```
    */
   async updateOne({ language, update }: UpdateLanguageOptions): Promise<void> {
     await this.languageRepository.update({ languageId: language.languageId }, update);
@@ -59,8 +120,29 @@ export class LanguagesService {
 
   /**
    * delete language if the language belong to the user
-   * @param { languageId, user } - language id and logged user
+   * @param languageId,
+   * @param  user
    * return 404 language not found if the language not exist or don`t belong to the user
+   *
+   * @example
+   *
+   * ```ts
+   * import { LanguageCreate } from '../../dto/language-create.dto';
+   * import { Language } from '../../entities/language.entity';
+   * import { ApiLanguageIdParam, FindOneParamsLanguage } from './find-one-language.params';
+   *
+   *   @Delete()
+   *   @Authorize.Candidates()
+   *   @ApiKeycloakIdParam()
+   *   @ApiLanguageIdParam()
+   *   async deleteOneLanguage(
+   *      @AuthenticatedUser() user: User,
+   *      @Param() { languageId, keycloakId }: FindOneParamsLanguage
+   *    ): Promise<void> {
+   *       await this.languagesService.deleteOne({ user, languageId });
+   *   }
+   *
+   * ```
    */
   async deleteOne({ user, languageId }: DeleteLanguageOptions) {
     const { affected } = await this.languageRepository.delete({ languageId, keycloakId: user.id });
@@ -72,16 +154,37 @@ export class LanguagesService {
 }
 
 export interface CreateLanguageOptions {
+  /**
+   * user = User entity
+   * language = LanguageCreate dto
+   */
   user: User;
   language: LanguageCreate;
 }
 
 export interface UpdateLanguageOptions {
+  /**
+   * language = Language entity
+   * update = LanguageCreate dto
+   */
   language: Language;
   update: LanguageCreate;
 }
 
 export interface DeleteLanguageOptions {
+  /**
+   * user = User entity
+   * languageId = string
+   */
   user: User;
   languageId: string;
+}
+
+export interface FindUserLanguageByIdOption {
+  /**
+   * languageId = string
+   * user = User entity
+   */
+  languageId: LanguageId;
+  user: User;
 }

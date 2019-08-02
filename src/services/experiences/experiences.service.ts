@@ -9,11 +9,6 @@ import { CvService } from '../cv/cv.service';
 
 @Injectable()
 export class ExperiencesService {
-  /**
-   *
-   * @param experienceRepository - repository for entity Experience
-   * @param cvService - dependency injection to create a new cv if not exist with method ensureExists
-   */
   constructor(
     @InjectRepository(Experience) private readonly experienceRepository: Repository<Experience>,
     private readonly cvService: CvService
@@ -21,9 +16,33 @@ export class ExperiencesService {
 
   /**
    * create a experience for logged in user
-   * @param { user, experience: experienceCreate } - user = logged user, experienceCreate = form data from front as ExperienceCreate model
+   * @param user
+   * @param experience
    * create de cv if don`t exist with method ensureExists
    * return the created experience
+   *
+   * @example
+   *
+   * ```ts
+   *
+   * import { ExperienceCreate } from '../../dto/experience-create.dto';
+   * import { Experience } from '../../entities/experience.entity';
+   * import { ExperiencesService } from '../../services/experiences/experiences.service';
+   *
+   * export class DemoCreateExperience {
+   *  constructor(private readonly experiencesService: ExperiencesService) {}
+   *
+   *  @Post()
+   *  @Authorize.Candidates()
+   *  async create(
+   *    @AuthenticatedUser() user: User,
+   *    @Body() experience: ExperienceCreate
+   *  ): Promise<Experience> {
+   *    return this.experiencesService.createExperience({ user, experience });
+   *  }
+   *
+   * ```
+   *
    */
   async createExperience({ user, experience: experienceCreate }: CreateExperienceOptions): Promise<Experience> {
     const experience = this.experienceRepository.create({
@@ -38,9 +57,34 @@ export class ExperiencesService {
 
   /**
    * find user experience by id for logged in user
-   * @param { experienceId, user } - experienceId = id of experience, user = logged in user
+   * @param experienceId
+   * @param user
    * trow a not found exception when the experience don`t exist or not belong to logged user
    * return the experience
+   *
+   * @example
+   *
+   * ```ts
+   *
+   * import { ExperienceCreate } from '../../dto/experience-create.dto';
+   * import { Experience } from '../../entities/experience.entity';
+   * import { ExperiencesService } from '../../services/experiences/experiences.service';
+   * import { ApiExperienceIdParam, FindOneParamsExperience } from './find-one-experience.params';
+   *
+   * export class DemoFindUserExperienceById {
+   *  constructor(private readonly experiencesService: ExperiencesService) {}
+   *
+   *  @Get()
+   *  @Authorize.Candidates()
+   *  @ApiExperienceIdParam()
+   *  async create(
+   *    @AuthenticatedUser() user: User,
+   *  ): Promise<Experience> {
+   *    return this.experiencesService.createExperience({ user, experience });
+   *  }
+   * }
+   *
+   * ```
    */
   async findUserExperienceById({ experienceId, user }: { experienceId: ExperienceId; user: User }): Promise<Experience> {
     const experience = await this.experienceRepository.findOne({ experienceId, keycloakId: user.id });
@@ -54,7 +98,25 @@ export class ExperiencesService {
 
   /**
    * update a experience for logged in user
-   * @param { experience, update } - experience = old experience, update = new experience
+   * @param experience
+   * @param update
+   *
+   * @example
+   *
+   * ```ts
+   *
+   * import { ExperienceCreate } from '../../dto/experience-create.dto';
+   * import { Experience } from '../../entities/experience.entity';
+   * import { ExperiencesService } from '../../services/experiences/experiences.service';
+   * import { ApiExperienceIdParam, FindOneParamsExperience } from './find-one-experience.params';
+   *
+   * export class DemoCreateExperience {
+   *  constructor(private readonly experiencesService: ExperiencesService) {}
+   *
+   * }
+   *
+   * ```
+   *
    */
   async updateOne({ experience, update }: UpdateExperienceOptions): Promise<void> {
     await this.experienceRepository.update({ experienceId: experience.experienceId }, update);
@@ -75,16 +137,28 @@ export class ExperiencesService {
 }
 
 export interface CreateExperienceOptions {
+  /**
+   * user type of User entity
+   * experienceCreate type of ExperienceCreate dto
+   */
   user: User;
   experience: ExperienceCreate;
 }
 
 export interface UpdateExperienceOptions {
+  /**
+   * experience type of Experience entity
+   * update type of ExperienceCreate dto
+   */
   experience: Experience;
   update: ExperienceCreate;
 }
 
 export interface DeleteExperienceOptions {
+  /**
+   * experience type of User entity
+   * experienceId string
+   */
   user: User;
   experienceId: string;
 }
