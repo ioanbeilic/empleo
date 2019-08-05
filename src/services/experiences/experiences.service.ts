@@ -15,7 +15,7 @@ export class ExperiencesService {
   ) {}
 
   /**
-   * create a experience for logged in user
+   * create a experience for user
    * @param user
    * @param experience
    * create de cv if don`t exist with method ensureExists
@@ -25,15 +25,10 @@ export class ExperiencesService {
    *
    * ```ts
    *
-   * import { ExperienceCreate } from '../../dto/experience-create.dto';
-   * import { Experience } from '../../entities/experience.entity';
-   * import { ExperiencesService } from '../../services/experiences/experiences.service';
-   *
    * export class DemoCreateExperience {
    *  constructor(private readonly experiencesService: ExperiencesService) {}
    *
    *  @Post()
-   *  @Authorize.Candidates()
    *  async create(
    *    @AuthenticatedUser() user: User,
    *    @Body() experience: ExperienceCreate
@@ -56,7 +51,7 @@ export class ExperiencesService {
   }
 
   /**
-   * find user experience by id for logged in user
+   * find experience by user and experienceId
    * @param experienceId
    * @param user
    * trow a not found exception when the experience don`t exist or not belong to logged user
@@ -66,21 +61,14 @@ export class ExperiencesService {
    *
    * ```ts
    *
-   * import { ExperienceCreate } from '../../dto/experience-create.dto';
-   * import { Experience } from '../../entities/experience.entity';
-   * import { ExperiencesService } from '../../services/experiences/experiences.service';
-   * import { ApiExperienceIdParam, FindOneParamsExperience } from './find-one-experience.params';
-   *
    * export class DemoFindUserExperienceById {
    *  constructor(private readonly experiencesService: ExperiencesService) {}
    *
    *  @Get()
-   *  @Authorize.Candidates()
-   *  @ApiExperienceIdParam()
-   *  async create(
+   *  async findUserExperienceById(
    *    @AuthenticatedUser() user: User,
    *  ): Promise<Experience> {
-   *    return this.experiencesService.createExperience({ user, experience });
+   *    return this.experiencesService.findUserExperienceById({ experienceId, user });
    *  }
    * }
    *
@@ -97,22 +85,26 @@ export class ExperiencesService {
   }
 
   /**
-   * update a experience for logged in user
-   * @param experience
-   * @param update
+   * update a experience
+   * @param experience experience that will be updated
+   * @param update experience to which it is updated
    *
    * @example
    *
    * ```ts
    *
-   * import { ExperienceCreate } from '../../dto/experience-create.dto';
-   * import { Experience } from '../../entities/experience.entity';
-   * import { ExperiencesService } from '../../services/experiences/experiences.service';
-   * import { ApiExperienceIdParam, FindOneParamsExperience } from './find-one-experience.params';
-   *
    * export class DemoCreateExperience {
    *  constructor(private readonly experiencesService: ExperiencesService) {}
    *
+   *  @Put()
+   *  async updateExperience(
+   *    @AuthenticatedUser() user: User,
+   *    @Body() update: ExperienceCreate,
+   *    @Param() { experienceId, keycloakId }: FindOneParamsExperience
+   *  ): Promise<void> {
+   *    const experience = await this.experiencesService.findUserExperienceById({ experienceId, user });
+   *    await this.experiencesService.updateOne({ experience, update });
+   *  }
    * }
    *
    * ```
@@ -123,9 +115,28 @@ export class ExperiencesService {
   }
 
   /**
-   * delete a experience for logged in user
-   * @param { user, experienceId } - user =  logged in user, experienceId = id of experience to delete
+   * delete a experience with user and id
+   * @param user
+   * @param experienceId
    * trow not found exception if experience don`t exist or not belong to the user
+   *
+   * @example
+   *
+   * ```ts
+   *
+   * export class DemoCreateExperience {
+   *  constructor(private readonly experiencesService: ExperiencesService) {}
+   *
+   *  @Delete()
+   *  async deleteOneExperience(
+   *    @AuthenticatedUser() user: User,
+   *    @Param() { experienceId, keycloakId }: FindOneParamsExperience
+   *  ): Promise<void> {
+   *    await this.experiencesService.deleteOne({ user, experienceId });
+   *  }
+   * }
+   *
+   * ```
    */
   async deleteOne({ user, experienceId }: DeleteExperienceOptions) {
     const { affected } = await this.experienceRepository.delete({ experienceId, keycloakId: user.id });

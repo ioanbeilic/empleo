@@ -9,21 +9,35 @@ import { CvService } from '../cv/cv.service';
 
 @Injectable()
 export class EducationsService {
-  /**
-   *
-   * @param educationRepository - repository for entity Education
-   * @param cvService - dependency injection to create a new cv if not exist with method  ensureExists
-   */
   constructor(
     @InjectRepository(Education) private readonly educationRepository: Repository<Education>,
     private readonly cvService: CvService
   ) {}
 
   /**
-   * create a education for logged in user
-   * @param { user, education: educationCreate } - user = logged user, educationCreate = form data from front as EducationCreate model
+   * create a education for user
+   * @param  user
+   * @param education:
    * create de cv if don`t exist with method ensureExists
    * return the created education
+   *
+   * @example
+   *
+   * ```ts
+   *
+   * export class DemoCreateEducation {
+   *  constructor(private readonly educationsService: EducationsService {}
+   *
+   *  @Post()
+   *  async demoCreateEducation(
+   *    @AuthenticatedUser() user: User,
+   *    @Body() education: EducationCreate
+   *  ): Promise<Education> {
+   *    return this.educationsService.createEducation({ user, education });
+   *  }
+   * }
+   *
+   * ```
    */
   async createEducation({ user, education: educationCreate }: CreateEducationOptions): Promise<Education> {
     const education = await this.educationRepository.create({
@@ -37,10 +51,28 @@ export class EducationsService {
   }
 
   /**
-   * find user education by id for logged in user
-   * @param { educationId, user } - educationId = id of education, user = logged in user
+   * find education by id and user
+   * @param  educationId
+   * @param  user
    * trow a not found exception when the education don`t exist or not belong to logged user
    * return the education
+   *
+   * @example
+   *
+   * ```ts
+   *
+   * export class demoFindUserEducationById {
+   *  constructor(private readonly educationsService: EducationsService) {}
+   *
+   *  @Get()
+   *  async create(
+   *    @AuthenticatedUser() user: User,
+   *  ): Promise<Education> {
+   *    return this.educationsService.createEducation({ user, education });
+   *  }
+   * }
+   *
+   * ```
    */
   async findUserEducationById({ educationId, user }: { educationId: EducationId; user: User }): Promise<Education> {
     const education = await this.educationRepository.findOne({ educationId, keycloakId: user.id });
@@ -53,17 +85,57 @@ export class EducationsService {
   }
 
   /**
-   * update a education for logged in user
-   * @param { education, update } - education = old education, update = new education
+   * update a education by user and educationId
+   * @param education experience that will be updated
+   * @param update education to which it is updated
+   *
+   * @example
+   *
+   * ```ts
+   *
+   * export class demoUpdateEducation {
+   *  constructor(private readonly educationsService: EducationsService {}
+   *
+   *    @Put()
+   *    async updateEducation(
+   *      @AuthenticatedUser() user: User,
+   *      @Body() update: EducationCreate,
+   *      @Param() { educationId, keycloakId }: FindOneParamsEducation
+   *    ): Promise<void> {
+   *      const education = await this.educationsService.findUserEducationById({ educationId, user });
+   *      await this.educationsService.updateOne({ education, update });
+   *    }
+   *
+   * }
+   *
+   * ```
    */
   async updateOne({ education, update }: UpdateEducationOptions): Promise<void> {
     await this.educationRepository.update({ educationId: education.educationId }, update);
   }
 
   /**
-   * delete a education for logged in user
-   * @param { user, educationId } - user =  logged in user, educationId = id of education to delete
+   * delete a education with user and educationId
+   * @param  user
+   * @param educationId
    * trow not found exception if education don`t exist or not belong to the user
+   *
+   * @example
+   *
+   * ```ts
+   *
+   * export class demoDeleteOne {
+   *  constructor(private readonly educationsService: EducationsService {}
+   *
+   *  @Delete()
+   *  async deleteOneEducation(
+   *                              @AuthenticatedUser() user: User,
+   *                              @Param() { educationId, keycloakId }: FindOneParamsEducation
+   *                          ): Promise<void> {
+   *    await this.educationsService.deleteOne({ user, educationId });
+   *  }
+   * }
+   * ```
    */
   async deleteOne({ user, educationId }: DeleteEducationOptions) {
     const { affected } = await this.educationRepository.delete({ educationId, keycloakId: user.id });
@@ -75,16 +147,28 @@ export class EducationsService {
 }
 
 export interface CreateEducationOptions {
+  /**
+   * user type of User entity
+   * education type of EducationCreate dto
+   */
   user: User;
   education: EducationCreate;
 }
 
 export interface UpdateEducationOptions {
+  /**
+   * education type of Education entity
+   * update type of EducationCreate dto
+   */
   education: Education;
   update: EducationCreate;
 }
 
 export interface DeleteEducationOptions {
+  /**
+   * user type of User entity
+   * educationId string
+   */
   user: User;
   educationId: string;
 }

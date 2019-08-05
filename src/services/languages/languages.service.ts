@@ -34,7 +34,6 @@ export class LanguagesService {
    *  constructor(private readonly languagesService: LanguagesService) {}
    *
    *  @Post()
-   *  @Authorize.Candidates()
    *  async createLanguage(
    *     @AuthenticatedUser() user: User,
    *     @Body() language: LanguageCreate
@@ -58,7 +57,7 @@ export class LanguagesService {
   }
 
   /**
-   * find a specific language by id and user
+   * find a language by id and user
    * @param languageId
    * @param user
    * return Language
@@ -66,13 +65,8 @@ export class LanguagesService {
    * @example
    *
    * ```ts
-   * import { LanguageCreate } from '../../dto/language-create.dto';
-   * import { Language } from '../../entities/language.entity';
-   * import { ApiLanguageIdParam, FindOneParamsLanguage } from './find-one-language.params';
    *
    *  @Get()
-   *  @Authorize.Candidates()
-   *  @ApiLanguageIdParam()
    *  async demoFindUserLanguageById(
    *     @AuthenticatedUser() user: User,
    *     @Param() { languageId, keycloakId }: FindOneParamsLanguage
@@ -100,9 +94,6 @@ export class LanguagesService {
    * @example
    *
    * ```ts
-   * import { LanguageCreate } from '../../dto/language-create.dto';
-   * import { Language } from '../../entities/language.entity';
-   * import { ApiLanguageIdParam, FindOneParamsLanguage } from './find-one-language.params';
    *
    *  @Put()
    *  async updateLanguage(
@@ -127,14 +118,8 @@ export class LanguagesService {
    * @example
    *
    * ```ts
-   * import { LanguageCreate } from '../../dto/language-create.dto';
-   * import { Language } from '../../entities/language.entity';
-   * import { ApiLanguageIdParam, FindOneParamsLanguage } from './find-one-language.params';
    *
    *   @Delete()
-   *   @Authorize.Candidates()
-   *   @ApiKeycloakIdParam()
-   *   @ApiLanguageIdParam()
    *   async deleteOneLanguage(
    *      @AuthenticatedUser() user: User,
    *      @Param() { languageId, keycloakId }: FindOneParamsLanguage

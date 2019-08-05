@@ -21,9 +21,7 @@ export class CvService {
    * export class DemoEnsureExists {
    *  constructor(private readonly cvService: CvService) {}
    *
-   *  @Get()
-   *  @Authorize.Candidates()
-   *  @ApiKeycloakIdParam()
+   *  @Post()
    *  async create(
    *    @Param() { keycloakId }: KeycloakIdParams,
    *  ): void {
@@ -45,7 +43,7 @@ export class CvService {
   }
 
   /**
-   * method to find a cv by keycloakId, only for logged in users
+   * method to find a cv by keycloakId and users
    * @param keycloakId - the user for which you want to find the cv
    * trow not found exception if cv not exist
    * return the cv with all details  experiences, educations, documents, language
@@ -53,14 +51,11 @@ export class CvService {
    * @example
    *
    * ```ts
-   * import { Cv } from '../../entities/cv.entity';
    *
    * export class DemoFindByKeycloakId {
    *  constructor(private readonly cvService: CvService) {}
    *
    *    @Get()
-   *    @Authorize.Candidates()
-   *    @ApiKeycloakIdParam()
    *    async controllerFindByKeycloakId(
    *        @Param() { keycloakId }: KeycloakIdParams,
    *    ): Promise<Cv> {
@@ -93,8 +88,6 @@ export class CvService {
    *   constructor(private readonly cvService: CvService) {}
    *
    *   @Delete()
-   *   @Authorize.Candidates()
-   *   @ApiKeycloakIdParam()
    *   async controllerDeleteOne(
    *   @Param() { keycloakId }: KeycloakIdParams,
    *   ): void {
