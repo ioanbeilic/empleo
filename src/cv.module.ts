@@ -42,6 +42,7 @@ import { LanguagesService } from './services/languages/languages.service';
       inject: [POSTGRES_URI]
     })
   ],
+
   providers: [CvOpenapi, EducationsService, ExperiencesService, CvService, LanguagesService, DocumentsService]
 })
 export class CvModule {}
